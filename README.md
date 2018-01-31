@@ -26,7 +26,7 @@ You can install scRNABatchQC package in R from [github](https://github.com/liuqi
 
 # Quick start
 
-Here we show the most basic steps for a validation procedure. You need to create a target directory used to store the data. Here, we assume the target directory is your work directory.
+Here we show the most basic steps.
 
 	library(scRNABatchQC)
 
