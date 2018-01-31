@@ -1,0 +1,12 @@
+citEntry(entry="article",
+         title = "scRNABatchQC",
+         author = personList( as.person("Jie Ping")
+							  as.person("Quanhu Sheng"),
+                              as.person("Yu Shyr"),
+                              as.person("Qi Liu")),
+         year = 2018,
+         journal = "",
+         doi = "",
+         url = "",
+         textVersion = "scRNABatchQC: Quality control of multiple single cell RNAseq data" )
+
