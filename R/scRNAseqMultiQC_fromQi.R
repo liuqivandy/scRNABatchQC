@@ -50,12 +50,10 @@ scRNAseqMultiQC <- function(count1, count2, count3, ERCC = "spikein", GeneofInte
     curve(sce3$var.fit$trend(x), col = 3, lwd = 2, add = TRUE)
     
     ###explain variables ###combine different sample into one figure###########
-    plotExplanatoryVariables(sce1$sce, variables = c("log10_total_counts")) ##scater
-    plotExplanatoryVariables(sce2$sce, variables = c("log10_total_counts"))
-    plotExplanatoryVariables(sce3$sce, variables = c("log10_total_counts"))
     
-    plotExplanatoryVariables(sce1$sce, variables = c("log10_total_features"))
-    plotExplanatoryVariables(sce1$sce, variables = c("log10_total_counts_Mt"))
+    plotMultiSamplesOneExplanatoryVariables(sce1, sce2, sce3, var = "log10_total_counts", samplenames = c("Sample1", "Sample2", "Sample3"))
+    plotMultiSamplesOneExplanatoryVariables(sce1, sce2, sce3, var = "log10_total_features", samplenames = c("Sample1", "Sample2", "Sample3"))
+    plotMultiSamplesOneExplanatoryVariables(sce1, sce2, sce3, var = "log10_total_counts_Mt", samplenames = c("Sample1", "Sample2", "Sample3"))
     
     ###########Global similarity########################################ave count similarity, pca plot, tsne plot ################
     ave.count <- assay(scecombine)
@@ -131,7 +129,26 @@ scRNAseqMultiQC <- function(count1, count2, count3, ERCC = "spikein", GeneofInte
     rownames(diffFC) <- rownames(s1vss2)[matchid]
     colnames(diffFC) <- c("s1vss2", "s1vss3", "s2vss3")
     heatmap.2(diffFC, cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
-  }
+}
+
+plotMultiSamplesOneExplanatoryVariables <- function(sce1, sce2, sce3, var = "log10_total_counts", samplenames = c("Sample1", "Sample2", "Sample3")) {
+  d1 <- plotExplanatoryVariables(sce1$sce, variables = c(var)) ##scater
+  d2 <- plotExplanatoryVariables(sce2$sce, variables = c(var))
+  d3 <- plotExplanatoryVariables(sce3$sce, variables = c(var))
+  
+  dat <- data.frame(Pct_Var_Explained = c(d1$data$Pct_Var_Explained,
+                                          d2$data$Pct_Var_Explained,
+                                          d3$data$Pct_Var_Explained),
+                    Sample = rep(samplenames, each = length(d1$data$Pct_Var_Explained)))
+  p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
+    geom_line(stat = "density", alpha = 0.7, size = 2, trim = T) + 
+    geom_vline(xintercept = 1, linetype = 2) + 
+    scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
+    xlab(paste0("% variance explained (log10-scale)")) + 
+    ylab("Density") + ggtitle(var) +
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) 
+  return(p)
+}
 
 
 ####subfunctions#########
