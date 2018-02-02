@@ -6,6 +6,7 @@ library(cluster)
 library(limma)
 library(dynamicTreeCut)
 library(gplots)
+library(Rtsne)
 
 scRNAseqMultiQC <- function(count1, count2, count3, ERCC = "spikein", GeneofInterest = "") {
 
