@@ -132,7 +132,7 @@ scRNAseqMultiQC <- function(count1, count2, count3, ERCC = "spikein", GeneofInte
 }
 
 plotMultiSamplesOneExplanatoryVariables <- function(sce1, sce2, sce3, var = "log10_total_counts", samplenames = c("Sample1", "Sample2", "Sample3")) {
-  d1 <- plotExplanatoryVariables(sce1$sce, variables = c(var)) ##scater
+  d1 <- plotExplanatoryVariables(sce1$sce, variables = c(var))
   d2 <- plotExplanatoryVariables(sce2$sce, variables = c(var))
   d3 <- plotExplanatoryVariables(sce3$sce, variables = c(var))
   
@@ -145,11 +145,10 @@ plotMultiSamplesOneExplanatoryVariables <- function(sce1, sce2, sce3, var = "log
     geom_vline(xintercept = 1, linetype = 2) + 
     scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
     xlab(paste0("% variance explained (log10-scale)")) + 
-    ylab("Density") + ggtitle(var) +
+    ylab("Density") + ggtitle(var) + scale_color_manual(values = c(1:length(samplenames))) +
     coord_cartesian(xlim = c(10 ^ (-3), 100)) 
   return(p)
 }
-
 
 ####subfunctions#########
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
