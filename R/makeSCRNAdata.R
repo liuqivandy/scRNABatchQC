@@ -9,6 +9,7 @@ library(gplots)
 library(Rtsne)
 
 makeSCRNAdata <- function(object) {
+  stopifnot(methods::is(object, "data.table"))
   ### object is a data.table object, the first column is gene symbols
 
   sce <- SingleCellExperiment(list(counts = (as.matrix(object[, -1]))))
@@ -74,12 +75,4 @@ makeSCRNAdata <- function(object) {
 
   return(list(sce = sce, var.out = var.out, var.fit = var.fit, pcs = pcs, pc1genes = pc1genes, dist = my.dist, tree = my.tree, cluster = my.clusters))
 }
-
-
-####check the separatedness of clusters using the silhouette width
-clust.col <- scater:::.get_palette("tableau10medium") # hidden scater colours
-sil <- silhouette(my.clusters, dist = my.dist)
-sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
-sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
-plot(sil, main = paste(length(unique(my.clusters)), "clusters"), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
 
