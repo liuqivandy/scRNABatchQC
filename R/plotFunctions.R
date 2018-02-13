@@ -13,3 +13,44 @@ checkClusterSeparateness <- function(object) {
   plot(sil, main = paste(length(unique(object$cluster)), "clusters "), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
 }
 
+plot.multi.dens <- function(s, feature = "") {
+  junk.x = NULL
+  junk.y = NULL
+  
+  fNo <- which(colnames(colData(s[[1]]$sce)) == feature)
+  
+  stopifnot(fNo > 0)
+  
+  for (i in 1:length(s)) {
+    junk.x = c(junk.x, density(colData(s[[i]]$sce)[, fNo])$x)
+    junk.y = c(junk.y, density(colData(s[[i]]$sce)[, fNo])$y)
+  }
+  xr <- range(junk.x)
+  yr <- range(junk.y)
+  plot( density(colData(s[[1]]$sce)[, fNo]), xlim = xr, ylim = yr, main = "", xlab = feature)
+  for (i in 1:length(s)) {
+    lines(density(colData(s[[i]]$sce)[, fNo]), xlim = xr, ylim = yr, col = i)
+  }
+}
+
+plotMultiSamplesOneExplanatoryVariables <- function(s, var = "") {
+  d <- list()
+  pct_var_explained <- c()
+  
+  for (i in 1:length(s)) {
+    d[[i]] <- plotExplanatoryVariables(s[[i]]$sce, variables = c(var)) ##scater
+    pct_var_explained <- c(pct_var_explained, d[[i]]$data$Pct_Var_Explained)
+  }
+
+  dat <- data.frame(Pct_Var_Explained = pct_var_explained,
+                    Sample = rep(names(s), each = length(d[[1]]$data$Pct_Var_Explained)))
+  
+  p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
+    geom_line(stat = "density", alpha = 0.7, size = 2, trim = T) + 
+    geom_vline(xintercept = 1, linetype = 2) + 
+    scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
+    xlab(paste0("% variance explained (log10-scale)")) + 
+    ylab("Density") + ggtitle(var) +
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) 
+  return(p)
+}
