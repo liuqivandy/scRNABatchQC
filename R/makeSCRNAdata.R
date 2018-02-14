@@ -46,11 +46,11 @@ makeSCRNAdata <- function(object) {
   high.ave <- rowData(sce)$ave.count >= 0.1
   clusters <- quickCluster(sce, subset.row = high.ave, method = "igraph")
   sce <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = NULL)
-  
+
   ##Heterogenous populations ##quickCluster first#####
   ##Normalize#####
   
-  sce <- normalize(sce)  #add logcounts assay into the object
+  sce <- normalize(sce[, sizeFactors(sce)>0])  #add logcounts assay into the object
   
   ###Modeling the technical noise ######on normalized data
   #modeling mean-variance relationship
@@ -81,3 +81,46 @@ makeSCRNAdata <- function(object) {
   return(list(sce = sce, var.out = var.out, var.fit = var.fit, pcs = pcs, pc1genes = pc1genes, dist = my.dist, tree = my.tree, cluster = my.clusters))
 }
 
+#####Test######
+
+ct <- fread("D:\\Work\\scRNABatchQC\\3706_hs_1.tsv")
+
+if (sum(grepl("^mt-|^MT-", as.matrix(ct[, 1]))) == 0) {
+  ct <- ct[, data.table(t(.SD), keep.rownames = TRUE), .SDcols=-1]
+}
+
+sce <- SingleCellExperiment(list(counts = (as.matrix(ct[, -1]))))
+rownames(sce) <- as.matrix(ct[, 1])
+
+is.mito <- grepl("^mt-|^MT-", rownames(sce)) #  is mitochondrial genes # human 14 mitochondrial genes #mouse 13 mitochondrial genes
+
+sce <- calculateQCMetrics(sce, feature_controls = list(Mt = is.mito))
+
+##remove low quality cells
+##define outlier
+libsize.drop <- isOutlier(sce$total_counts, nmads = 3, type = "lower", log = TRUE)
+feature.drop <- isOutlier(sce$total_features, nmads = 3, type = "lower", log = TRUE)
+mito.drop <- isOutlier(sce$pct_counts_Mt, nmads = 3, type = "higher")
+##remove
+sce <- sce[, !(libsize.drop | feature.drop | mito.drop)]
+
+ave.counts <- calcAverage(sce)
+rowData(sce)$ave.count <- ave.counts
+
+##remove genes not expressed in any cells
+gene.keep <- ave.counts > 0
+sce <- sce[gene.keep, ]
+
+num.cells <- nexprs(sce, byrow = TRUE)
+rowData(sce)$num.cells <- num.cells
+
+high.ave <- rowData(sce)$ave.count >= 0.1
+clusters <- quickCluster(sce, subset.row = high.ave, method = "igraph")
+
+scN <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = NULL)
+
+scN <- normalize(scN[, sizeFactors(scN)>0])  #add logcounts assay into the object
+
+###Modeling the technical noise ######on normalized data
+#modeling mean-variance relationship
+var.fit <- trendVar(scN, parametric = TRUE, span = 0.2, use.spikes = FALSE)
