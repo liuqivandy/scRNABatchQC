@@ -1,58 +1,38 @@
-%\VignetteIndexEntry{Validate genomic data with "DupChecker" package}
-%\VignettePackage{dupchecker}
+%\VignetteIndexEntry{Multiple single cell data quality control}
+%\VignettePackage{scRNABatchQC}
 %\VignetteEngine{knitr::knitr}
 
 \documentclass[12pt]{article}
 \usepackage{hyperref}
 
-\author{Quanhu Sheng$^{*}$, Yu Shyr, Xi Chen \\[1em] \small{Center for 
-Quantitative Sciences, Vanderbilt University, Nashville, USA} \\ 
-\small{\texttt{$^*$shengqh (at) gmail.com}}}
+\author{Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu \\[1em] \small{Center for 
+Quantitative Sciences, Vanderbilt University Medical Center, Nashville, USA} \\ 
+\small{\texttt{$^*$qi.liu (at) vanderbilt.edu}}}
 
-\title{DupChecker: a bioconductor package for checking high-throughput 
-genomic data redundancy in meta-analysis}
+\title{scRNABatchQC: a bioconductor package for multiple single cell data quality control}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-Meta-analysis has become a popular approach for high-throughput genomic data 
-analysis because it often can significantly increase power to detect biological 
-signals or patterns in datasets. However, when using public-available databases 
-for meta-analysis, duplication of samples is an often encountered problem, 
-especially for gene expression data. Not removing duplicates could lead false 
-positive finding, misleading clustering pattern or model over-fitting issue, 
-etc in the subsequent data analysis.
 
-We developed a Bioconductor package Dupchecker that efficiently identifies 
-duplicated samples by generating MD5 fingerprints for raw data. A real data 
-example was demonstrated to show the usage and output of the package.
-
-Researchers may not pay enough attention to checking and removing duplicated 
-samples, and then data contamination could make the results or conclusions 
-from meta-analysis questionable. We suggest applying DupChecker to examine 
-all gene expression data sets before any data analysis step.
-
-In this vignette, we demonstrate the application of DupChecker as a package for 
-checking high-throughput genomic data redundancy in meta-analysis. 
-DupChecker can download the GEO/ArrayExpress raw data files from EBI/ncbi ftp 
-server, extract individual data files, calculate MD5 fingerprint for each 
-data file and validate the redundancy of those data files. 
+In this vignette, we demonstrate the application of scRNABatchQC as a package for performing 
+multiple single cell data quality control. scRNABatchQC reads multiple single cell gene expression 
+tables. 
 
 \vspace{1em}
 
-\textbf{DupChecker version:} \Sexpr{packageDescription("DupChecker")$Version}
+\textbf{scRNABatchQC version:} \Sexpr{packageDescription("scRNABatchQC")$Version}
 
 \vspace{1em}
 
 \begin{center}
     \begin{tabular}{ | l | }
       \hline 
-      If you use DupChecker in published research, please cite:  \\
+      If you use scRNABatchQC in published research, please cite:  \\
       \\
-      Quanhu Sheng, Yu Shyr, Xi Chen.: DupChecker: a bioconductor package for checking high-throughput genomic \\
-      data redundancy in meta-analysis. BMC bioinformatics 2014, 15:323. \\
+      Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu.: scRNABatchQC: a bioconductor package for multiple single cell data quality control. \\
       \hline 
     \end{tabular}
   \end{center}
@@ -62,26 +42,16 @@ data file and validate the redundancy of those data files.
 
 \section{Introduction}
 
-Meta-analysis has become a popular approach for high-throughput genomic data 
-analysis because it often can significantly increase power to detect biological 
-signals or patterns in datasets. However, when using public-available databases 
-for meta-analysis, duplication of samples is an often encountered problem, 
-especially for gene expression data. Not removing duplicates would make study 
-results questionable. We developed a package DupChecker that efficiently 
-identifies duplicated samples by generating MD5 fingerprints for individual data
-file.
-
 \section{Standard workflow}
 
 \subsection{Quick start}
 
-Here we show the most basic steps for a validation procedure. You need to 
+Here we show the most basic steps for a quality control procedure. You need to 
 create a target directory used to store the data. In order to illustrate the 
-procedure, here we used two very small datasets without redundant CEL files. 
-You may also try a real example with redundancy at example~\ref{realexample}. 
+procedure, here we used a datasets with three samples. 
 
 <<quick, echo=TRUE, message=FALSE, warning=FALSE, tidy=FALSE>>=
-library(DupChecker)
+library(scRNABatchQC)
 
 ## Create a "DupChecker" directory under temporary directory
 rootDir<-paste0(dirname(tempdir()), "/DupChecker")

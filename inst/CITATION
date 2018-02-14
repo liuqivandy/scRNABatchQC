@@ -1,7 +1,7 @@
 citEntry(entry="article",
          title = "scRNABatchQC",
-         author = personList( as.person("Jie Ping")
-							  as.person("Quanhu Sheng"),
+         author = personList( as.person("Quanhu Sheng"),
+                              as.person("Jie Ping"),
                               as.person("Yu Shyr"),
                               as.person("Qi Liu")),
          year = 2018,
