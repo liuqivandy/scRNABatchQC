@@ -11,6 +11,11 @@ library(Rtsne)
 makeSCRNAdata <- function(object) {
   stopifnot(methods::is(object, "data.table"))
   ### object is a data.table object, the first column is gene symbols
+  
+  ### automatically transpose the matrix
+  if (sum(grepl("^mt-|^MT-", as.matrix(object[, 1]))) == 0) {
+    object <- object[, data.table(t(.SD), keep.rownames = TRUE), .SDcols=-1]
+  }
 
   sce <- SingleCellExperiment(list(counts = (as.matrix(object[, -1]))))
   rownames(sce) <- as.matrix(object[, 1])

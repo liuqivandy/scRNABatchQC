@@ -3,7 +3,7 @@ source("makeSCRNAdata.R")
 readInCountTables <- function(path, fileNames, sampleNames) {
   #path = YOUR_FILE_PATH, 
   #filenames = c("count1.csv","count2.csv", "count3.csv"),
-  #sampleNames = c("count1","count2", "count3")
+  #sampleNames = c("S1","S2", "S3")
   
   stopifnot(length(fileNames) == length(sampleNames))
   
