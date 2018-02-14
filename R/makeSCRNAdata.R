@@ -89,8 +89,13 @@ if (sum(grepl("^mt-|^MT-", as.matrix(ct[, 1]))) == 0) {
   ct <- ct[, data.table(t(.SD), keep.rownames = TRUE), .SDcols=-1]
 }
 
-sce <- SingleCellExperiment(list(counts = (as.matrix(ct[, -1]))))
-rownames(sce) <- as.matrix(ct[, 1])
+counttable <- as.matrix(ct[, -1])
+rownames(counttable) <- as.matrix(ct[, 1])
+
+counttable <- counttable[rowSums(counttable) > 0, ]
+counttable <- counttable[, colSums(counttable) > 0]
+
+sce <- SingleCellExperiment(list(counts = counttable))
 
 is.mito <- grepl("^mt-|^MT-", rownames(sce)) #  is mitochondrial genes # human 14 mitochondrial genes #mouse 13 mitochondrial genes
 
@@ -108,8 +113,8 @@ ave.counts <- calcAverage(sce)
 rowData(sce)$ave.count <- ave.counts
 
 ##remove genes not expressed in any cells
-gene.keep <- ave.counts > 0
-sce <- sce[gene.keep, ]
+#gene.keep <- ave.counts > 0
+#sce <- sce[gene.keep, ]
 
 num.cells <- nexprs(sce, byrow = TRUE)
 rowData(sce)$num.cells <- num.cells
@@ -124,3 +129,4 @@ scN <- normalize(scN[, sizeFactors(scN)>0])  #add logcounts assay into the objec
 ###Modeling the technical noise ######on normalized data
 #modeling mean-variance relationship
 var.fit <- trendVar(scN, parametric = TRUE, span = 0.2, use.spikes = FALSE)
+
