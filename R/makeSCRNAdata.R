@@ -124,7 +124,8 @@ clusters <- quickCluster(sce, subset.row = high.ave, method = "igraph")
 
 scN <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = NULL)
 
-scN <- normalize(scN[, sizeFactors(scN)>0])  #add logcounts assay into the object
+scN <- normalize(scN)
+#scN <- normalize(scN[, sizeFactors(scN)>0])  #add logcounts assay into the object
 
 ###Modeling the technical noise ######on normalized data
 #modeling mean-variance relationship
