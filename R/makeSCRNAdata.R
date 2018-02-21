@@ -9,16 +9,9 @@ library(gplots)
 library(Rtsne)
 
 makeSCRNAdata <- function(object) {
-  stopifnot(methods::is(object, "data.table"))
-  ### object is a data.table object, the first column is gene symbols
-  
-  ### automatically transpose the matrix
-  if (sum(grepl("^mt-|^MT-", as.matrix(object[, 1]))) == 0) {
-    object <- object[, data.table(t(.SD), keep.rownames = TRUE), .SDcols=-1]
-  }
+  ### object need to be a matrix with gene names as row name.
 
-  sce <- SingleCellExperiment(list(counts = (as.matrix(object[, -1]))))
-  rownames(sce) <- as.matrix(object[, 1])
+  sce <- SingleCellExperiment(list(counts = (object)))
 
   is.mito <- grepl("^mt-|^MT-", rownames(sce)) #  is mitochondrial genes # human 14 mitochondrial genes #mouse 13 mitochondrial genes
 
@@ -97,6 +90,9 @@ counttable <- counttable[, colSums(counttable) > 0]
 
 sce <- SingleCellExperiment(list(counts = counttable))
 
+sce <- SingleCellExperiment(list(counts = (as.matrix(ct[, -1]))))
+rownames(sce) <- as.matrix(ct[, 1])
+
 is.mito <- grepl("^mt-|^MT-", rownames(sce)) #  is mitochondrial genes # human 14 mitochondrial genes #mouse 13 mitochondrial genes
 
 sce <- calculateQCMetrics(sce, feature_controls = list(Mt = is.mito))
@@ -122,7 +118,7 @@ rowData(sce)$num.cells <- num.cells
 high.ave <- rowData(sce)$ave.count >= 0.1
 clusters <- quickCluster(sce, subset.row = high.ave, method = "igraph")
 
-scN <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = NULL)
+scN <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = NULL, positive = TRUE)
 
 scN <- normalize(scN)
 #scN <- normalize(scN[, sizeFactors(scN)>0])  #add logcounts assay into the object
