@@ -1,0 +1,57 @@
+---
+title: "QC for single cell RNA-seq data"
+output: html_document
+params:
+  data: dat
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(SingleCellExperiment)
+library(scater)
+library(scran)
+library(pheatmap)
+library(cluster)
+library(limma)
+library(dynamicTreeCut)
+library(gplots)
+library(Rtsne)
+
+source("plotFunctions.R")
+
+```
+
+## QC for single cell RNA-seq data
+
+### 1. Technical features
+
+#### Distribution of total counts:
+
+```{r dis_total_counts}
+plot_multi_dens(dat, "total_counts", cex = 1)
+```
+
+#### Distribution of total features: 
+
+```{r dis_total_feature}
+plot_multi_dens(dat, "total_features", cex = 1)
+```
+
+#### Distribution of mitochondrial RNA: 
+
+```{r dis_total_counts}
+plot_multi_dens(dat, "pct_counts_Mt", cex = 1)
+```
+
+### 2. 
+
+Figure of ave expression (x) and num. of cells detected this gene (Y)
+
+```{r pressure, echo=FALSE}
+
+scecombine <- SingleCellExperiment(list(counts = cbind(rowData(dat[[1]]$sce)$ave.count, rowData(dat[[2]]$sce)$ave.count, rowData(dat[[3]]$sce)$ave.count)))
+colData(scecombine)$condition <- c(1, 2, 3)
+plotScater(scecombine, colour_by = "condition")
+
+```
