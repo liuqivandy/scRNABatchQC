@@ -13,7 +13,7 @@ checkClusterSeparateness <- function(object) {
   plot(sil, main = paste(length(unique(object$cluster)), "clusters "), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
 }
 
-plot.multi.dens <- function(s, feature = "") {
+plot_multi_dens <- function(s, feature = "") {
   junk.x = NULL
   junk.y = NULL
   
