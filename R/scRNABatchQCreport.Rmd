@@ -48,10 +48,8 @@ plot_multi_dens(dat, "pct_counts_Mt", cex = 1)
 
 Figure of ave expression (x) and num. of cells detected this gene (Y)
 
-```{r pressure, echo=FALSE}
+```{r gene_count_distribution, echo=FALSE}
 
-scecombine <- SingleCellExperiment(list(counts = cbind(rowData(dat[[1]]$sce)$ave.count, rowData(dat[[2]]$sce)$ave.count, rowData(dat[[3]]$sce)$ave.count)))
-colData(scecombine)$condition <- c(1, 2, 3)
-plotScater(scecombine, colour_by = "condition")
+plotGeneCountDistribution(dat)
 
 ```
