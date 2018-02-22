@@ -5,7 +5,7 @@ library(cluster)
 library(limma)
 library(dynamicTreeCut)
 
-##' makeSCRNAdata
+##' prepareSCRNAData
 ##'
 ##' The function prepare statistics information from single cell RNAseq data table.
 ##'
@@ -20,17 +20,11 @@ library(dynamicTreeCut)
 ##' @importFrom limma lmFit eBayes topTable
 ##' @importFrom dynamicTreeCut cutreeDynamic
 ##' @importFrom cluster silhouette
-##' @export makeSCRNAdata
+##' @export prepareSCRNAData
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv"))
-##' #sce1<-makeSCRNAdata(count1)
-##' #sce1$filters
-##' #metadata(sce)$silhouette
-##' #metadata(sce)$silhouette.colors
-##' #metadata(sec)$pc1genes
-##' #metadata(sec)$hvg
-##' #metadata(sec)$variance.fit
-makeSCRNAdata<-function(count){
+##' #sce1<-prepareSCRNAData(count1)
+prepareSCRNAData<-function(count){
   
   #remove empty genes and samples
   emptyGene=rowSums(count)==0
@@ -118,15 +112,6 @@ makeSCRNAdata<-function(count){
 
 DEBUG=FALSE
 if(DEBUG){
-  library(data.table)
-  
-  ct <- fread("Z:\\shengq1\\20180214_scRNABatchQC\\3706_hs_1.tsv")
-  ct <- fread("Z:\\shengq1\\20180214_scRNABatchQC\\3706_hs_2.tsv")
-  
-  if (sum(grepl("^mt-|^MT-", as.matrix(ct[, 1]))) == 0) {
-    ct <- ct[, data.table(t(.SD), keep.rownames = TRUE), .SDcols=-1]
-  }
-  
-  count <- as.matrix(ct[, -1])
-  rownames(count) <- as.matrix(ct[, 1])
+  count1<-as.matrix(t(read.csv("Z:/shengq1/20180214_scRNABatchQC/qi_m2.csv")))
+  sce1<-prepareSCRNAData(count1)
 }
