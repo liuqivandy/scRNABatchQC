@@ -2,55 +2,9 @@
 library(RColorBrewer)
 library(scater)
 
+source("prepareSCRNAData.R")
 source("prepareSCRNADataSet.R")
 source("plotFunctions.R")
-
-.getColData<-function(sces, feature){
-  if(missing(feature)){
-    stop("Need to specify feature of .getColData")
-  }
-  
-  fNo <- which(colnames(colData(sces[[1]]$sce)) == feature)
-  if(fNo == 0){
-    stop(paste0("Feature ", feature, " is not exists in object sces"))
-  }
-  
-  result<-NULL
-  for (i in 1:length(sces)) {
-    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=colData(sces[[i]]$sce)[, fNo]))
-  }
-  return(result)
-}
-
-.getCbindRowData<-function(sces, feature){
-  if(missing(feature)){
-    stop("Need to specify feature of .getRowData")
-  }
-  
-  fNo <- which(colnames(rowData(sces[[1]]$sce)) == feature)
-  if(fNo == 0){
-    stop(paste0("Feature ", feature, " is not exists in object sces"))
-  }
-  
-  result<-NULL
-  for (i in 1:length(sces)) {
-    result<-cbind(result, rowData(sces[[i]]$sce)[, fNo])
-  }
-  colnames(result)<-names(sces)
-  return(result)
-}
-
-plotDensity <- function(sces, feature, featureLabel="", scolors ) {
-  featureData<-.getColData(sces, feature)
-  featureLabel=ifelse(featureLabel=="", feature, featureLabel)
-  
-  g<-ggplot(featureData, aes(x=Value)) + 
-    geom_density(aes(color=Sample)) + 
-    scale_colour_manual(values=scolors) +
-    xlab(featureLabel) +
-    theme_bw()
-  print(g)
-}
 
 DEBUG<-TRUE
 
@@ -68,13 +22,13 @@ if(DEBUG){
   }
   names(scolors)<-names(sces)
   
-  plotDensity(sces,"total_counts", "Total count", scolors)
-  plotDensity(sces,"total_features", "Total feature", scolors)
-  plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors)
-  
-  plotGeneCountDistribution(sces, scolors)
-
-  plotAveCountVSdetectRate(sces, scolors)
-  
-  plotVarianceTrend(sces, scolors)
+  pdf("Z:/shengq1/20180214_scRNABatchQC/scRNABatchQC.pdf", onefile=TRUE)
+  print(plotDensity(sces,"total_counts", "Total count", scolors))
+  print(plotDensity(sces,"total_features", "Total feature", scolors))
+  print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
+  print(plotGeneCountDistribution(sces, scolors))
+  print(plotAveCountVSdetectRate(sces, scolors))
+  print(plotVarianceTrend(sces, scolors))
+  print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts", "log10(total counts)"))
+  dev.off()
 }

@@ -1,5 +1,59 @@
 library(ggplot2)
 
+DEFAULT_LINE_SIZE <- 1.5
+DEFAULT_POINT_SIZE <- 1
+
+.getColData<-function(sces, feature){
+  if(missing(feature)){
+    stop("Need to specify feature of .getColData")
+  }
+  
+  fNo <- which(colnames(colData(sces[[1]]$sce)) == feature)
+  if(fNo == 0){
+    stop(paste0("Feature ", feature, " is not exists in object sces"))
+  }
+  
+  result<-NULL
+  for (i in 1:length(sces)) {
+    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=colData(sces[[i]]$sce)[, fNo]))
+  }
+  return(result)
+}
+
+.getCbindRowData<-function(sces, feature){
+  if(missing(feature)){
+    stop("Need to specify feature of .getRowData")
+  }
+  
+  fNo <- which(colnames(rowData(sces[[1]]$sce)) == feature)
+  if(fNo == 0){
+    stop(paste0("Feature ", feature, " is not exists in object sces"))
+  }
+  
+  result<-NULL
+  for (i in 1:length(sces)) {
+    result<-cbind(result, rowData(sces[[i]]$sce)[, fNo])
+  }
+  colnames(result)<-names(sces)
+  return(result)
+}
+
+plotDensity <- function(sces, feature, featureLabel="", scolors, size = DEFAULT_LINE_SIZE ) {
+  featureData<-.getColData(sces, feature)
+  featureLabel=ifelse(featureLabel=="", feature, featureLabel)
+  
+  if(missing(scolors)){
+    scolors =  1:length(sces)
+  }
+  
+  p<-ggplot(featureData, aes(x=Value)) + 
+    geom_density(aes(color=Sample), size=size) + 
+    scale_colour_manual(values=scolors) +
+    xlab(featureLabel) +
+    theme_bw()
+  return(p)
+}
+
 checkClusterSeparateness <- function(object) {
   ####check the separateness of clusters using the silhouette width
   
@@ -13,76 +67,15 @@ checkClusterSeparateness <- function(object) {
   plot(sil, main = paste(length(unique(object$cluster)), "clusters "), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
 }
 
-plot.multi.dens <- function(s, feature = "") {
-  junk.x = NULL
-  junk.y = NULL
-  
-  fNo <- which(colnames(colData(s[[1]]$sce)) == feature)
-  
-  stopifnot(fNo > 0)
-  
-  for (i in 1:length(s)) {
-    junk.x = c(junk.x, density(colData(s[[i]]$sce)[, fNo])$x)
-    junk.y = c(junk.y, density(colData(s[[i]]$sce)[, fNo])$y)
-  }
-  xr <- range(junk.x)
-  yr <- range(junk.y)
-  plot( density(colData(s[[1]]$sce)[, fNo]), xlim = xr, ylim = yr, main = "", xlab = feature)
-  for (i in 1:length(s)) {
-    lines(density(colData(s[[i]]$sce)[, fNo]), xlim = xr, ylim = yr, col = i)
-  }
-}
-
-plot_multi_dens <- function(s, feature = "", cex = 2) {
-
-  fNo <- which(colnames(colData(s[[1]]$sce)) == feature)
-  
-  stopifnot(fNo > 0)
-  
-  pdata <- data.frame()
-  
-  for (i in 1:length(s)) {
-    pdata <- rbind(pdata, data.frame(data = colData(s[[i]]$sce)[, fNo], 
-                                     Sample = rep(names(s)[i], length((colData(s[[i]]$sce)[, fNo])))))
-  }
-  
-  p <- ggplot(pdata, aes(x = data, color = Sample)) + 
-    geom_density(cex = cex) + xlab(feature) + scale_color_manual(values = 1:length(s))
-  
-  return(p)
-}
-
-plotMultiSamplesOneExplanatoryVariables <- function(s, var = "", size = 2) {
-  d <- list()
-  pct_var_explained <- c()
-  
-  for (i in 1:length(s)) {
-    d[[i]] <- plotExplanatoryVariables(s[[i]]$sce, variables = c(var)) ##scater
-    pct_var_explained <- c(pct_var_explained, d[[i]]$data$Pct_Var_Explained)
-  }
-
-  dat <- data.frame(Pct_Var_Explained = pct_var_explained,
-                    Sample = rep(names(s), each = length(d[[1]]$data$Pct_Var_Explained)))
-  
-  p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
-    geom_line(stat = "density", alpha = 0.7, size = size, trim = T) + 
-    geom_vline(xintercept = 1, linetype = 2) + 
-    scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
-    xlab(paste0("% variance explained (log10-scale)")) + 
-    ylab("Density") + ggtitle(var) + scale_color_manual(values = 1:length(s)) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) 
-  return(p)
-}
-
 ### top 500 genes count distribution
-plotGeneCountDistribution <- function(dat, scolors, nfeatures = 500) {
+plotGeneCountDistribution <- function(sces, scolors, nfeatures = 500, size = DEFAULT_LINE_SIZE) {
   prop_mat <- c()
   
-  for (i in 1:length(dat)) {
-    aveCountSum <- sum(rowData(dat[[i]]$sce)$ave.count)
-    aveCountProp <- cumsum(sort(rowData(dat[[i]]$sce)$ave.count, decreasing = TRUE)) / aveCountSum
+  for (i in 1:length(sces)) {
+    aveCountSum <- sum(rowData(sces[[i]]$sce)$ave.count)
+    aveCountProp <- cumsum(sort(rowData(sces[[i]]$sce)$ave.count, decreasing = TRUE)) / aveCountSum
     prop_mat <- cbind(prop_mat, aveCountProp)
-    colnames(prop_mat)[i] <- names(dat)[i]
+    colnames(prop_mat)[i] <- names(sces)[i]
   }
   rownames(prop_mat) <- seq_len(nrow(prop_mat))
   
@@ -92,22 +85,22 @@ plotGeneCountDistribution <- function(dat, scolors, nfeatures = 500) {
   p <- ggplot(prop_to_plot, 
               aes_string(x = "Feature", y = "Proportion_Library", 
                          group = "Sample", colour = "Sample")) +
-    geom_line() + 
+    geom_line(size=size) + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
     scale_color_manual(values = scolors) +
     theme_classic()
   
-  print(p)
+  return(p)
 }
 
 ####averge count vs. detection rate
 
-plotAveCountVSdetectRate <- function(dat, scolors) {
+plotAveCountVSdetectRate <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
   avedetect <- data.frame()
-  for (i in 1:length(dat)) {
-    tmpavedec <- data.frame(avecount = log10(rowData(dat[[i]]$sce)$ave.count), 
-                            detectrate = rowData(dat[[i]]$sce)$num.cells / dim(dat[[i]]$sce)[2], 
-                            Sample = rep(names(dat)[i], length(log10(rowData(dat[[i]]$sce)$ave.count))))
+  for (i in 1:length(sces)) {
+    tmpavedec <- data.frame(avecount = log10(rowData(sces[[i]]$sce)$ave.count), 
+                            detectrate = rowData(sces[[i]]$sce)$num.cells / dim(sces[[i]]$sce)[2], 
+                            Sample = rep(names(sces)[i], length(log10(rowData(sces[[i]]$sce)$ave.count))))
     avedetect <- rbind(avedetect, tmpavedec)
   }
   
@@ -120,22 +113,21 @@ plotAveCountVSdetectRate <- function(dat, scolors) {
 }
 
 ##variance trend
-
-plotVarianceTrend <- function(dat, scolors) {
+plotVarianceTrend <- function(sces, scolors, pointSize=DEFAULT_POINT_SIZE, lineSize=DEFAULT_LINE_SIZE) {
   vartrend_dat <- data.frame()
-  for (i in 1:length(dat)) {
-    tmpvartrend <- data.frame(mean = dat[[i]]$hvg$mean, 
-                              total = dat[[i]]$hvg$total, 
-                              trend = dat[[i]]$var.fit$trend(dat[[i]]$hvg$mean),
-                              Sample = rep(names(dat)[i], length(dat[[i]]$hvg$mean)))
+  for (i in 1:length(sces)) {
+    tmpvartrend <- data.frame(mean = sces[[i]]$hvg$mean, 
+                              total = sces[[i]]$hvg$total, 
+                              trend = sces[[i]]$var.fit$trend(sces[[i]]$hvg$mean),
+                              Sample = rep(names(sces)[i], length(sces[[i]]$hvg$mean)))
     vartrend_dat <- rbind(vartrend_dat, tmpvartrend)
   }
   
   pp <- ggplot(vartrend_dat, aes_string(x = "mean", y = "total", group = "Sample", colour = "Sample")) + geom_point()
   pl <- ggplot(vartrend_dat, aes_string(x = "mean", y = "trend", group = "Sample", colour = "Sample")) + geom_line(alpha = 0.3, size = 1.5)
   p <- ggplot(vartrend_dat) + 
-    geom_point(pp$mapping) + 
-    geom_line(pl$mapping) + 
+    geom_point(pp$mapping, size=pointSize) + 
+    geom_line(pl$mapping, size=lineSize) + 
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
     ylab("Variance of log-expression") +
@@ -144,3 +136,35 @@ plotVarianceTrend <- function(dat, scolors) {
   return(p)
 }
 
+plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, featureLabel="", size = DEFAULT_LINE_SIZE) {
+  if(missing(scolors)){
+    scolors =  1:length(sces)
+  }
+  
+  if(missing(feature)){
+    stop("Need to specify feature of plotMultiSamplesOneExplanatoryVariables")
+  }
+  featureLabel=ifelse(featureLabel=="", feature, featureLabel)
+  
+  pct_var_explained <- c()
+  sample <-c()
+  for (i in 1:length(sces)) {
+    pev <- plotExplanatoryVariables(sces[[i]]$sce, variables = c(feature)) ##scater
+    pct_var_explained <- c(pct_var_explained, pev$data$Pct_Var_Explained)
+    sample <-c(sample, rep(names(sces)[i], length(pev$data$Pct_Var_Explained)))
+  }
+  
+  dat <- data.frame(Pct_Var_Explained = pct_var_explained,  Sample = sample)
+  
+  p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
+    geom_line(stat = "density", size = size, trim = T) + 
+    geom_vline(xintercept = 1, linetype = 2) + 
+    scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
+    xlab(paste0("% variance explained (log10-scale)")) + 
+    ylab("Density") + 
+    ggtitle(featureLabel) + 
+    scale_color_manual(values = scolors) +
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) + 
+    theme_classic()
+  return(p)
+}
