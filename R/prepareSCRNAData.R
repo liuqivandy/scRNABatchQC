@@ -90,22 +90,6 @@ prepareSCRNAData<-function(count){
   fit <- eBayes(fit, trend=TRUE, robust=TRUE)
   
   pc1genes <- topTable(fit, coef=2, n=dim(sce)[1],sort.by="none")
-  
-  ##clustering cells into subpopulations###############
-  pcs <- reducedDim(sce, "PCA")
-  my.dist <- dist(pcs)
-  my.tree <- hclust(my.dist, method="ward.D2")
-  my.clusters <- unname(cutreeDynamic(my.tree, distM=as.matrix(my.dist), verbose=0))
-  sce$cluster <- factor(my.clusters)
-  
-  ##check the separatedness of clusters using the silhouette width 
-  clust.col <- scater:::.get_palette("tableau10medium") # hidden scater colours
-  sil <- silhouette(my.clusters, dist = my.dist)
-  sil.cols <- clust.col[ifelse(sil[,3] > 0, sil[,1], sil[,2])]
-  sil.cols <- sil.cols[order(-sil[,1], sil[,3])]
-  
-  metadata(sce)$silhouette<-sil
-  metadata(sce)$silhouette.colors<-sil.cols
 
   return(list(sce = sce, hvg = var.out, pc1genes = pc1genes, var.fit = var.fit))
 }

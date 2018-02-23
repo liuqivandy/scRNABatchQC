@@ -22,7 +22,11 @@ if(DEBUG){
   }
   names(scolors)<-names(sces)
   
+  
   pdf("Z:/shengq1/20180214_scRNABatchQC/scRNABatchQC.pdf", onefile=TRUE)
+  
+  checkClusterSeparateness(sces[[1]]$sce)
+  
   print(plotDensity(sces,"total_counts", "Total count", scolors))
   print(plotDensity(sces,"total_features", "Total feature", scolors))
   print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))

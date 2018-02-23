@@ -38,6 +38,26 @@ DEFAULT_POINT_SIZE <- 1
   return(result)
 }
 
+plotClusterSeparateness <- function(sce) {
+  ####check the separateness of clusters using the silhouette width
+  pcs <- reducedDim(sce, "PCA")
+  my.dist <- dist(pcs)
+  my.tree <- hclust(my.dist, method = "ward.D2")
+  
+  my.clusters <- unname(cutreeDynamic(my.tree, distM = as.matrix(my.dist), verbose = 0))
+  
+  sce$cluster <- factor(my.clusters)
+  
+  ####check the separatedness of clusters using the silhouette width
+  
+  clust.col <- scater:::.get_palette("tableau10medium") # hidden scater colours
+  sil <- silhouette(my.clusters, dist = my.dist)
+  sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
+  sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
+  plot(sil, main = paste(length(unique(my.clusters)), "clusters"), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
+}
+
+
 plotDensity <- function(sces, feature, featureLabel="", scolors, size = DEFAULT_LINE_SIZE ) {
   featureData<-.getColData(sces, feature)
   featureLabel=ifelse(featureLabel=="", feature, featureLabel)
@@ -52,19 +72,6 @@ plotDensity <- function(sces, feature, featureLabel="", scolors, size = DEFAULT_
     xlab(featureLabel) +
     theme_bw()
   return(p)
-}
-
-checkClusterSeparateness <- function(object) {
-  ####check the separateness of clusters using the silhouette width
-  
-  clust.col <- scater:::.get_palette("tableau10medium") # hidden scater colours
-  sil <- silhouette(object$cluster, dist = object$dist)
-  
-  sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
-  
-  sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
-  
-  plot(sil, main = paste(length(unique(object$cluster)), "clusters "), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
 }
 
 ### top 500 genes count distribution

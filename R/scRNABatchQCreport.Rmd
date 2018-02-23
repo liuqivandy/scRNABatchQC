@@ -8,17 +8,96 @@ params:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(SingleCellExperiment)
-library(scater)
-library(scran)
-library(pheatmap)
-library(cluster)
-library(limma)
-library(dynamicTreeCut)
-library(gplots)
-library(Rtsne)
+library(RColorBrewer)
+library(knitr)
+library(reshape2)
+library(ggplot2)
+library(data.table)
+library(DT)
+library(RCurl)
+library(htmltools)
 
+knitr::opts_chunk$set(echo = TRUE)
+
+addLinkTag<-function(text,link) {
+  result<-paste0("<a href='",link,"' target='_blank'>",text,"</a>")
+  return(result)
+}
+
+figRef <- local({
+  tag <- numeric()
+  created <- logical()
+  used <- logical()
+  function(label, caption, prefix = options("figcap.prefix"), 
+           sep = options("figcap.sep"), prefix.highlight = options("figcap.prefix.highlight")) {
+    i <- which(names(tag) == label)
+    if (length(i) == 0) {
+      i <- length(tag) + 1
+      tag <<- c(tag, i)
+      names(tag)[length(tag)] <<- label
+      used <<- c(used, FALSE)
+      names(used)[length(used)] <<- label
+      created <<- c(created, FALSE)
+      names(created)[length(created)] <<- label
+    }
+    if (!missing(caption)) {
+      created[label] <<- TRUE
+      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
+             " ", caption)
+    } else {
+      used[label] <<- TRUE
+      paste(prefix, tag[label])
+    }
+  }
+})
+options(figcap.prefix = "Figure", figcap.sep = ":", figcap.prefix.highlight = "**")
+
+tabRef <- local({
+  tag <- numeric()
+  created <- logical()
+  used <- logical()
+  function(label, caption, prefix = options("tabcap.prefix"), 
+           sep = options("tabcap.sep"), prefix.highlight = options("tabcap.prefix.highlight")) {
+    i <- which(names(tag) == label)
+    if (length(i) == 0) {
+      i <- length(tag) + 1
+      tag <<- c(tag, i)
+      names(tag)[length(tag)] <<- label
+      used <<- c(used, FALSE)
+      names(used)[length(used)] <<- label
+      created <<- c(created, FALSE)
+      names(created)[length(created)] <<- label
+    }
+    if (!missing(caption)) {
+      created[label] <<- TRUE
+      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
+             " ", caption)
+    } else {
+      used[label] <<- TRUE
+      paste(prefix, tag[label])
+    }
+  }
+})
+options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
+
+source("prepareSCRNAData.R")
+source("prepareSCRNADataSet.R")
 source("plotFunctions.R")
+```
+
+```{r data, include=FALSE, cache=TRUE}
+sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
+                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
+                        Transform=c(1, 1, 1))
+  
+sces<-prepareSCRNADataSet(sampleTable)
+  
+if(length(sces) < 9){
+  scolors=brewer.pal(length(sces), "Set1")
+}else{
+  scolors=rainbow(length(sces))
+}
+names(scolors)<-names(sces)
 
 ```
 
@@ -28,28 +107,40 @@ source("plotFunctions.R")
 
 #### Distribution of total counts:
 
-```{r dis_total_counts}
-plot_multi_dens(dat, "total_counts", cex = 1)
+```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
+print(plotDensity(sces,"total_counts", "Total count", scolors))
 ```
 
 #### Distribution of total features: 
 
-```{r dis_total_feature}
-plot_multi_dens(dat, "total_features", cex = 1)
+```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
+print(plotDensity(sces,"total_features", "Total feature", scolors))
 ```
 
 #### Distribution of mitochondrial RNA: 
 
-```{r dis_total_counts}
-plot_multi_dens(dat, "pct_counts_Mt", cex = 1)
+```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
+print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
 ### 2. 
 
 Figure of ave expression (x) and num. of cells detected this gene (Y)
 
-```{r gene_count_distribution, echo=FALSE}
-
-plotGeneCountDistribution(dat)
-
+```{r gene_count_distribution,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("gene_count_distribution", "Mitochondrial count distribution")}
+print(plotGeneCountDistribution(sces, scolors))
 ```
+
+
+```{r AveCountVSdetectRate,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSdetectRate", "Average count vs detecting rage")}
+print(plotAveCountVSdetectRate(sces, scolors))
+```
+
+```{r plotVarianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Variance trend")}
+print(plotVarianceTrend(sces, scolors))
+```
+
+```{r plotMultiSamplesOneExplanatoryVariables,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("MultiSamplesOneExplanatoryVariables", "Multi samples one explanatory variables")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts", "log10(total counts)"))
+```
+
