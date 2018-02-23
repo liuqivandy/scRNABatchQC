@@ -112,6 +112,6 @@ prepareSCRNAData<-function(count){
 
 DEBUG=FALSE
 if(DEBUG){
-  count1<-as.matrix(t(read.csv("Z:/shengq1/20180214_scRNABatchQC/qi_m2.csv")))
+  count1<-as.matrix(t(read.csv("Z:/shengq1/20180214_scRNABatchQC/qi_m1.csv")))
   sce1<-prepareSCRNAData(count1)
 }
