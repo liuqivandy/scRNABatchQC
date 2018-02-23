@@ -75,7 +75,7 @@ plotMultiSamplesOneExplanatoryVariables <- function(s, var = "", size = 2) {
 }
 
 ### top 500 genes count distribution
-plotGeneCountDistribution <- function(dat, nfeatures = 500) {
+plotGeneCountDistribution <- function(dat, scolors, nfeatures = 500) {
   prop_mat <- c()
   
   for (i in 1:length(dat)) {
@@ -92,16 +92,17 @@ plotGeneCountDistribution <- function(dat, nfeatures = 500) {
   p <- ggplot(prop_to_plot, 
               aes_string(x = "Feature", y = "Proportion_Library", 
                          group = "Sample", colour = "Sample")) +
-    geom_line(alpha = 0.3, size = 1.5) + 
+    geom_line() + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
-    scale_color_manual(values = 1:length(dat))
+    scale_color_manual(values = scolors) +
+    theme_classic()
   
-  return(p)
+  print(p)
 }
 
 ####averge count vs. detection rate
 
-plotAveCountVSdetectRate <- function(dat) {
+plotAveCountVSdetectRate <- function(dat, scolors) {
   avedetect <- data.frame()
   for (i in 1:length(dat)) {
     tmpavedec <- data.frame(avecount = log10(rowData(dat[[i]]$sce)$ave.count), 
@@ -112,30 +113,33 @@ plotAveCountVSdetectRate <- function(dat) {
   
   p <- ggplot(avedetect, aes_string(x = "avecount", y = "detectrate", 
                                     group = "Sample", colour = "Sample")) + 
-    geom_point() + xlab("Ave counts of genes") + ylab("Detecting Rate") +
-    scale_color_manual(values = 1:length(dat))
+    geom_point() + xlab("Average count of genes") + ylab("Detecting rate") +
+    scale_color_manual(values = scolors) +
+    theme_classic()
   return(p)
 }
 
 ##variance trend
 
-plotVarianceTrend <- function(dat) {
-
+plotVarianceTrend <- function(dat, scolors) {
   vartrend_dat <- data.frame()
-
   for (i in 1:length(dat)) {
-    tmpvartrend <- data.frame(mean = dat[[i]]$var.out$mean, total = dat[[i]]$var.out$total, 
-                              trend = dat[[i]]$var.fit$trend(dat[[i]]$var.out$mean),
-                              Sample = rep(names(dat)[i], length(dat[[i]]$var.out$mean)))
+    tmpvartrend <- data.frame(mean = dat[[i]]$hvg$mean, 
+                              total = dat[[i]]$hvg$total, 
+                              trend = dat[[i]]$var.fit$trend(dat[[i]]$hvg$mean),
+                              Sample = rep(names(dat)[i], length(dat[[i]]$hvg$mean)))
     vartrend_dat <- rbind(vartrend_dat, tmpvartrend)
   }
   
   pp <- ggplot(vartrend_dat, aes_string(x = "mean", y = "total", group = "Sample", colour = "Sample")) + geom_point()
-  
   pl <- ggplot(vartrend_dat, aes_string(x = "mean", y = "trend", group = "Sample", colour = "Sample")) + geom_line(alpha = 0.3, size = 1.5)
-  
-  p <- ggplot(vartrend_dat) + geom_point(pp$mapping) + geom_line(pl$mapping) + 
-    scale_color_manual(values = 1:length(dat)) + xlab("Mean log-expression") + ylab("Variance of log-expression")
+  p <- ggplot(vartrend_dat) + 
+    geom_point(pp$mapping) + 
+    geom_line(pl$mapping) + 
+    scale_color_manual(values = scolors) + 
+    xlab("Mean log-expression") + 
+    ylab("Variance of log-expression") +
+    theme_classic()
   
   return(p)
 }
