@@ -1,6 +1,6 @@
-source("prepareSCRNAData.R")
-source("prepareSCRNADataSet.R")
-source("plotFunctions.R")
+source("R/prepareSCRNAData.R")
+source("R/prepareSCRNADataSet.R")
+source("R/plotFunctions.R")
 
 path <- "Z:/JiePing/scRNABatchQC"
 counts <- list()
@@ -20,6 +20,6 @@ names(sces) <- c("S1", "S2", "S3")
 sceall <- preparePCATSNEData(sces)
 
 rmarkdown::render("R/scRNABatchQCreport.Rmd", params = list(
-  sces = sces,
-  sceall = sceall
+  data = sces,
+  all = sceall
 ))

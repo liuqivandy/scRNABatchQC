@@ -2,8 +2,8 @@
 title: "QC for single cell RNA-seq data"
 output: html_document
 params:
-  sces: sces
-  sceall: sceall
+  data: sces
+  all: sceall
 ---
 
 ```{r setup, include=FALSE}
@@ -94,7 +94,7 @@ source("plotFunctions.R")
 #sces<-prepareSCRNADataSet(sampleTable)
 
 sces <- params$data
-sceall <- params$sceall
+sceall <- params$all
 
 if(length(sces) < 9){
   scolors <- brewer.pal(length(sces), "Set1")
@@ -113,19 +113,19 @@ names(scolors) <- names(sces)
 #### Distribution of total counts:
 
 ```{r dis_total_counts, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
-print(plotDensity(sces,"total_counts", "Total count", scolors))
+print(plotDensity(sces, "total_counts", "Total count", scolors))
 ```
 
 #### Distribution of total features: 
 
 ```{r dis_total_feature, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
-print(plotDensity(sces,"total_features", "Total feature", scolors))
+print(plotDensity(sces, "total_features", "Total feature", scolors))
 ```
 
 #### Distribution of mitochondrial RNA: 
 
 ```{r pct_counts_Mt, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
-print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
+print(plotDensity(sces, "pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
 ### 2. 
@@ -164,13 +164,13 @@ print(plotSampleSimilarity(sces))
 
 #### PCA plot
 
-```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("PC1", "PC2")}
+```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("PCA", "PCA")}
 print(plotAllPCA(sceall, scolors))
 ```
 
 #### TSNE plot
 
-```{r plotTSNE, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("Dimension 1", "Dimension 2")}
+```{r plotTSNE, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotTSNE", "TSNE")}
 print(plotAllTSNE(sceall, scolors))
 ```
 
