@@ -21,7 +21,7 @@ prepareSCRNADataSet<-function(sampleTable){
     sampleFile <- as.character(sampleTable[n,2])
     sampleTransform <- ifelse(ncol(sampleTable) > 2, sampleTable[n,3], 0)
     cat(sampleName, "\n")
-    counttable <- as.matrix(read.csv(sampleFile), row.names = 1)
+    counttable <- as.matrix(read.csv(sampleFile, row.names = 1))
     if(sampleTransform){
       counttable <- t(counttable)
     }
