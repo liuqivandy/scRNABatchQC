@@ -83,21 +83,39 @@ options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**
 source("prepareSCRNAData.R")
 source("prepareSCRNADataSet.R")
 source("plotFunctions.R")
+source("preparePCAData.R")
 ```
 
 ```{r data, include=FALSE, cache=TRUE}
-sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
-                        Transform=c(1, 1, 1))
+#sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
+#                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
+#                        Transform=c(1, 1, 1))
   
-sces<-prepareSCRNADataSet(sampleTable)
+#sces<-prepareSCRNADataSet(sampleTable)
+
+path <- "Z:/JiePing/scRNABatchQC"
+counts <- list()
+counts[[1]] <- as.matrix(t(read.csv(file.path(path, "qi_m2.csv"))))
+counts[[2]] <- as.matrix(t(read.csv(file.path(path, "s1_pan_qi_1.csv"))))
+counts[[3]] <- as.matrix(t(read.csv(file.path(path, "qi_m1.csv"))))
+genename <- read.csv(file.path(path, "mousenames.csv"), as.is = T, header = F)[, 1]
+rownames(counts[[1]]) <- rownames(counts[[2]]) <- rownames(counts[[3]]) <- genename
+
+sces <- list()
   
+for (n in 1 : length(counts)) {
+    sces[[n]] <- prepareSCRNAData(counts[[n]])
+}
+names(sces) <- c("S1", "S2", "S3")
+
 if(length(sces) < 9){
   scolors=brewer.pal(length(sces), "Set1")
 }else{
   scolors=rainbow(length(sces))
 }
 names(scolors)<-names(sces)
+
+sceall <- preparePCAData(sces)
 
 ```
 
@@ -107,40 +125,58 @@ names(scolors)<-names(sces)
 
 #### Distribution of total counts:
 
-```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
+```{r dis_total_counts, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
 print(plotDensity(sces,"total_counts", "Total count", scolors))
 ```
 
 #### Distribution of total features: 
 
-```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
+```{r dis_total_feature, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
 print(plotDensity(sces,"total_features", "Total feature", scolors))
 ```
 
 #### Distribution of mitochondrial RNA: 
 
-```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
+```{r pct_counts_Mt, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
 print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
 ### 2. 
 
-Figure of ave expression (x) and num. of cells detected this gene (Y)
+#### Figure of features (x) and percentage of total counts (Y) 
 
-```{r gene_count_distribution,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("gene_count_distribution", "Mitochondrial count distribution")}
+```{r gene_count_distribution, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("features", "percentage of total counts")}
 print(plotGeneCountDistribution(sces, scolors))
 ```
 
+#### Figure of ave expression (x) and num. of cells detected this gene (Y)
 
-```{r AveCountVSdetectRate,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSdetectRate", "Average count vs detecting rage")}
+```{r AveCountVSdetectRate, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("AveCountVSdetectRate", "Average count vs detecting rage")}
 print(plotAveCountVSdetectRate(sces, scolors))
 ```
 
-```{r plotVarianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Variance trend")}
+#### Figure of mean-variance trend figure
+
+```{r plotVarianceTrend, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Variance trend")}
 print(plotVarianceTrend(sces, scolors))
 ```
 
-```{r plotMultiSamplesOneExplanatoryVariables,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("MultiSamplesOneExplanatoryVariables", "Multi samples one explanatory variables")}
+#### Explainable variables between different samples
+
+```{r plotMultiSamplesOneExplanatoryVariables, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("MultiSamplesOneExplanatoryVariables", "Multi samples one explanatory variables")}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts", "log10(total counts)"))
 ```
 
+### 3.
+
+#### Sample expression similarity; Mean expression similarity
+
+```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center"}
+print(plotSampleSimilarity(sces))
+```
+
+#### PCA plot
+
+```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center"}
+print(plotAllPCA(sceall, scolors))
+```
