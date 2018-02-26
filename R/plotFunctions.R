@@ -94,8 +94,7 @@ plotGeneCountDistribution <- function(sces, scolors, nfeatures = 500, size = DEF
                          group = "Sample", colour = "Sample")) +
     geom_line(size=size) + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
-    scale_color_manual(values = scolors) +
-    theme_classic()
+    scale_color_manual(values = scolors)
   
   return(p)
 }
@@ -114,8 +113,7 @@ plotAveCountVSdetectRate <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
   p <- ggplot(avedetect, aes_string(x = "avecount", y = "detectrate", 
                                     group = "Sample", colour = "Sample")) + 
     geom_point() + xlab("Average count of genes") + ylab("Detecting rate") +
-    scale_color_manual(values = scolors) +
-    theme_classic()
+    scale_color_manual(values = scolors)
   return(p)
 }
 
@@ -137,8 +135,7 @@ plotVarianceTrend <- function(sces, scolors, pointSize=DEFAULT_POINT_SIZE, lineS
     geom_line(pl$mapping, size=lineSize) + 
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
-    ylab("Variance of log-expression") +
-    theme_classic()
+    ylab("Variance of log-expression")
   
   return(p)
 }
@@ -171,7 +168,61 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, feat
     ylab("Density") + 
     ggtitle(featureLabel) + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) + 
-    theme_classic()
+    coord_cartesian(xlim = c(10 ^ (-3), 100))
   return(p)
 }
+
+###########Global similarity########################################ave count similarity, pca plot, tsne plot ################
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+  usr <- par("usr")
+  on.exit(par(usr))
+  
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y, method = "spearman"))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste(prefix, txt, sep = "")
+  
+  if (missing(cex.cor)) {
+    cex <- 0.8 / strwidth(txt)
+  }
+  
+  col <- rgb((1:100) / 100, 0, 0)
+  rect(0, 0, 1, 1, col = col[round(r * 100)])
+  
+  text(0.5, 0.5, txt, cex = cex * r, col = "white")
+}
+
+
+panel.dot <- function(x, y, ...) {
+  points(x, y, pch = 16)
+}
+
+plotSampleSimilarity <- function(sces) {
+  aveCount <- rowData(sces[[1]]$sce)$ave.count
+  for (i in 2:length(sces)) {
+    aveCount <- cbind(aveCount, rowData(sces[[i]]$sce)$ave.count)
+  }
+  colnames(aveCount) <- names(sces)
+  
+  pairs(log10(aveCount), xaxt = "n", yaxt = "n", upper.panel = panel.cor, gap = 0, lower.panel = panel.dot)
+}
+
+####################### PCA ##############
+
+plotAllPCA <- function(sceall, scolors, size = 2) {
+  pcadata <- data.frame(PC1 = reducedDim(sceall)[, 1],
+                        PC2 = reducedDim(sceall)[, 2], 
+                        Sample = as.factor(colData(sceall)["condition"][, 1]))
+  pcalabs <- attr(reducedDim(sceall), "percentVar")
+  
+  p_pca <- ggplot(pcadata, aes(x = PC1, y = PC2, label = Sample)) + 
+    geom_point(aes(col = Sample), size = size) + 
+    xlab(paste0("Componet 1:", round(pcalabs[1] * 100), "% Variance")) + 
+    ylab(paste0("Componet 2:", round(pcalabs[2] * 100), "% Variance")) + 
+    scale_colour_manual(values = scolors)
+  
+  return(p_pca)
+}
+
+
+plotTSNE(sceall, use_dimred = "PCA", colour_by = "condition", perplexity = 20, rand_seed = 100)  ###scater
