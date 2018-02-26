@@ -2,11 +2,11 @@
 title: "QC for single cell RNA-seq data"
 output: html_document
 params:
-  data: dat
+  sces: sces
+  sceall: sceall
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
 library(RColorBrewer)
 library(knitr)
@@ -17,7 +17,7 @@ library(DT)
 library(RCurl)
 library(htmltools)
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache.lazy = FALSE)
 
 addLinkTag<-function(text,link) {
   result<-paste0("<a href='",link,"' target='_blank'>",text,"</a>")
@@ -83,7 +83,7 @@ options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**
 source("prepareSCRNAData.R")
 source("prepareSCRNADataSet.R")
 source("plotFunctions.R")
-source("preparePCAData.R")
+
 ```
 
 ```{r data, include=FALSE, cache=TRUE}
@@ -93,29 +93,16 @@ source("preparePCAData.R")
   
 #sces<-prepareSCRNADataSet(sampleTable)
 
-path <- "Z:/JiePing/scRNABatchQC"
-counts <- list()
-counts[[1]] <- as.matrix(t(read.csv(file.path(path, "qi_m2.csv"))))
-counts[[2]] <- as.matrix(t(read.csv(file.path(path, "s1_pan_qi_1.csv"))))
-counts[[3]] <- as.matrix(t(read.csv(file.path(path, "qi_m1.csv"))))
-genename <- read.csv(file.path(path, "mousenames.csv"), as.is = T, header = F)[, 1]
-rownames(counts[[1]]) <- rownames(counts[[2]]) <- rownames(counts[[3]]) <- genename
-
-sces <- list()
-  
-for (n in 1 : length(counts)) {
-    sces[[n]] <- prepareSCRNAData(counts[[n]])
-}
-names(sces) <- c("S1", "S2", "S3")
+sces <- params$data
+sceall <- params$sceall
 
 if(length(sces) < 9){
-  scolors=brewer.pal(length(sces), "Set1")
+  scolors <- brewer.pal(length(sces), "Set1")
 }else{
-  scolors=rainbow(length(sces))
+  scolors <- rainbow(length(sces))
 }
-names(scolors)<-names(sces)
+names(scolors) <- names(sces)
 
-sceall <- preparePCAData(sces)
 
 ```
 
@@ -171,12 +158,21 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts
 
 #### Sample expression similarity; Mean expression similarity
 
-```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center"}
+```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE}
 print(plotSampleSimilarity(sces))
 ```
 
 #### PCA plot
 
-```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center"}
+```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("PC1", "PC2")}
 print(plotAllPCA(sceall, scolors))
 ```
+
+#### TSNE plot
+
+```{r plotTSNE, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("Dimension 1", "Dimension 2")}
+print(plotAllTSNE(sceall, scolors))
+```
+
+
+
