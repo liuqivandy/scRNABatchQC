@@ -225,8 +225,8 @@ plotAllPCA <- function(sceall, scolors, size = 2) {
 }
 
 plotAllTSNE <- function(sceall, scolors, size = 2) {
-  tsnedata <- data.frame(D1 = tsne_out$Y[, 1],
-                         D2 = tsne_out$Y[, 2], 
+  tsnedata <- data.frame(D1 = reducedDim(sceall, "TSNE")[, 1],
+                         D2 = reducedDim(sceall, "TSNE")[, 2], 
                          Sample = as.factor(colData(sceall)["condition"][, 1]))
   
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
