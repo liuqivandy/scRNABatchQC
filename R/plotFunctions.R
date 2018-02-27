@@ -200,7 +200,9 @@ panel.dot <- function(x, y, ...) {
 plotSampleSimilarity <- function(sces) {
   aveCount <- rowData(sces[[1]]$sce)$ave.count
   for (i in 2:length(sces)) {
-    aveCount <- cbind(aveCount, rowData(sces[[i]]$sce)$ave.count)
+    aveCount <- merge(aveCount, rowData(sces[[i]]$sce)$ave.count, by = "row.names")
+    rownames(aveCount) <- aveCount[, 1]
+    aveCount <- aveCount[, -1]
   }
   colnames(aveCount) <- names(sces)
   
