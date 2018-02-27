@@ -1,4 +1,5 @@
 library(ggplot2)
+library(gplots)
 
 DEFAULT_LINE_SIZE <- 1.5
 DEFAULT_POINT_SIZE <- 1
@@ -226,6 +227,8 @@ plotAllPCA <- function(sceall, scolors, size = 2) {
   return(p_pca)
 }
 
+####################### TSNE ##############
+
 plotAllTSNE <- function(sceall, scolors, size = 2) {
   tsnedata <- data.frame(D1 = reducedDim(sceall, "TSNE")[, 1],
                          D2 = reducedDim(sceall, "TSNE")[, 2], 
@@ -237,3 +240,10 @@ plotAllTSNE <- function(sceall, scolors, size = 2) {
     scale_colour_manual(values = scolors)
   return(p_tsne)
 }
+
+
+
+
+
+
+
