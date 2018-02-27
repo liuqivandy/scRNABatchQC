@@ -2,25 +2,12 @@ source("R/prepareSCRNAData.R")
 source("R/prepareSCRNADataSet.R")
 source("R/plotFunctions.R")
 
-path <- "Z:/JiePing/scRNABatchQC"
-counts <- list()
-counts[[1]] <- as.matrix(t(read.csv(file.path(path, "qi_m2.csv"))))
-counts[[2]] <- as.matrix(t(read.csv(file.path(path, "s1_pan_qi_1.csv"))))
-counts[[3]] <- as.matrix(t(read.csv(file.path(path, "qi_m1.csv"))))
-counts[[4]] <- as.matrix(t(read.csv(file.path(path, "qi_m1.csv"))))
-genename <- read.csv(file.path(path, "mousenames.csv"), as.is = T, header = F)[, 1]
-rownames(counts[[1]]) <- rownames(counts[[2]]) <- rownames(counts[[3]]) <- rownames(counts[[4]]) <- genename
-
-sces <- list()
-
-for (n in 1 : length(counts)) {
-  sces[[n]] <- prepareSCRNAData(counts[[n]])
-}
-names(sces) <- c("S1", "S2", "S3", "S3_2")
+sampleTable<-data.frame(Sample = c("S1", "S2", "S3"),
+                        File = file.path("Z:/JiePing/scRNABatchQC", c("count1.csv", "count2.csv", "count3.csv")),
+                        Transform = c(0, 0, 0))
+sces <- prepareSCRNADataSet(sampleTable)
 
 sceall <- preparePCATSNEData(sces)
 
-rmarkdown::render("R/scRNABatchQCreport.Rmd", params = list(
-  data = sces,
-  all = sceall
-))
+rmarkdown::render("R/scRNABatchQCreport.Rmd", output_dir = "Z:/JiePing/scRNABatchQC",
+                  params = list(data = sces, all = sceall))
