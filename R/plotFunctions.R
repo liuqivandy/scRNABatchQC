@@ -1,4 +1,6 @@
 library(ggplot2)
+library(reshape2)
+library(WebGestaltR)
 
 DEFAULT_LINE_SIZE <- 1.5
 DEFAULT_POINT_SIZE <- 1
@@ -100,6 +102,24 @@ plotGeneCountDistribution <- function(sces, scolors, nfeatures = 500, size = DEF
   return(p)
 }
 
+
+plotAveCountVSNumberOfCells <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
+  avedetect <- data.frame()
+  for (i in 1:length(sces)) {
+    tmpavedec <- data.frame(avecount = log10(rowData(sces[[i]]$sce)$ave.count), 
+                            numberOfCells = rowData(sces[[i]]$sce)$num.cells, 
+                            Sample = rep(names(sces)[i], length(rowData(sces[[i]]$sce)$ave.count)))
+    avedetect <- rbind(avedetect, tmpavedec)
+  }
+  
+  p <- ggplot(avedetect, aes_string(x = "avecount", y = "numberOfCells", 
+                                    group = "Sample", colour = "Sample")) + 
+    geom_point() + xlab("log10(Average count of genes)") + ylab("Number of cells") +
+    scale_color_manual(values = scolors) +
+    theme_classic()
+  return(p)
+}
+
 ####averge count vs. detection rate
 
 plotAveCountVSdetectRate <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
@@ -174,4 +194,67 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, feat
     coord_cartesian(xlim = c(10 ^ (-3), 100)) + 
     theme_classic()
   return(p)
+}
+
+### Biological features similarity
+### select the top 50 genes (adjustable) with FDR<0.01
+### plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
+### plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, defaultValue=0) {
+  objIndex <- which(names(sces[[1]]) == objectName)
+  sobj <- sces[[1]][[objIndex]]
+  filterIndex  <- which(colnames(sobj) == filterName)
+  valueIndex  <- which(colnames(sobj) == valueName)
+  
+  genelist<-c()
+  for (i in 1:length(sces)) {
+    sce<-sces[[i]]
+    sobj <- sce[[objIndex]]
+    sobj<-sobj[sobj[, filterIndex] < 0.01, ]
+    sgene <- rownames(sobj)[order(abs(sobj[,valueName]), decreasing = TRUE)][1:min(50, dim(sobj)[1])]
+    genelist<-c(genelist, sgene)
+  }
+  genelist<-unique(genelist)
+  
+  sdata <- NULL
+  for (i in 1:length(sces)) {
+    sce<-sces[[i]]
+    sobj <- sce[[objIndex]]
+    matchid <- rownames(sobj) %in% genelist
+    filtered<-sobj[matchid,]
+    sdata<-rbind(sdata, data.frame(Sample=names(sces)[i], Feature=rownames(filtered), Value=filtered[,valueIndex]))
+  }
+  
+  mdata<-dcast(sdata, Feature~Sample, value.var="Value", fill=defaultValue)
+  rownames(mdata)<-mdata$Feature
+  mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  
+  heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5)
+}
+
+plotPathwaySimilarity <- function(sces, objectName, filterName, organism) {
+  objIndex <- which(names(sces[[1]]) == objectName)
+  sobj <- sces[[1]][[objIndex]]
+  filterIndex  <- which(colnames(sobj) == filterName)
+
+  sdata<-NULL
+  for (i in 1:length(sces)) {
+    sce<-sces[[i]]
+    sobj <- sce[[objIndex]]
+    sobj<-sobj[sobj[, filterIndex] < 0.01, ]
+    sgenes <- rownames(sobj)
+    spathway<-WebGestaltR(enrichMethod="ORA",organism=organism,
+                    enrichDatabase="pathway_KEGG",interestGene=sgenes,
+                    interestGeneType="genesymbol",referenceSet="genome",
+                    is.output=FALSE)
+    sdata<-rbind(sdata, data.frame(Sample=names(sces)[i],
+                               Pathway=spathway$description,
+                               FDR=-log10(spathway$FDR)))
+  }
+  
+  mdata<-dcast(sdata, Feature~Sample, value.var="Value", fill=defaultValue)
+  rownames(mdata)<-mdata$Feature
+  mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  
+  heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5)
 }

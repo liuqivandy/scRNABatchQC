@@ -16,6 +16,8 @@ library(data.table)
 library(DT)
 library(RCurl)
 library(htmltools)
+library(gplots)
+library(WebGestaltR)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -87,8 +89,7 @@ source("plotFunctions.R")
 
 ```{r data, include=FALSE, cache=TRUE}
 sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
-                        Transform=c(1, 1, 1))
+                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")))
   
 sces<-prepareSCRNADataSet(sampleTable)
   
@@ -105,42 +106,63 @@ names(scolors)<-names(sces)
 
 ### 1. Technical features
 
-#### Distribution of total counts:
-
-```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
-print(plotDensity(sces,"total_counts", "Total count", scolors))
+```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Distribution of total counts")}
+print(plotDensity(sces,"total_counts", "Total counts", scolors))
 ```
 
-#### Distribution of total features: 
-
-```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
-print(plotDensity(sces,"total_features", "Total feature", scolors))
+```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Distribution of total features")}
+print(plotDensity(sces,"total_features", "Total features", scolors))
 ```
 
-#### Distribution of mitochondrial RNA: 
-
-```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
-print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
+```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Distribution of mitochondrial RNA")}
+print(plotDensity(sces,"pct_counts_Mt", "PCT mitochondrial counts", scolors))
 ```
 
-### 2. 
-
-Figure of ave expression (x) and num. of cells detected this gene (Y)
-
-```{r gene_count_distribution,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("gene_count_distribution", "Mitochondrial count distribution")}
+```{r gene_count_distribution,echo=FALSE,results='asis', warning=FALSE, fig.align="center", fig.cap=figRef("gene_count_distribution", "Features (x) and percentage of total counts (Y)")}
 print(plotGeneCountDistribution(sces, scolors))
 ```
 
-
-```{r AveCountVSdetectRate,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSdetectRate", "Average count vs detecting rage")}
-print(plotAveCountVSdetectRate(sces, scolors))
+```{r AveCountVSNumberOfCells,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSNumberOfCells", "Average expression (x) and number of cells detect this gene (Y)")}
+print(plotAveCountVSNumberOfCells(sces, scolors))
 ```
 
-```{r plotVarianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Variance trend")}
+```{r plotVarianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Mean-variance trend")}
 print(plotVarianceTrend(sces, scolors))
 ```
 
-```{r plotMultiSamplesOneExplanatoryVariables,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("MultiSamplesOneExplanatoryVariables", "Multi samples one explanatory variables")}
+```{r log10_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "log10(total counts)")}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts", "log10(total counts)"))
+```
+
+```{r log10_total_features,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "log10(total features)")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_features", "log10(total features)"))
+```
+
+```{r log10_total_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "log10(total MT counts)")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_Mt", "log10(total mitochondrial counts)"))
+```
+
+### 2. Sample expression similarity 
+
+### 3. Bilogical similarity
+
+```{r biologicalSimilarityHighVariableGenes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHighVariableGenes", "Biological variation of most varied genes"), fig.height=10}
+  plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
+```
+
+```{r keggHighVariableGenes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHighVariableGenes", "Biological variation of most varied genes"), fig.height=10}
+
+wg<-WebGestaltR(enrichMethod="ORA",organism="mmusculus",
+            enrichDatabase="pathway_KEGG",interestGene=hvgenes,
+            interestGeneType="genesymbol",referenceSet="genome",
+            is.output=FALSE)
+
+
+```{r biologicalSimilarityPC1Genes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityPC1Genes", "Biological variation of PC1 genes"), fig.height=10}
+pc1genes<-plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+wg<-WebGestaltR(enrichMethod="ORA",organism="mmusculus",
+            enrichDatabase="pathway_KEGG",interestGene=pc1genes,
+            interestGeneType="genesymbol",referenceSet="genome",
+            is.output=FALSE)
 ```
 

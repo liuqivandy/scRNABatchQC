@@ -25,18 +25,17 @@ library(dynamicTreeCut)
 ##' #count1 <- as.matrix(read.csv("sample1.csv"))
 ##' #sce1<-prepareSCRNAData(count1)
 prepareSCRNAData<-function(count){
-  
-  #remove empty genes and samples
-  emptyGene=rowSums(count)==0
-  emptySample=colSums(count)==0
-  count <- count[!emptyGene, !emptySample]
-  
   sce <- SingleCellExperiment(list(counts = count))
   
   #is mitochondrial genes (human 14 mitochondrial genes and mouse 13 mitochondrial genes)
   is.mito <- grepl("^mt-|^MT-", rownames(sce)) 
   
   sce <- calculateQCMetrics(sce, feature_controls=list(Mt=is.mito))
+
+  #remove empty genes and samples
+  emptyGene=rowSums(count)==0
+  emptySample=colSums(count)==0
+  sce <- sce[!emptyGene, !emptySample]
   
   ##remove low quality cells
   libsize.drop <- isOutlier(sce$total_counts, nmads=3, type="lower", log=TRUE)
@@ -61,14 +60,14 @@ prepareSCRNAData<-function(count){
   sizeFactorZero<-sizeFactors(sce) == 0
   sce<-sce[,!sizeFactorZero]
   
-  metadata(sce)$filters<-c(SampleInit=length(emptySample),
+  metadata(sce)$filters<-c(SampleRaw=length(emptySample),
                            SampleEmpty=count(emptySample),
                            SampleLibsizeDrop=count(libsize.drop),
                            SampleFeatureDrop=count(feature.drop),
                            SampleMitoDrop=count(mito.drop),
                            SampleCombinedDrop=count(combined.drop),
                            SampleSizeFactorZero=count(sizeFactorZero),
-                           GeneInit = length(emptyGene),
+                           GeneRaw=length(emptyGene),
                            GeneEmpty=count(emptyGene),
                            GeneMitoCount=count(is.mito),
                            GeneLowExpress=count(lowGene))
@@ -77,7 +76,7 @@ prepareSCRNAData<-function(count){
   sce<-normalize(sce)
   
   ##modeling the technical noise on normalized data and modeling mean-variance relationship
-  var.fit <- trendVar(sce, parametric=TRUE, span=0.2,use.spikes=FALSE)
+  var.fit <- trendVar(sce, parametric=TRUE, span=0.2, use.spikes=FALSE)
   var.out <- decomposeVar(sce, var.fit)
   
   sce <- runPCA(sce,ncomponents=10) 
@@ -96,6 +95,6 @@ prepareSCRNAData<-function(count){
 
 DEBUG=FALSE
 if(DEBUG){
-  count1<-as.matrix(t(read.csv("Z:/shengq1/20180214_scRNABatchQC/qi_m1.csv")))
-  sce1<-prepareSCRNAData(count1)
+  count<-as.matrix(read.csv("Z:/shengq1/20180214_scRNABatchQC/S1.csv", row.names=1))
+  sce<-prepareSCRNAData(count)
 }
