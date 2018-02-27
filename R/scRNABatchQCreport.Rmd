@@ -15,6 +15,7 @@ library(RColorBrewer)
 library(knitr)
 library(reshape2)
 library(ggplot2)
+library(gplots)
 library(data.table)
 library(DT)
 library(RCurl)
@@ -86,6 +87,7 @@ options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**
 source("prepareSCRNAData.R")
 source("prepareSCRNADataSet.R")
 source("plotFunctions.R")
+source("BiologicalSimilarityFunctions.R")
 
 ```
 
@@ -131,8 +133,6 @@ print(plotDensity(sces, "total_features", "Total feature", scolors))
 print(plotDensity(sces, "pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
-### 2. 
-
 #### Figure of features (x) and percentage of total counts (Y) 
 
 ```{r gene_count_distribution, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("features", "percentage of total counts")}
@@ -157,11 +157,11 @@ print(plotVarianceTrend(sces, scolors))
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts", "log10(total counts)"))
 ```
 
-### 3.
+### 2. Sample expression similarity
 
-#### Sample expression similarity; Mean expression similarity
+#### Mean expression similarity
 
-```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE}
+```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("SampleSimilarity", "Sample Similarity")}
 print(plotSampleSimilarity(sces))
 ```
 
@@ -177,5 +177,25 @@ print(plotAllPCA(sceall, scolors))
 print(plotAllTSNE(sceall, scolors))
 ```
 
+### 3. Biological Features similarity
 
+#### Highly variable genes (select the top 50 genes (adjustable) with FDR<0.01)
 
+```{r plotHVG, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotHVG", "Highly variable genes")}
+hvgbio <- getHighVarGenes(sces, FDR = 0.01, geneNo = 50)
+heatmap.2(hvgbio, margins = c(2, 10), cexRow = 0.5)
+```
+
+#### PC1 genes (select the top 50 genes (adjustable) with FDR<0.01)
+
+```{r plotPC1gene, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPC1gene", "PC1 genes")}
+pcgFC <- getTopPC1genes(sces, FDR = 0.01, geneNo = 50)
+heatmap.2(abs(pcgFC), margins = c(2, 10), cexRow = 0.5)
+```
+
+#### Pairwise comparsion
+
+```{r plotPC, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes")}
+diffFC <- getDiffGenes(sceall, FDR = 0.01, geneNo = 50)
+heatmap.2(diffFC, cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
+```
