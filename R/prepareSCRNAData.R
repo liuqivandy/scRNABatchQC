@@ -25,11 +25,11 @@ library(Rtsne)
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv"))
 ##' #sce1<-prepareSCRNAData(count1)
-prepareSCRNAData<-function(count){
+prepareSCRNAData <- function(count) {
   
   #remove empty genes and samples
-  emptyGene=rowSums(count)==0
-  emptySample=colSums(count)==0
+  emptyGene <- rowSums(count) == 0
+  emptySample <- colSums(count) == 0
   count <- count[!emptyGene, !emptySample]
   
   sce <- SingleCellExperiment(list(counts = count))
@@ -37,72 +37,89 @@ prepareSCRNAData<-function(count){
   #is mitochondrial genes (human 14 mitochondrial genes and mouse 13 mitochondrial genes)
   is.mito <- grepl("^mt-|^MT-", rownames(sce)) 
   
-  sce <- calculateQCMetrics(sce, feature_controls=list(Mt=is.mito))
+  sce <- calculateQCMetrics(sce, feature_controls = list(Mt = is.mito))
   
   ##remove low quality cells
-  libsize.drop <- isOutlier(sce$total_counts, nmads=3, type="lower", log=TRUE)
-  feature.drop <- isOutlier(sce$total_features, nmads=3, type="lower", log=TRUE)
-  mito.drop<-isOutlier(sce$pct_counts_Mt,nmads=3, type="higher")
-  combined.drop<-libsize.drop | feature.drop | mito.drop
-  sce <- sce[,!combined.drop]
+  libsize.drop <- isOutlier(sce$total_counts, nmads = 3, type = "lower", log = TRUE)
+  feature.drop <- isOutlier(sce$total_features, nmads = 3, type = "lower", log = TRUE)
+  mito.drop <- isOutlier(sce$pct_counts_Mt, nmads = 3, type = "higher")
+  combined.drop <- libsize.drop | feature.drop | mito.drop
+  sce <- sce[, !combined.drop]
   
   ##remove genes not expressed in any cells
   ave.counts <- calcAverage(sce)
   rowData(sce)$ave.count <- ave.counts
-  num.cells <- nexprs(sce, byrow=TRUE)
-  rowData(sce)$num.cells<-num.cells
-  lowGene<-num.cells==0
-  sce<-sce[!lowGene,]
+  num.cells <- nexprs(sce, byrow = TRUE)
+  rowData(sce)$num.cells <- num.cells
+  lowGene <- num.cells == 0
+  sce <- sce[!lowGene, ]
   
   ##quickCluster and normalization
   high.ave <- rowData(sce)$ave.count >= 0.1
   clusters <- quickCluster(sce, subset.row=high.ave, method="igraph")
   sce <- computeSumFactors(sce, cluster=clusters, subset.row=high.ave, min.mean=NULL, positive=TRUE)
   
-  sizeFactorZero<-sizeFactors(sce) == 0
-  sce<-sce[,!sizeFactorZero]
+  sizeFactorZero <- sizeFactors(sce) == 0
+  sce <- sce[, !sizeFactorZero]
   
-  metadata(sce)$filters<-c(SampleInit=length(emptySample),
-                           SampleEmpty=count(emptySample),
-                           SampleLibsizeDrop=count(libsize.drop),
-                           SampleFeatureDrop=count(feature.drop),
-                           SampleMitoDrop=count(mito.drop),
-                           SampleCombinedDrop=count(combined.drop),
-                           SampleSizeFactorZero=count(sizeFactorZero),
-                           GeneInit = length(emptyGene),
-                           GeneEmpty=count(emptyGene),
-                           GeneMitoCount=count(is.mito),
-                           GeneLowExpress=count(lowGene))
+  metadata(sce)$filters <- c(SampleInit = length(emptySample),
+                             SampleEmpty = count(emptySample),
+                             SampleLibsizeDrop = count(libsize.drop),
+                             SampleFeatureDrop = count(feature.drop),
+                             SampleMitoDrop = count(mito.drop),
+                             SampleCombinedDrop = count(combined.drop),
+                             SampleSizeFactorZero = count(sizeFactorZero),
+                             GeneInit = length(emptyGene),
+                             eneEmpty = count(emptyGene),
+                             GeneMitoCount = count(is.mito),
+                             GeneLowExpress = count(lowGene))
   
   
-  sce<-normalize(sce)
+  sce <- normalize(sce)
   
   ##modeling the technical noise on normalized data and modeling mean-variance relationship
-  var.fit <- trendVar(sce, parametric=TRUE, span=0.2,use.spikes=FALSE)
+  var.fit <- trendVar(sce, parametric = TRUE, span = 0.2, use.spikes = FALSE)
   var.out <- decomposeVar(sce, var.fit)
   
-  sce <- runPCA(sce,ncomponents=10) 
+  sce <- runPCA(sce,ncomponents = 10) 
   
   ##interpreting heterogeneity across PC1
   pc1 <- reducedDim(sce, "PCA")[,1]
   design <- model.matrix(~pc1)
   
   fit <- lmFit(logcounts(sce), design)
-  fit <- eBayes(fit, trend=TRUE, robust=TRUE)
+  fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
-  pc1genes <- topTable(fit, coef=2, n=dim(sce)[1],sort.by="none")
+  pc1genes <- topTable(fit, coef = 2, n = dim(sce)[1], sort.by = "none")
 
   return(list(sce = sce, hvg = var.out, pc1genes = pc1genes, var.fit = var.fit))
 }
 
-preparePCATSNEData <- function(sces, perplexity = 20) {
+##' preparePCATSNEData
+##'
+##' The function prepare statistics information from multiple scRNA dataset.
+##'
+##' @param sces a named list of makeSCRNAdata result
+##' @return a sce:SingleCellExperiment data with PCA and TSNE
+##' @importFrom SingleCellExperiment SingleCellExperiment reducedDim
+##' @importFrom Scater calculateQCMetrics isOutlier calcAverage nexprs normalize runPCA .get_palette
+##' @importFrom Scran quickCluster computeSumFactors trendVar decomposeVar
+##' @importFrom Rtsne Rtsne
+##' @export preparePCATSNEData
+##' @examples 
+##' #sces <- prepareSCRNADataSet(sampleTable)
+##' #sceall <- preparePCATSNEData(sces)
+preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   allCount <- counts(sces[[1]]$sce)
   conditions <- rep(names(sces)[1], dim(sces[[1]]$sce)[2])
+  colnames(allCount) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$sce)[2])
+  
   for (i in 2:length(sces)) {
     allCount <- merge(allCount, counts(sces[[i]]$sce), by = "row.names", all = T)
     rownames(allCount) <- allCount[, 1]
     allCount <- allCount[, -1]
     conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$sce)[2]))
+    colnames(allCount)[(ncol(allCount) - dim(sces[[i]]$sce)[2] + 1):ncol(allCount)] <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$sce)[2])
   }
   allCount[is.na(allCount)] <- 0
   
@@ -114,18 +131,13 @@ preparePCATSNEData <- function(sces, perplexity = 20) {
   high.ave <- ave.counts >= 0.1
   clusters <- quickCluster(sceall, subset.row = high.ave, method = "igraph")
   sceall <- computeSumFactors(sceall, cluster = clusters, subset.row = high.ave, min.mean = NULL)
-  sceall <- normalize(sceall)  #add logcounts assay into the object
+  sceall <- normalize(sceall)
   
-  ####
-  sceall <- runPCA(sceall, ncomponents = 10)
+  sceall <- runPCA(sceall, ncomponents = ncomponents)
   
   set.seed(100)
-  
-  vals <- reducedDim(sceall, "PCA")
-  do_pca <- FALSE
-  pca_dims <- ncol(vals)
-  
-  tsne_out <- Rtsne::Rtsne(vals, initial_dims = pca_dims, pca = do_pca, perplexity = perplexity)
+
+  tsne_out <- Rtsne(reducedDim(sceall, "PCA"), initial_dims = ncol(reducedDim(sceall, "PCA")), pca = FALSE, perplexity = perplexity)
   reducedDim(sceall, "TSNE") <- tsne_out$Y
   
   return(sceall)
