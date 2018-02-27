@@ -1,6 +1,9 @@
 ---
 title: "QC for single cell RNA-seq data"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 params:
   data: sces
   all: sceall
