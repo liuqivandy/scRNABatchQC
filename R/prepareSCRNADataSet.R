@@ -9,21 +9,18 @@
 ##' @export prepareSCRNADataSet
 ##' @examples 
 ##' #sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-##' #                        File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
+##' #                        File=file.path(("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")),
 ##' #                        Transform=c(1,1,1))
 ##' #sces<-prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet<-function(sampleTable){
-  result<-list()
+prepareSCRNADataSet <- function(sampleTable){
+  result <- list()
   
-  n<-1
+  n <- 1
   for (n in 1:nrow(sampleTable)) {
-    sampleName <- as.character(sampleTable[n,1])
-    sampleFile <- as.character(sampleTable[n,2])
     cat(sampleName, "\n")
-    counttable <- as.matrix(read.csv(sampleFile, row.names = 1))
     result[[n]] <- prepareSCRNAData(counttable)
   }
-  names(result) <- sampleTable[,1]
+  names(result) <- sampleTable[, 1]
   return(result)
 }
 
@@ -31,7 +28,7 @@ DEBUG=FALSE
 if(DEBUG){
   source("prepareSCRNAData.R")
   sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                          File=paste0("Z:/shengq1/20180214_scRNABatchQC/", c("qi_m1.csv", "qi_m2.csv", "s1_pan_qi_1.csv")),
+                          File=file.path(("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")),
                           Transform=c(1,1,1))
   sces<-prepareSCRNADataSet(sampleTable)
 }

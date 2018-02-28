@@ -32,3 +32,7 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .Rproj.user
+/R/scRNABatchQCreport_files/figure-html
+/R/scRNABatchQCreport_cache/html/__packages
+/R/scRNABatchQCreport_cache/html
+/R/scRNABatchQCreport.html
