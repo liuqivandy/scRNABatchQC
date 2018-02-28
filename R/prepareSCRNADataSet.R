@@ -1,5 +1,3 @@
-
-
 ##' prepareSCRNADataSet
 ##'
 ##' The function read multiple count table and prepare statistics information for each table
@@ -20,14 +18,14 @@ prepareSCRNADataSet <- function(sampleTable){
     sampleName<-as.character(sampleTable[n,1])
     countFile<-as.character(sampleTable[n,2])
     cat(sampleName, "\n")
-    count<-read.csv(countFile, row.names=1, header=T)
-    result[[n]] <- prepareSCRNAData(count)
+    counts<-as.matrix(read.csv(countFile, row.names=1, header=T))
+    result[[n]] <- prepareSCRNAData(counts)
   }
   names(result) <- sampleTable[, 1]
   return(result)
 }
 
-DEBUG=FALSE
+DEBUG=TRUE
 if(DEBUG){
   source("prepareSCRNAData.R")
   sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
