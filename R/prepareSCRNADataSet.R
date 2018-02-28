@@ -28,7 +28,7 @@ DEBUG=FALSE
 if(DEBUG){
   source("prepareSCRNAData.R")
   sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                          File=file.path(("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")),
+                          File=file.path(paste0("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")),
                           Transform=c(1,1,1))
   sces<-prepareSCRNADataSet(sampleTable)
 }
