@@ -17,8 +17,11 @@ prepareSCRNADataSet <- function(sampleTable){
   
   n <- 1
   for (n in 1:nrow(sampleTable)) {
+    sampleName<-as.character(sampleTable[n,1])
+    countFile<-as.character(sampleTable[n,2])
     cat(sampleName, "\n")
-    result[[n]] <- prepareSCRNAData(counttable)
+    count<-read.csv(countFile, row.names=1, header=T)
+    result[[n]] <- prepareSCRNAData(count)
   }
   names(result) <- sampleTable[, 1]
   return(result)
@@ -28,7 +31,7 @@ DEBUG=FALSE
 if(DEBUG){
   source("prepareSCRNAData.R")
   sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                          File=file.path(paste0("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv")),
-                          Transform=c(1,1,1))
+                          File=file.path(paste0("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv"))),
+                          stringsAsFactors = FALSE)
   sces<-prepareSCRNADataSet(sampleTable)
 }

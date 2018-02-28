@@ -61,11 +61,22 @@ prepareSCRNAData <- function(count) {
   sizeFactorZero <- sizeFactors(sce) == 0
   sce <- sce[, !sizeFactorZero]
   
-  
-  
+  metadata(sce)$filters<-c(SampleInit=length(emptySample),
+                           SampleEmpty=count(emptySample),
+                           SampleLibsizeDrop=count(libsize.drop),
+                           SampleFeatureDrop=count(feature.drop),
+                           SampleMitoDrop=count(mito.drop),
+                           SampleCombinedDrop=count(combined.drop),
+                           SampleSizeFactorZero=count(sizeFactorZero),
+                           GeneInit = length(emptyGene),
+                           GeneEmpty=count(emptyGene),
+                           GeneMitoCount=count(is.mito),
+                           GeneLowExpress=count(lowGene))
+
   sce <- normalize(sce)
   
   ##modeling the technical noise on normalized data and modeling mean-variance relationship
+  var.fit <- trendVar(sce, parametric = TRUE, span = 0.2, use.spikes = FALSE)
   var.out <- decomposeVar(sce, var.fit)
   
   sce <- runPCA(sce,ncomponents = 10) 
