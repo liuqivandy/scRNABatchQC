@@ -6,24 +6,22 @@ output:
     toc_float: true
 params:
   data: sces
-  all: sceall
+  all: scesall
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
 library(RColorBrewer)
 library(knitr)
 library(reshape2)
 library(ggplot2)
-library(gplots)
 library(data.table)
 library(DT)
 library(RCurl)
 library(htmltools)
-library(gplots)
-library(WebGestaltR)
 
-knitr::opts_chunk$set(echo = TRUE, cache.lazy = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 
 addLinkTag<-function(text,link) {
   result<-paste0("<a href='",link,"' target='_blank'>",text,"</a>")
@@ -85,115 +83,92 @@ tabRef <- local({
   }
 })
 options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
-
-source("prepareSCRNAData.R")
-source("prepareSCRNADataSet.R")
-source("plotFunctions.R")
-source("BiologicalSimilarityFunctions.R")
-
 ```
 
-```{r data, include=FALSE, cache=TRUE}
-  
-#sces<-prepareSCRNADataSet(sampleTable)
-
+```{r data, include=FALSE, cache=FALSE}
 sces <- params$data
-sceall <- params$all
+scesall <- params$all
+organism <- params$organism
+
+hvgPathways<-.getMultiplePathway(sces, metaObjectName="hvgPathway")
+pc1Pathways<-.getMultiplePathway(sces, metaObjectName="pc1Pathway")
 
 if(length(sces) < 9){
-  scolors <- brewer.pal(length(sces), "Set1")
+  scolors=brewer.pal(length(sces), "Set1")
 }else{
-  scolors <- rainbow(length(sces))
+  scolors=rainbow(length(sces))
 }
-names(scolors) <- names(sces)
-
-
+names(scolors)<-names(sces)
 ```
-
-## QC for single cell RNA-seq data
 
 ### 1. Technical features
 
-```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Distribution of total counts")}
-print(plotDensity(sces,"total_counts", "Total counts", scolors))
+```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
+print(plotDensity(sces,"total_counts", "Total count", scolors))
 ```
 
+```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
+print(plotDensity(sces,"total_features", "Total feature", scolors))
 ```
 
-```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Distribution of mitochondrial RNA")}
-print(plotDensity(sces,"pct_counts_Mt", "PCT mitochondrial counts", scolors))
-```
-
+```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
+print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
 ```{r AveCountVSNumberOfCells,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSNumberOfCells", "Average expression (x) and number of cells detect this gene (Y)")}
 print(plotAveCountVSNumberOfCells(sces, scolors))
 ```
 
+```{r varianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Mean-variance trend")}
+print(plotVarianceTrend(sces, scolors))
 ```
 
-
+```{r log10_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "log10(total counts)")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts"))
 ```
 
-
-
+```{r log10_total_features,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "log10(total features)")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_features"))
 ```
 
-```{r keggHighVariableGenes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHighVariableGenes", "Biological variation of most varied genes"), fig.height=10}
-
-wg<-WebGestaltR(enrichMethod="ORA",organism="mmusculus",
-            enrichDatabase="pathway_KEGG",interestGene=hvgenes,
-            interestGeneType="genesymbol",referenceSet="genome",
-            is.output=FALSE)
-
-
-```{r biologicalSimilarityPC1Genes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityPC1Genes", "Biological variation of PC1 genes"), fig.height=10}
-pc1genes<-plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
-wg<-WebGestaltR(enrichMethod="ORA",organism="mmusculus",
-            enrichDatabase="pathway_KEGG",interestGene=pc1genes,
-            interestGeneType="genesymbol",referenceSet="genome",
-            is.output=FALSE)
+```{r log10_total_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "log10(total mitochondrial count)")}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_Mt"))
 ```
 
-### 2. Sample expression similarity
+### 2. Sample expression similarity 
 
-#### Mean expression similarity
-
-```{r plotsamplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("SampleSimilarity", "Sample Similarity")}
-print(plotSampleSimilarity(sces))
+```{r samplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("samplesimilarity", "Sample Similarity")}
+plotSampleSimilarity(sces)
 ```
 
-#### PCA plot
-
-```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("PCA", "PCA")}
-print(plotAllPCA(sceall, scolors))
+```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPCA", "PCA")}
+print(plotAllPCA(scesall, scolors))
 ```
-
-#### TSNE plot
 
 ```{r plotTSNE, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotTSNE", "TSNE")}
-print(plotAllTSNE(sceall, scolors))
+print(plotAllTSNE(scesall, scolors))
 ```
 
 ### 3. Biological Features similarity
 
-#### Highly variable genes (select the top 50 genes (adjustable) with FDR<0.01)
-
-```{r plotHVG, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotHVG", "Highly variable genes")}
-hvgbio <- getHighVarGenes(sces, FDR = 0.01, geneNo = 50)
-heatmap.2(hvgbio, margins = c(2, 10), cexRow = 0.5)
+```{r biologicalSimilarityHVGenes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHVGenes", "Top 50 highly variable genes with FDR < 0.01"), fig.height=10}
+plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
 ```
 
-#### PC1 genes (select the top 50 genes (adjustable) with FDR<0.01)
-
-```{r plotPC1gene, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPC1gene", "PC1 genes")}
-pcgFC <- getTopPC1genes(sces, FDR = 0.01, geneNo = 50)
-heatmap.2(abs(pcgFC), margins = c(2, 10), cexRow = 0.5)
+```{r pathwaySimilarityHVG,echo=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityHVG", "Pathway similarity based on highly variable genes with FDR < 0.01"), fig.height=10, cache=FALSE}
+heatmap.2(hvgPathways, margins = c(5, 10), cexRow = 0.5)
 ```
 
-#### Pairwise comparsion
+```{r biologicalSimilarityPC1Genes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityPC1Genes", "Top 50 PC1 genes with FDR < 0.01"), fig.height=10}
+plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+```
 
-```{r plotPC, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes")}
-diffFC <- getDiffGenes(sceall, FDR = 0.01, geneNo = 50)
-heatmap.2(diffFC, cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
+```{r pathwaySimilarityPC1Genes,echo=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityPC1Gene", "Pathway similarity based on PC1 genes with FDR < 0.01"), fig.height=10, cache=FALSE}
+heatmap.2(pc1Pathways, margins = c(5, 10), cexRow = 0.5)
+```
+
+### 4. Pairwise difference
+
+```{r plotPC, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes"), fig.height=8}
+plotPairwiseDifference(scesall)
 ```

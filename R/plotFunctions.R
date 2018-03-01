@@ -41,6 +41,80 @@ DEFAULT_POINT_SIZE <- 1
   return(result)
 }
 
+.getDiffGenes <- function(sceall, FDR = 0.01, geneNo = 50) {
+  design <- model.matrix( ~ 0 + as.factor(sceall$condition))
+  snames <- unique(sceall$condition)
+  colnames(design) <- snames
+  
+  cont <- c()
+  compareNames <- c()
+  
+  for (i in 1 : (length(snames)-1)) {
+    for (j in (i + 1) : length(snames)) {
+      cont <- c(cont, paste0(snames[i], " - ", snames[j]))
+      compareNames <- c(compareNames, paste0(snames[i], "_VS_", snames[j]))
+    }
+  }
+  
+  fit <- lmFit(logcounts(sceall), design)
+  contrast.matrix <- makeContrasts(contrasts = cont, levels = design)
+  
+  fit2 <- contrasts.fit(fit, contrast.matrix)
+  fit2 <- eBayes(fit2, trend = TRUE, robust = TRUE)
+  
+  coefNo <- length(cont)
+  pairTables <- list()
+  
+  for (i in 1 : coefNo) {
+    pairTables[[i]] <- topTable(fit2, coef = i, num = dim(sceall)[1], sort.by = "none")
+  }
+  names(pairTables) <- cont
+  
+  diffgenes <- list()
+  diffglist <- c()
+  
+  for (i in 1:coefNo) {
+    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
+    diffgenes[[i]] <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
+    diffglist <- unique(c(diffglist, diffgenes[[i]]))
+  }
+  names(diffgenes) <- compareNames
+  
+  matchid <- rownames(pairTables[[1]]) %in% diffglist
+  
+  diffFC <- pairTables[[1]]$logFC[matchid]
+  for (i in 2:coefNo) {
+    diffFC <- cbind(diffFC, pairTables[[i]]$logFC[matchid])
+  }
+  rownames(diffFC) <- rownames(pairTables[[1]])[matchid]
+  colnames(diffFC) <- compareNames
+  return(diffFC)
+}
+
+.getMultiplePathway <- function(sces, metaObjectName) {
+  fNo <- which(names(metadata(sces[[1]]$sce)) == metaObjectName)
+  if(fNo == 0){
+    stop(paste0(metaObjectName, " is not exists in object sces"))
+  }
+  
+  sdata<-NULL
+  for (i in 1:length(sces)) {
+    sce<-sces[[i]]$sce
+    spathway = metadata(sce)[[fNo]]
+    spathway$Sample = names(sces)[i]
+    sdata<-rbind(sdata, spathway)
+  }
+  
+  sdata$FDR[sdata$FDR==Inf]<-max(sdata$FDR[sdata$FDR!=Inf]) + 1
+  
+  mdata<-reshape2::dcast(sdata, Pathway~Sample, value.var="FDR", fill=0)
+  rownames(mdata)<-mdata$Pathway
+  mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  rownames(mdata)<-gsub(" - .*", "", rownames(mdata))
+  
+  return(mdata)
+}
+
 plotClusterSeparateness <- function(sce) {
   ####check the separateness of clusters using the silhouette width
   pcs <- reducedDim(sce, "PCA")
@@ -73,7 +147,7 @@ plotDensity <- function(sces, feature, featureLabel="", scolors, size = DEFAULT_
     geom_density(aes(color=Sample), size=size) + 
     scale_colour_manual(values=scolors) +
     xlab(featureLabel) +
-    theme_bw()
+    theme_classic()
   return(p)
 }
 
@@ -156,12 +230,13 @@ plotVarianceTrend <- function(sces, scolors, pointSize=DEFAULT_POINT_SIZE, lineS
     geom_line(pl$mapping, size=lineSize) + 
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
-    ylab("Variance of log-expression")
+    ylab("Variance of log-expression") +
+    theme_classic()
   
   return(p)
 }
 
-plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, featureLabel="", size = DEFAULT_LINE_SIZE) {
+plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, size = DEFAULT_LINE_SIZE) {
   if(missing(scolors)){
     scolors =  1:length(sces)
   }
@@ -169,8 +244,7 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, feat
   if(missing(feature)){
     stop("Need to specify feature of plotMultiSamplesOneExplanatoryVariables")
   }
-  featureLabel=ifelse(featureLabel=="", feature, featureLabel)
-  
+
   pct_var_explained <- c()
   sample <-c()
   for (i in 1:length(sces)) {
@@ -187,13 +261,14 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, feat
     scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
     xlab(paste0("% variance explained (log10-scale)")) + 
     ylab("Density") + 
-    ggtitle(featureLabel) + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100))
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) +
+    theme_classic()
   return(p)
 }
 
-###########Global similarity########################################ave count similarity, pca plot, tsne plot ################
+###########Global similarity#####################################
+###ave count similarity, pca plot, tsne plot ################
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
   usr <- par("usr")
   on.exit(par(usr))
@@ -242,7 +317,8 @@ plotAllPCA <- function(sceall, scolors, size = 2) {
     geom_point(aes(col = Sample), size = size) + 
     xlab(paste0("Componet 1:", round(pcalabs[1] * 100), "% Variance")) + 
     ylab(paste0("Componet 2:", round(pcalabs[2] * 100), "% Variance")) + 
-    scale_colour_manual(values = scolors)
+    scale_colour_manual(values = scolors) +
+    theme_classic()
   
   return(p_pca)
 }
@@ -257,16 +333,10 @@ plotAllTSNE <- function(sceall, scolors, size = 2) {
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
     geom_point(aes(col = Sample), size = size) + 
     xlab("Dimension 1") + ylab("Dimension 2") + 
-    scale_colour_manual(values = scolors)
+    scale_colour_manual(values = scolors) +
+    theme_classic()
   return(p_tsne)
 }
-
-
-
-
-
-
-
 
 ### Biological features similarity
 ### select the top 50 genes (adjustable) with FDR<0.01
@@ -305,6 +375,7 @@ plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, de
 }
 
 plotPathwaySimilarity <- function(sces, objectName, filterName, organism) {
+  mdata = .get
   objIndex <- which(names(sces[[1]]) == objectName)
   sobj <- sces[[1]][[objIndex]]
   filterIndex  <- which(colnames(sobj) == filterName)
@@ -320,13 +391,21 @@ plotPathwaySimilarity <- function(sces, objectName, filterName, organism) {
                     interestGeneType="genesymbol",referenceSet="genome",
                     is.output=FALSE)
     sdata<-rbind(sdata, data.frame(Sample=names(sces)[i],
-                               Pathway=spathway$description,
-                               FDR=-log10(spathway$FDR)))
+                                   Pathway=spathway$description,                             
+                                   FDR=-log10(spathway$FDR)))
   }
   
-  mdata<-dcast(sdata, Feature~Sample, value.var="Value", fill=defaultValue)
-  rownames(mdata)<-mdata$Feature
+  sdata$FDR[sdata$FDR==Inf]<-max(sdata$FDR[sdata$FDR!=Inf]) + 1
+  
+  mdata<-dcast(sdata, Pathway~Sample, value.var="FDR", fill=0)
+  rownames(mdata)<-mdata$Pathway
   mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  rownames(mdata)<-gsub(" - .*", "", rownames(mdata))
   
   heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5)
+}
+
+plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50) {
+  diffFC <- .getDiffGenes(scesall, FDR = FDR, geneNo = geneNo)
+  heatmap.2(diffFC, cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
 }

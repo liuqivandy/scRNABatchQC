@@ -5,6 +5,21 @@ library(cluster)
 library(limma)
 library(dynamicTreeCut)
 
+.getIndividualPathway <- function(sobj, filterName, organism) {
+  filterIndex  <- which(colnames(sobj) == filterName)
+  
+  sobj<-sobj[sobj[, filterIndex] < 0.01, ]
+  sgenes <- rownames(sobj)
+  spathway<-WebGestaltR(enrichMethod="ORA",organism=organism,
+                        enrichDatabase="pathway_KEGG",interestGene=sgenes,
+                        interestGeneType="genesymbol",referenceSet="genome",
+                        is.output=FALSE)
+  sdata<-data.frame(Pathway=spathway$description,                             
+                    FDR=-log10(spathway$FDR),
+                    stringsAsFactors = F)
+  return(sdata)
+}
+
 ##' prepareSCRNAData
 ##'
 ##' The function prepare statistics information from single cell RNAseq data table.
@@ -24,7 +39,7 @@ library(dynamicTreeCut)
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv"))
 ##' #sce1<-prepareSCRNAData(count1)
-prepareSCRNAData <- function(counts) {
+prepareSCRNAData <- function(counts, organism) {
   if(is.data.frame(counts)){
     counts<-as.matrix(counts)
   }
@@ -93,6 +108,11 @@ prepareSCRNAData <- function(counts) {
   fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
   pc1genes <- topTable(fit, coef = 2, n = dim(sce)[1], sort.by = "none")
+  
+  if(!missing(organism)){
+    metadata(sce)$hvgPathway <- .getIndividualPathway(var.out, "FDR", organism)
+    metadata(sce)$pc1Pathway <- .getIndividualPathway(pc1genes, "adj.P.Val", organism)
+  }
 
   return(list(sce = sce, hvg = var.out, pc1genes = pc1genes, var.fit = var.fit))
 }
@@ -100,5 +120,5 @@ prepareSCRNAData <- function(counts) {
 DEBUG=FALSE
 if(DEBUG){
   counts<-as.matrix(read.csv("Z:/shengq1/20180214_scRNABatchQC/S1.csv", row.names=1, header=T))
-  sce<-prepareSCRNAData(counts)
+  sce<-prepareSCRNAData(counts, "mmusculus")
 }
