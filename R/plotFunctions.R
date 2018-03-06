@@ -6,7 +6,7 @@ library(WebGestaltR)
 DEFAULT_LINE_SIZE <- 1.5
 DEFAULT_POINT_SIZE <- 1
 
-plotClusterSeparateness <- function(sce) {
+plotClusterSeparateness <- function(sce, ...) {
   ####check the separateness of clusters using the silhouette width
   pcs <- reducedDim(sce, "PCA")
   my.dist <- dist(pcs)
@@ -22,28 +22,23 @@ plotClusterSeparateness <- function(sce) {
   sil <- silhouette(my.clusters, dist = my.dist)
   sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
   sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
-  plot(sil, main = paste(length(unique(my.clusters)), "clusters"), border = sil.cols, col = sil.cols, do.col.sort = FALSE)
+  plot(sil, main = paste(length(unique(my.clusters)), "clusters"), border = sil.cols, col = sil.cols, do.col.sort = FALSE, ...)
 }
 
+plotDensity <- function(sces, feature, featureLabel = "", scolors = 1:length(sces), size = DEFAULT_LINE_SIZE ) {
+  featureData <- .getColData(sces, feature)
+  featureLabel <- ifelse(featureLabel == "", feature, featureLabel)
 
-plotDensity <- function(sces, feature, featureLabel="", scolors, size = DEFAULT_LINE_SIZE ) {
-  featureData<-.getColData(sces, feature)
-  featureLabel=ifelse(featureLabel=="", feature, featureLabel)
+  p <- ggplot(featureData, aes(x = Value)) + 
+    geom_density(aes(color = Sample), size = size) + 
+    scale_colour_manual(values = scolors) +
+    xlab(featureLabel) + theme_classic()
   
-  if(missing(scolors)){
-    scolors =  1:length(sces)
-  }
-  
-  p<-ggplot(featureData, aes(x=Value)) + 
-    geom_density(aes(color=Sample), size=size) + 
-    scale_colour_manual(values=scolors) +
-    xlab(featureLabel) +
-    theme_classic()
   return(p)
 }
 
 ### top 500 genes count distribution
-plotGeneCountDistribution <- function(sces, scolors, nfeatures = 500, size = DEFAULT_LINE_SIZE) {
+plotGeneCountDistribution <- function(sces, scolors = 1:length(sces), nfeatures = 500, size = DEFAULT_LINE_SIZE) {
   prop_mat <- c()
   
   for (i in 1:length(sces)) {
@@ -60,15 +55,16 @@ plotGeneCountDistribution <- function(sces, scolors, nfeatures = 500, size = DEF
   p <- ggplot(prop_to_plot, 
               aes_string(x = "Feature", y = "Proportion_Library", 
                          group = "Sample", colour = "Sample")) +
-    geom_line(size=size) + 
+    geom_line(size = size) + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
-    scale_color_manual(values = scolors)
+    scale_color_manual(values = scolors) +
+    theme_classic()
   
   return(p)
 }
 
 
-plotAveCountVSNumberOfCells <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
+plotAveCountVSNumberOfCells <- function(sces, scolors = 1:length(sces), size = DEFAULT_POINT_SIZE) {
   avedetect <- data.frame()
   for (i in 1:length(sces)) {
     tmpavedec <- data.frame(avecount = log10(rowData(sces[[i]]$sce)$ave.count), 
@@ -82,12 +78,13 @@ plotAveCountVSNumberOfCells <- function(sces, scolors, size = DEFAULT_POINT_SIZE
     geom_point() + xlab("log10(Average count of genes)") + ylab("Number of cells") +
     scale_color_manual(values = scolors) +
     theme_classic()
+  
   return(p)
 }
 
 ####averge count vs. detection rate
 
-plotAveCountVSdetectRate <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
+plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), size = DEFAULT_POINT_SIZE) {
   avedetect <- data.frame()
   for (i in 1:length(sces)) {
     tmpavedec <- data.frame(avecount = log10(rowData(sces[[i]]$sce)$ave.count), 
@@ -101,11 +98,12 @@ plotAveCountVSdetectRate <- function(sces, scolors, size = DEFAULT_POINT_SIZE) {
     geom_point() + xlab("Average count of genes") + ylab("Detection rate") +
     scale_color_manual(values = scolors) +
     theme_classic()
+  
   return(p)
 }
 
 ##variance trend
-plotVarianceTrend <- function(sces, scolors, pointSize=DEFAULT_POINT_SIZE, lineSize=DEFAULT_LINE_SIZE) {
+plotVarianceTrend <- function(sces, scolors = 1:length(sces), pointSize=DEFAULT_POINT_SIZE, lineSize=DEFAULT_LINE_SIZE) {
   vartrend_dat <- data.frame()
   for (i in 1:length(sces)) {
     tmpvartrend <- data.frame(mean = sces[[i]]$hvg$mean, 
@@ -128,11 +126,8 @@ plotVarianceTrend <- function(sces, scolors, pointSize=DEFAULT_POINT_SIZE, lineS
   return(p)
 }
 
-plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, size = DEFAULT_LINE_SIZE) {
-  if(missing(scolors)){
-    scolors =  1:length(sces)
-  }
-  
+plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sces), feature, size = DEFAULT_LINE_SIZE) {
+
   if(missing(feature)){
     stop("Need to specify feature of plotMultiSamplesOneExplanatoryVariables")
   }
@@ -154,8 +149,8 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors, feature, size
     xlab(paste0("% variance explained (log10-scale)")) + 
     ylab("Density") + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) +
-    theme_classic()
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()
+  
   return(p)
 }
 
@@ -182,10 +177,10 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
 
 
 panel.dot <- function(x, y, ...) {
-  points(x, y, pch = 16)
+  points(x, y, pch = 16, ...)
 }
 
-plotSampleSimilarity <- function(sces) {
+plotSampleSimilarity <- function(sces, ...) {
   aveCount <- rowData(sces[[1]]$sce)$ave.count
   for (i in 2:length(sces)) {
     aveCount <- merge(aveCount, rowData(sces[[i]]$sce)$ave.count, by = "row.names")
@@ -194,12 +189,12 @@ plotSampleSimilarity <- function(sces) {
   }
   colnames(aveCount) <- names(sces)
   
-  pairs(log10(aveCount), xaxt = "n", yaxt = "n", upper.panel = panel.cor, gap = 0, lower.panel = panel.dot)
+  pairs(log10(aveCount), xaxt = "n", yaxt = "n", upper.panel = panel.cor, gap = 0, lower.panel = panel.dot, ...)
 }
 
 ####################### PCA ##############
 
-plotAllPCA <- function(sceall, scolors, size = 2) {
+plotAllPCA <- function(sceall, scolors = 1:length(sces), size = 2) {
   pcadata <- data.frame(PC1 = reducedDim(sceall, "PCA")[, 1],
                         PC2 = reducedDim(sceall, "PCA")[, 2], 
                         Sample = as.factor(colData(sceall)["condition"][, 1]))
@@ -209,15 +204,14 @@ plotAllPCA <- function(sceall, scolors, size = 2) {
     geom_point(aes(col = Sample), size = size) + 
     xlab(paste0("Componet 1:", round(pcalabs[1] * 100), "% Variance")) + 
     ylab(paste0("Componet 2:", round(pcalabs[2] * 100), "% Variance")) + 
-    scale_colour_manual(values = scolors) +
-    theme_classic()
+    scale_colour_manual(values = scolors) + theme_classic()
   
   return(p_pca)
 }
 
 ####################### TSNE ##############
 
-plotAllTSNE <- function(sceall, scolors, size = 2) {
+plotAllTSNE <- function(sceall, scolors = 1:length(sces), size = 1.5) {
   tsnedata <- data.frame(D1 = reducedDim(sceall, "TSNE")[, 1],
                          D2 = reducedDim(sceall, "TSNE")[, 2], 
                          Sample = as.factor(colData(sceall)["condition"][, 1]))
@@ -225,8 +219,8 @@ plotAllTSNE <- function(sceall, scolors, size = 2) {
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
     geom_point(aes(col = Sample), size = size) + 
     xlab("Dimension 1") + ylab("Dimension 2") + 
-    scale_colour_manual(values = scolors) +
-    theme_classic()
+    scale_colour_manual(values = scolors) + theme_classic()
+  
   return(p_tsne)
 }
 
@@ -234,39 +228,39 @@ plotAllTSNE <- function(sceall, scolors, size = 2) {
 ### select the top 50 genes (adjustable) with FDR<0.01
 ### plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
 ### plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
-plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, defaultValue=0) {
+plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, defaultValue = 0, ...) {
   objIndex <- which(names(sces[[1]]) == objectName)
   sobj <- sces[[1]][[objIndex]]
   filterIndex  <- which(colnames(sobj) == filterName)
   valueIndex  <- which(colnames(sobj) == valueName)
   
-  genelist<-c()
+  genelist <- c()
   for (i in 1:length(sces)) {
-    sce<-sces[[i]]
+    sce <- sces[[i]]
     sobj <- sce[[objIndex]]
-    sobj<-sobj[sobj[, filterIndex] < 0.01, ]
+    sobj <- sobj[sobj[, filterIndex] < 0.01, ]
     sgene <- rownames(sobj)[order(abs(sobj[,valueName]), decreasing = TRUE)][1:min(50, dim(sobj)[1])]
-    genelist<-c(genelist, sgene)
+    genelist <- c(genelist, sgene)
   }
-  genelist<-unique(genelist)
+  genelist <- unique(genelist)
   
   sdata <- NULL
   for (i in 1:length(sces)) {
-    sce<-sces[[i]]
+    sce <- sces[[i]]
     sobj <- sce[[objIndex]]
     matchid <- rownames(sobj) %in% genelist
-    filtered<-sobj[matchid,]
-    sdata<-rbind(sdata, data.frame(Sample=names(sces)[i], Feature=rownames(filtered), Value=filtered[,valueIndex]))
+    filtered <- sobj[matchid,]
+    sdata <- rbind(sdata, data.frame(Sample = names(sces)[i], Feature = rownames(filtered), Value = filtered[, valueIndex]))
   }
   
-  mdata<-dcast(sdata, Feature~Sample, value.var="Value", fill=defaultValue)
-  rownames(mdata)<-mdata$Feature
-  mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  mdata <- dcast(sdata, Feature ~ Sample, value.var = "Value", fill = defaultValue)
+  rownames(mdata) <- mdata$Feature
+  mdata <- as.matrix(mdata[, c(2:ncol(mdata))])
   
-  heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5)
+  heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5, ...)
 }
 
-plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50) {
+plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50, ...) {
   diffFC <- .getDiffGenes(scesall, FDR = FDR, geneNo = geneNo)
-  heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
+  heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10), ...)
 }
