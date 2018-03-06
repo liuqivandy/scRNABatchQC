@@ -106,72 +106,76 @@ names(scolors)<-names(sces)
 
 ### 1. Technical features
 
-```{r dis_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
+```{r dis_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution")}
 print(plotDensity(sces,"total_counts", "Total count", scolors))
 ```
 
-```{r dis_total_feature,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
+```{r dis_total_feature, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution")}
 print(plotDensity(sces,"total_features", "Total feature", scolors))
 ```
 
-```{r pct_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
+```{r pct_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution")}
 print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
-```{r aveCountVSdetectRate,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("aveCountVSdetectRate", "Average expression and detection rate of genes")}
+```{r GeneCountDistribution, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("genesCountdistribution", "Top 500 Genes Count Distribution")}
+print(plotGeneCountDistribution(sces, scolors))
+```
+
+```{r aveCountVSdetectRate, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("aveCountVSdetectRate", "Average expression and detection rate of genes")}
 print(plotAveCountVSdetectRate(sces, scolors))
 ```
 
-```{r varianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Mean-variance trend")}
+```{r varianceTrend, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Mean-variance trend")}
 print(plotVarianceTrend(sces, scolors))
 ```
 
-```{r log10_total_counts,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "log10(total counts)")}
+```{r log10_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "log10(total counts)")}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts"))
 ```
 
-```{r log10_total_features,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "log10(total features)")}
+```{r log10_total_features, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "log10(total features)")}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_features"))
 ```
 
-```{r log10_total_counts_Mt,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "log10(total mitochondrial count)")}
+```{r log10_total_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "log10(total mitochondrial count)")}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_Mt"))
 ```
 
 ### 2. Sample expression similarity 
 
-```{r samplesimilarity, echo=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("samplesimilarity", "Sample Similarity")}
+```{r samplesimilarity, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("samplesimilarity", "Sample Similarity")}
 plotSampleSimilarity(sces)
 ```
 
-```{r plotPCA, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPCA", "PCA")}
+```{r plotPCA, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPCA", "PCA")}
 print(plotAllPCA(scesall, scolors))
 ```
 
-```{r plotTSNE, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotTSNE", "TSNE")}
+```{r plotTSNE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotTSNE", "TSNE")}
 print(plotAllTSNE(scesall, scolors))
 ```
 
 ### 3. Biological Features similarity
 
-```{r biologicalSimilarityHVGenes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHVGenes", "Top 50 highly variable genes with FDR < 0.01"), fig.height=10}
-plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
+```{r biologicalSimilarityHVGenes, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityHVGenes", "Top 50 highly variable genes with FDR < 0.01"), fig.height=10}
+plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio", cexRow = 0.5, cexCol = 0.5)
 ```
 
-```{r pathwaySimilarityHVG,echo=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityHVG", "Pathway similarity based on highly variable genes with FDR < 0.01"), fig.height=10, cache=FALSE}
+```{r pathwaySimilarityHVG, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityHVG", "Pathway similarity based on highly variable genes with FDR < 0.01"), fig.height=10, cache=FALSE}
 heatmap.2(hvgPathways, margins = c(5, 10), cexRow = 0.5)
 ```
 
-```{r biologicalSimilarityPC1Genes,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityPC1Genes", "Top 50 PC1 genes with FDR < 0.01"), fig.height=10}
-plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+```{r biologicalSimilarityPC1Genes, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("biologicalSimilarityPC1Genes", "Top 50 PC1 genes with FDR < 0.01"), fig.height=10}
+plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC", cexRow = 0.5, cexCol = 0.5)
 ```
 
-```{r pathwaySimilarityPC1Genes,echo=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityPC1Gene", "Pathway similarity based on PC1 genes with FDR < 0.01"), fig.height=10, cache=FALSE}
+```{r pathwaySimilarityPC1Genes, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("pathwaySimilarityPC1Gene", "Pathway similarity based on PC1 genes with FDR < 0.01"), fig.height=10, cache=FALSE}
 heatmap.2(pc1Pathways, margins = c(5, 10), cexRow = 0.5)
 ```
 
 ### 4. Pairwise difference
 
-```{r plotPC, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes"), fig.height=8}
+```{r plotPC, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes"), fig.height=8}
 heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
 ```
