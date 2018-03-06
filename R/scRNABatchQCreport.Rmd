@@ -7,6 +7,7 @@ output:
 params:
   data: sces
   all: scesall
+  organism: ""
 ---
 
 ```{r setup, include=FALSE}
@@ -93,6 +94,8 @@ organism <- params$organism
 hvgPathways<-.getMultiplePathway(sces, metaObjectName="hvgPathway")
 pc1Pathways<-.getMultiplePathway(sces, metaObjectName="pc1Pathway")
 
+diffFC <- .getDiffGenes(scesall, organism = organism,  FDR = 0.01, geneNo = 50)
+
 if(length(sces) < 9){
   scolors=brewer.pal(length(sces), "Set1")
 }else{
@@ -115,8 +118,8 @@ print(plotDensity(sces,"total_features", "Total feature", scolors))
 print(plotDensity(sces,"pct_counts_Mt", "pct_counts_Mt", scolors))
 ```
 
-```{r AveCountVSNumberOfCells,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("AveCountVSNumberOfCells", "Average expression (x) and number of cells detect this gene (Y)")}
-print(plotAveCountVSNumberOfCells(sces, scolors))
+```{r aveCountVSdetectRate,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("aveCountVSdetectRate", "Average expression and detection rate of genes")}
+print(plotAveCountVSdetectRate(sces, scolors))
 ```
 
 ```{r varianceTrend,echo=FALSE,results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "Mean-variance trend")}
@@ -170,5 +173,5 @@ heatmap.2(pc1Pathways, margins = c(5, 10), cexRow = 0.5)
 ### 4. Pairwise difference
 
 ```{r plotPC, echo=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes"), fig.height=8}
-plotPairwiseDifference(scesall)
+heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
 ```

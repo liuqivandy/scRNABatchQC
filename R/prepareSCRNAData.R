@@ -5,21 +5,6 @@ library(cluster)
 library(limma)
 library(dynamicTreeCut)
 
-.getIndividualPathway <- function(sobj, filterName, organism) {
-  filterIndex  <- which(colnames(sobj) == filterName)
-  
-  sobj<-sobj[sobj[, filterIndex] < 0.01, ]
-  sgenes <- rownames(sobj)
-  spathway<-WebGestaltR(enrichMethod="ORA",organism=organism,
-                        enrichDatabase="pathway_KEGG",interestGene=sgenes,
-                        interestGeneType="genesymbol",referenceSet="genome",
-                        is.output=FALSE)
-  sdata<-data.frame(Pathway=spathway$description,                             
-                    FDR=-log10(spathway$FDR),
-                    stringsAsFactors = F)
-  return(sdata)
-}
-
 ##' prepareSCRNAData
 ##'
 ##' The function prepare statistics information from single cell RNAseq data table.

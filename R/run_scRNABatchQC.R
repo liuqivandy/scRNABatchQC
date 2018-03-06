@@ -1,6 +1,7 @@
+source("./dataFunctions.R")
+source("./plotFunctions.R")
 source("./prepareSCRNAData.R")
 source("./prepareSCRNADataSet.R")
-source("./plotFunctions.R")
 
 rdatafile<-"Z:/JiePing/scRNABatchQC/sces.rdata"
 organism = "mmusculus"
