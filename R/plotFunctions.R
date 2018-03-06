@@ -257,7 +257,7 @@ plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, de
   rownames(mdata) <- mdata$Feature
   mdata <- as.matrix(mdata[, c(2:ncol(mdata))])
   
-  heatmap.2(mdata, margins = c(5, 10), cexRow = 0.5, ...)
+  heatmap.2(mdata, margins = c(5, 10), ...)
 }
 
 plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50, ...) {
