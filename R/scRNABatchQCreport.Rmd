@@ -7,7 +7,7 @@ output:
 params:
   data: sces
   all: scesall
-  organism: ""
+  organ: organism
 ---
 
 ```{r setup, include=FALSE}
@@ -89,7 +89,7 @@ options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**
 ```{r data, include=FALSE, cache=FALSE}
 sces <- params$data
 scesall <- params$all
-organism <- params$organism
+organism <- params$organ
 
 hvgPathways<-.getMultiplePathway(sces, metaObjectName="hvgPathway")
 pc1Pathways<-.getMultiplePathway(sces, metaObjectName="pc1Pathway")
@@ -177,5 +177,5 @@ heatmap.2(pc1Pathways, margins = c(5, 10), cexRow = 0.5)
 ### 4. Pairwise difference
 
 ```{r plotPC, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPairComp", "Differentially Expressed Genes"), fig.height=8}
-heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
+heatmap.2(as.matrix(diffFC$genes), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10))
 ```

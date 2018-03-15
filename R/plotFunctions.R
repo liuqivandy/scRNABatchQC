@@ -1,7 +1,3 @@
-library(ggplot2)
-library(gplots)
-library(reshape2)
-library(WebGestaltR)
 
 DEFAULT_LINE_SIZE <- 1.5
 DEFAULT_POINT_SIZE <- 1

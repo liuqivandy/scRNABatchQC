@@ -1,5 +1,3 @@
-library(Rtsne)
-
 ##' prepareSCRNADataSet
 ##'
 ##' The function read multiple count table and prepare statistics information for each table
@@ -73,13 +71,4 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   reducedDim(sceall, "TSNE") <- tsne_out$Y
   
   return(sceall)
-}
-
-DEBUG=FALSE
-if(DEBUG){
-  source("prepareSCRNAData.R")
-  sampleTable<-data.frame(Sample=c("S1", "S2", "S3"),
-                          File=file.path(paste0("Z:/shengq1/20180214_scRNABatchQC/", c("S1.csv", "S2.csv", "S3.csv"))),
-                          stringsAsFactors = FALSE)
-  sces<-prepareSCRNADataSet(sampleTable)
 }

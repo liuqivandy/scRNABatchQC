@@ -1,10 +1,3 @@
-library(SingleCellExperiment)
-library(scater)
-library(scran)
-library(cluster)
-library(limma)
-library(dynamicTreeCut)
-
 ##' prepareSCRNAData
 ##'
 ##' The function prepare statistics information from single cell RNAseq data table.
@@ -100,10 +93,4 @@ prepareSCRNAData <- function(counts, organism) {
   }
 
   return(list(sce = sce, hvg = var.out, pc1genes = pc1genes, var.fit = var.fit))
-}
-
-DEBUG=FALSE
-if(DEBUG){
-  counts<-as.matrix(read.csv("Z:/shengq1/20180214_scRNABatchQC/S1.csv", row.names=1, header=T))
-  sce<-prepareSCRNAData(counts, "mmusculus")
 }
