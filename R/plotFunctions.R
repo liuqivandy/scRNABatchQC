@@ -45,7 +45,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces), nfeatures 
   }
   rownames(prop_mat) <- seq_len(nrow(prop_mat))
   
-  prop_to_plot <- reshape2::melt(prop_mat[seq_len(nfeatures), ])
+  prop_to_plot <- reshape2::melt(prop_mat[seq_len(nfeatures),,drop=FALSE ])
   colnames(prop_to_plot) <- c("Feature", "Sample", "Proportion_Library")
   
   p <- ggplot(prop_to_plot, 
@@ -198,8 +198,8 @@ plotAllPCA <- function(sceall, scolors = 1:length(sces), size = 2) {
   
   p_pca <- ggplot(pcadata, aes(x = PC1, y = PC2, label = Sample)) + 
     geom_point(aes(col = Sample), size = size) + 
-    xlab(paste0("Componet 1:", round(pcalabs[1] * 100), "% Variance")) + 
-    ylab(paste0("Componet 2:", round(pcalabs[2] * 100), "% Variance")) + 
+    xlab(paste0("PC1(", round(pcalabs[1] * 100), "%)")) + 
+    ylab(paste0("PC2(", round(pcalabs[2] * 100), "%)")) + 
     scale_colour_manual(values = scolors) + theme_classic()
   
   return(p_pca)
@@ -253,10 +253,10 @@ plotBiologicalSimilarity <- function(sces, objectName, filterName, valueName, de
   rownames(mdata) <- mdata$Feature
   mdata <- as.matrix(mdata[, c(2:ncol(mdata))])
   
-  heatmap.2(mdata, margins = c(5, 10), ...)
+  heatmap.2(mdata, ...)
 }
 
 plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50, ...) {
   diffFC <- .getDiffGenes(scesall, FDR = FDR, geneNo = geneNo)
-  heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, margins = c(5, 10), ...)
+  heatmap.2(as.matrix(diffFC), cexRow = 0.6, cexCol = 0.6, ...)
 }

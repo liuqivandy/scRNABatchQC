@@ -54,7 +54,7 @@
   
   mdata<-reshape2::dcast(sdata, Pathway~Sample, value.var="FDR", fill=0)
   rownames(mdata)<-mdata$Pathway
-  mdata<-as.matrix(mdata[,c(2:ncol(mdata))])
+  mdata<-as.matrix(mdata[,c(2:ncol(mdata)),drop=F])
   
   return(mdata)
 }
@@ -108,6 +108,10 @@
 }
 
 .getDiffGenes <- function(scesall, organism, FDR = 0.01, geneNo = 50) {
+  if(length(unique(scesall$condition)) == 1){
+    return (list(genes=NULL,pathways=NULL))
+  }
+  
   design <- model.matrix( ~ 0 + as.factor(scesall$condition))
   snames <- unique(scesall$condition)
   colnames(design) <- snames
@@ -150,11 +154,11 @@
   diffFC<-NULL
   for (i in 1:coefNo) {
     matchid <- rownames(pairTables[[i]]) %in% diffglist
-    diffFC <- rbind(diffFC, data.frame(Comparison=cont[i], Gene=rownames(pairTables[[i]])[matchid], AbsLogFold=abs(pairTables[[i]]$logFC[matchid])))
+    diffFC <- rbind(diffFC, data.frame(Comparison=cont[i], Gene=rownames(pairTables[[i]])[matchid], LogFold=pairTables[[i]]$logFC[matchid]))
   }
-  mDiffFC<-dcast(diffFC, Gene ~ Comparison, value.var="AbsLogFold", fill=0)
+  mDiffFC<-dcast(diffFC, Gene ~ Comparison, value.var="LogFold", fill=0)
   rownames(mDiffFC)<-mDiffFC$Gene
-  mDiffFC<-mDiffFC[,-1] 
+  mDiffFC<-mDiffFC[,-1,drop=F] 
   
   mDiffPathway<-NULL
   if(!missing(organism)){
@@ -177,10 +181,10 @@
     }
     mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
     rownames(mDiffPathway)<-mDiffPathway$Pathway
-    mDiffPathway<-mDiffPathway[,-1]
+    mDiffPathway<-mDiffPathway[,-1,drop=F]
     for (con in cont){
       if (!(con %in% colnames(mDiffPathway))){
-        mDiffPathway[,con]<-rnorm(nrow(mDiffPathway), 0, 0.1)
+        mDiffPathway[,con,drop=F]<-rnorm(nrow(mDiffPathway), 0, 0.1)
       }
     }
   }
