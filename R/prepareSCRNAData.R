@@ -23,23 +23,41 @@ prepareSCRNAData <- function(counts, organism) {
   }
   stopifnot(is.matrix(counts))
   
+  totalCount<-sum(counts)
+  totalCell<-ncol(counts)
+  totalGene<-nrow(counts)
+
+  countInCells<-apply(counts,2,sum)
+  rCount<-.getRange(countInCells)
+
+  geneInCells<-apply(counts > 0,2,sum)
+  rGene<-.getRange(geneInCells)
+
   sce <- SingleCellExperiment(list(counts = counts))
   
   #is mitochondrial genes (human 14 mitochondrial genes and mouse 13 mitochondrial genes)
   is.mito <- grepl("^mt-|^MT-", rownames(sce)) 
   
   sce <- calculateQCMetrics(sce, feature_controls = list(Mt = is.mito))
-
-  #remove empty genes and samples
-  emptyGene=rowSums(counts)==0
-  emptySample=colSums(counts)==0
-  sce <- sce[!emptyGene, !emptySample]
   
+  maxMtRNAPercentage<-max(sce$pct_counts_Mt)
+  maxRRNAPercentage<-0
+
   ##remove low quality cells
   libsize.drop <- isOutlier(sce$total_counts, nmads = 3, type = "lower", log = TRUE)
+  FCount<-sum(libsize.drop)
+  
   feature.drop <- isOutlier(sce$total_features, nmads = 3, type = "lower", log = TRUE)
+  FGene<-sum(feature.drop)
+  
+  FrRNA<-0
+
   mito.drop <- isOutlier(sce$pct_counts_Mt, nmads = 3, type = "higher")
+  FmtRNA<-sum(mito.drop)
+
   combined.drop <- libsize.drop | feature.drop | mito.drop
+  Ftotal<-sum(combined.drop)
+  
   sce <- sce[, !combined.drop]
   
   ##remove genes not expressed in any cells
@@ -58,17 +76,18 @@ prepareSCRNAData <- function(counts, organism) {
   sizeFactorZero <- sizeFactors(sce) == 0
   sce <- sce[, !sizeFactorZero]
   
-  metadata(sce)$filters<-c(SampleInit=length(emptySample),
-                           SampleEmpty=count(emptySample),
-                           SampleLibsizeDrop=count(libsize.drop),
-                           SampleFeatureDrop=count(feature.drop),
-                           SampleMitoDrop=count(mito.drop),
-                           SampleCombinedDrop=count(combined.drop),
-                           SampleSizeFactorZero=count(sizeFactorZero),
-                           GeneInit = length(emptyGene),
-                           GeneEmpty=count(emptyGene),
-                           GeneMitoCount=count(is.mito),
-                           GeneLowExpress=count(lowGene))
+  metadata(sce)$filters<-c("Count"=totalCount,
+                           "Cell"=totalCell,
+                           "Gene"=totalGene,
+                           "R-Count"=rCount,
+                           "R-Gene"=rGene,
+                           "mtRNA"=maxMtRNAPercentage,
+                           "rRNA"=maxRRNAPercentage,
+                           "F-Count"=FCount,
+                           "F-Gene"=FGene,
+                           "F-rRNA"=FrRNA,
+                           "F-mtRNA"=FmtRNA,
+                           "F"=Ftotal)
 
   sce <- normalize(sce)
   

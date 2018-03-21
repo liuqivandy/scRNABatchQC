@@ -1,0 +1,38 @@
+# Biological View
+
+This section presents the similarity/difference on the high-variable genes and genes differentially expressed along the first principal component (PC1 genes) between scRNA-seq experiments. scRNABatchQC calculates the pairwise similarity of highly variable genes and PC1 genes and their enriched pathways across experiments. Two experiments with similar highly variable genes or PC1 gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise.
+
+<hr>
+
+```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityHVGenes", "Heatmap of top50 highly variable genes"), fig.height=10, fig.width=10}
+plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio", cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC first selects the top 50 genes with highest and significant biological variance in each experiment (FDR<0.01) and then clusters experiments based on the similarity on highly variable genes. `r figRef("plotBiologicalSimilarityHVGenes")` shows the biological variance of top 50 genes in each experiment and their similarity across experiments.
+
+<hr>
+
+
+```{r plotPathwaySimilarityHVG, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityHVG", "Heatmap of enriched pathways for highly variable genes"), fig.height=10, cache=FALSE, fig.width=10}
+heatmap.2(hvgPathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC performs the functional enrichment analysis for the highly variable genes in each experiment. `r figRef("plotPathwaySimilarityHVG")` shows the log-pvalue for enriched pathways in each experiment and pathway similarity across experiments.
+
+<hr>
+
+```{r plotBiologicalSimilarityPC1Genes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityPC1Genes", "Heatmap of top50 PC1 genes"), fig.height=10, fig.width=10}
+plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC", cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC selects the top 50 differentially expressed genes along the first principle component (PC1 genes) in each experiment (FDR<0.01). `r figRef("plotBiologicalSimilarityPC1Genes")` shows differential expression of top 50 PC1 genes in each experiment and genes similarity across experiments.
+
+<hr>
+
+```{r plotPathwaySimilarityPC1Gene, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityPC1Gene", "Heatmap of enriched pathways for PC1 genes"), fig.height=10, cache=FALSE, fig.width=10}
+heatmap.2(pc1Pathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC performs the functional enrichment analysis for the PC1 genes in each experiment. `r figRef("plotPathwaySimilarityPC1Gene")` shows the log-pvalue for enriched pathways in each experiment and pathway similarity across experiments.
+
+<hr>

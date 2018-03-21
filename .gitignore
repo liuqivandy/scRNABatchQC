@@ -36,3 +36,5 @@ vignettes/*.pdf
 /R/scRNABatchQCreport_cache/html/__packages
 /R/scRNABatchQCreport_cache/html
 /R/scRNABatchQCreport.html
+/*.rdata
+/*.table

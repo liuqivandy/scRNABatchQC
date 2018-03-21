@@ -1,0 +1,13 @@
+# Expression Similarity
+
+This section presents the global expression similarity across multiple scRNA-seq experiments and also expression profiles similarity between cell populations using PCA and tSNE.
+
+<hr>
+
+```{r plotSamplesimilarity, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", warning=FALSE, fig.cap=figRef("plotSamplesimilarity", "Global expression similarity"), fig.height=4}
+plotSampleSimilarity(sces)
+```
+
+`r figRef("plotSamplesimilarity")` shows the global pairwise similarity between scRNA-seq experiments based on the average gene expression. The lower-left section shows the scatter plot, while the upper-right corner is the Pearson correlation coefficient between the two datasets.
+
+<hr>

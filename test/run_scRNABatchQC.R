@@ -9,9 +9,8 @@ library(limma)
 library(dynamicTreeCut)
 library(Rtsne)
 library(data.table)
-library(WebGestaltR)
+library(WebGestaltRsqh)
 library(rmdformats)
-library(knitr)
 
 source("./R/dataFunctions.R")
 source("./R/plotFunctions.R")
@@ -33,41 +32,7 @@ if(!file.exists(rdatafile)){
   load(rdatafile)
 }
 
-.detach_package(WebGestaltR)
-.detach_package(PythonInR)
-
 rmarkdown::render("./R/scRNABatchQCreport.Rmd",
                   output_dir = "Z:/JiePing/scRNABatchQC",
                   output_file = "scRNABatchQCreport.html",
-                  params = list(data = plotData))
-
-
-# 
-# sampleTable <- data.frame(Sample = c("S1"),
-#                           File = file.path("Z:/JiePing/scRNABatchQC", c("count1.csv")))
-# 
-# library(WebGestaltR)
-# plotData<-prepareReportData(sampleTable, organism)
-# 
-# .detach_package(WebGestaltR)
-# .detach_package(PythonInR)
-# 
-# rmarkdown::render("./R/scRNABatchQCreport.Rmd", 
-#                   output_dir = "Z:/JiePing/scRNABatchQC",
-#                   output_file = "scRNABatchQCreport_sample1.html",
-#                   params = list(data = plotData))
-# 
-# 
-# sampleTable <- data.frame(Sample = c("S1", "S2"),
-#                           File = file.path("Z:/JiePing/scRNABatchQC", c("count1.csv", "count2.csv")))
-# 
-# library(WebGestaltR)
-# plotData<-prepareReportData(sampleTable, organism)
-# 
-# .detach_package(WebGestaltR)
-# .detach_package(PythonInR)
-# 
-# rmarkdown::render("./R/scRNABatchQCreport.Rmd", 
-#                   output_dir = "Z:/JiePing/scRNABatchQC",
-#                   output_file = "scRNABatchQCreport_sample2.html",
-#                   params = list(data = plotData))
+                  params = list(data = plotData, displayFigure = TRUE))

@@ -1,0 +1,34 @@
+# Pairwise Difference
+
+This section identifies global pairwise difference across experiments. scRNABatchQC first detects differentially expressed genes between two experiments and then performs functional enrichment analysis on differentially expressed genes. Genes and pathways will help discriminate real biological effects from technical noise.
+
+<hr>
+
+```{r plotDiffGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffGenes", "Heatmap of differentially expressed genes in pairwise comparison"), fig.height=10, fig.width=10}
+heatmap.2(as.matrix(abs(diffFC$genes)), cexRow = 0.6, margins =heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC detects differentially expressed genes between two experiments (FC>2 & FDR<0.01). `r figRef("plotDiffGenes")` shows the absolute value of log2 transformed fold change of differentially expressed genes in each pairwise comparison.
+
+<hr>
+
+```{r plotDiffPathway, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes"), fig.height=10, fig.width=10}
+heatmap.2(as.matrix(abs(diffFC$pathways)), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```
+
+scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. `r figRef("plotDiffPathway")` shows the log-pvalue for enriched pathways in each pairwise comparison.
+
+<hr>
+
+```{r tableDiffPathway, echo=FALSE, results="asis"}
+pw<-diffFC$pathways
+pw[pw<0]<-0
+pw10<-10 ^ (-pw)
+pw10[pw10>0.9]<-1
+pw10<-format(pw10, digits = 3)
+pw10[pw10 == "1.00e+00"] <- ""
+kable(pw10, caption=tabRef("tableDiffPathway", "Enriched pathways in differentially expressed genes"))
+```
+
+`r tabRef("tableDiffPathway")` shows the enriched pathways based on differentially expressed genes between experiments.
+

@@ -12,12 +12,19 @@
   unloadNamespace(pkg)
 }
 
+.getRange<-function(values){
+  rangeCount<-range(values)
+  medianCount<-median(values)
+  result<-paste0("[", rangeCount[1], "-", medianCount, "-", rangeCount[2], "]")
+  return(result)
+}
+
 .getWebGestaltPathway <- function(genes, organism) {
   spathway<-WebGestaltR(enrichMethod="ORA",organism=organism,
                         enrichDatabase="pathway_KEGG",interestGene=genes,
                         interestGeneType="genesymbol",referenceSet="genome",
                         is.output=FALSE)
-  if(typeof(spathway) == "character"){
+  if(is.null(spathway) | typeof(spathway) == "character"){
     return(NULL)
   }else{
     sdata<-data.frame(Pathway=gsub(" - .*", "", spathway$description),
@@ -34,6 +41,27 @@
   sgenes <- rownames(sobj)
   sdata<-.getWebGestaltPathway(sgenes, organism)
   return(sdata)
+}
+
+.getMetaData <- function(sces, metaObjectName) {
+  fNo <- which(names(metadata(sces[[1]]$sce)) == metaObjectName)
+  if(fNo == 0){
+    stop(paste0(metaObjectName, " is not exists in object sces"))
+  }
+  
+  sdata<-NULL
+  isvector<-FALSE
+  for (i in 1:length(sces)) {
+    sce<-sces[[i]]$sce
+    fdata = metadata(sce)[[fNo]]
+    if(is.vector(fdata)){
+      fdata["Sample"]<-names(sces)[i]
+    }else{
+      fdata$Sample<-names(sces)[i]
+    }
+    sdata<-rbind(sdata, fdata)
+  }
+  return (sdata)
 }
 
 .getMultiplePathway <- function(sces, metaObjectName) {
@@ -94,19 +122,6 @@
   return(result)
 }
 
-.getGeneSymbols<-function(organism){
-  hostName<-"http://www.webgestalt.org/"
-  geneSymbolFile <- paste(organism,"_genesymbol.table",sep="")
-  if(!file.exists(geneSymbolFile)){
-    geneSymbol <- fread(input=file.path(hostName,"data","xref",geneSymbolFile),header=FALSE,sep="\t",stringsAsFactors=FALSE,colClasses="character",data.table=FALSE,showProgress=FALSE)
-    colnames(geneSymbol) <- c("entrezgeneS","genesymbol")
-    save(geneSymbol, file=geneSymbolFile)
-  }else{
-    load(geneSymbolFile)
-  }
-  return(geneSymbol)
-}
-
 .getDiffGenes <- function(scesall, organism, FDR = 0.01, geneNo = 50) {
   if(length(unique(scesall$condition)) == 1){
     return (list(genes=NULL,pathways=NULL))
@@ -126,6 +141,8 @@
     }
   }
   
+  cat("performing differential analysis ...\n")
+  
   fit <- lmFit(logcounts(scesall), design)
   contrast.matrix <- makeContrasts(contrasts = cont, levels = design)
   
@@ -139,10 +156,6 @@
     pairTables[[i]] <- topTable(fit2, coef = i, num = dim(scesall)[1], sort.by = "none")
   }
   names(pairTables) <- cont
-  
-  if(!missing(organism)){
-    geneSymbol<-.getGeneSymbols(organism)
-  }
   
   diffglist <- c()
   for (i in 1:coefNo) {
@@ -158,34 +171,42 @@
   }
   mDiffFC<-dcast(diffFC, Gene ~ Comparison, value.var="LogFold", fill=0)
   rownames(mDiffFC)<-mDiffFC$Gene
+  
+  for (con in cont){
+    if (!(con %in% colnames(mDiffFC))){
+      mDiffFC[,con]<-rnorm(nrow(mDiffFC), 0, 0.01)
+    }
+  }
   mDiffFC<-mDiffFC[,-1,drop=F] 
   
   mDiffPathway<-NULL
   if(!missing(organism)){
+    geneSymbol<-getGeneSymbols(organism)
+
     diffPathList<-NULL
-    diffglist <- c()
     for (i in 1:coefNo) {
-      diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
-      diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
-      diffglist <- unique(c(diffglist, diffgenes))
+      cat("pathway analysis of", i, ":", cont[i], "\n")
       
-      if(!missing(organism)){
-        alldiffgenes<-rownames(diffvs)
-        alldiffgenes<-alldiffgenes[alldiffgenes %in% geneSymbol$genesymbol]
-        pathList<-.getWebGestaltPathway(alldiffgenes, organism)
-        if (!is.null(pathList)){
-          pathList$Comparison <- cont[[i]]
-          diffPathList<-rbind(diffPathList, pathList)
-        }
+      diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
+      alldiffgenes<-rownames(diffvs)
+      alldiffgenes<-alldiffgenes[alldiffgenes %in% geneSymbol$genesymbol]
+      pathList<-.getWebGestaltPathway(alldiffgenes, organism)
+      if (!is.null(pathList)){
+        pathList$Comparison <- cont[[i]]
+        diffPathList<-rbind(diffPathList, pathList)
       }
     }
-    mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
-    rownames(mDiffPathway)<-mDiffPathway$Pathway
-    mDiffPathway<-mDiffPathway[,-1,drop=F]
-    for (con in cont){
-      if (!(con %in% colnames(mDiffPathway))){
-        mDiffPathway[,con,drop=F]<-rnorm(nrow(mDiffPathway), 0, 0.1)
+    
+    if(!is.null(diffPathList)){
+      mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
+      for (con in cont){
+        if (!(con %in% colnames(mDiffPathway))){
+          mDiffPathway[,con]<-rnorm(nrow(mDiffPathway), 0, 0.01)
+        }
       }
+      rownames(mDiffPathway)<-mDiffPathway$Pathway
+      mDiffPathway<-mDiffPathway[,-1,drop=F]
+      mDiffPathway[mDiffPathway==Inf]<-max(mDiffPathway[mDiffPathway!=Inf]) + 1
     }
   }
   

@@ -17,7 +17,7 @@ prepareSCRNADataSet <- function(sampleTable, organism){
   for (n in 1:nrow(sampleTable)) {
     sampleName<-as.character(sampleTable[n,1])
     countFile<-as.character(sampleTable[n,2])
-    cat(sampleName, "\n")
+    cat("Preparing ", sampleName, "\n")
     counts<-as.matrix(read.csv(countFile, row.names=1, header=T))
     result[[n]] <- prepareSCRNAData(counts, organism)
   }
