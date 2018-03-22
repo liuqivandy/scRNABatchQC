@@ -9,7 +9,7 @@ Description:
   Multiple single cell data quality control
 License: GPL (>= 2)
 LazyLoad: yes
-Imports: pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, data.table, WebGestaltRsqh, rmdformats
+Imports: pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, data.table, WebGestaltR, rmdformats
 biocViews: limma, scater, scran, SingleCellExperiment
 VignetteBuilder: knitr
 Roxygen: list(wrap = FALSE)
