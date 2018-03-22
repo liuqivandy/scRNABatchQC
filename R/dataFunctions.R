@@ -181,15 +181,12 @@
   
   mDiffPathway<-NULL
   if(!missing(organism)){
-    geneSymbol<-getGeneSymbols(organism)
-
     diffPathList<-NULL
     for (i in 1:coefNo) {
       cat("pathway analysis of", i, ":", cont[i], "\n")
       
       diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
       alldiffgenes<-rownames(diffvs)
-      alldiffgenes<-alldiffgenes[alldiffgenes %in% geneSymbol$genesymbol]
       pathList<-.getWebGestaltPathway(alldiffgenes, organism)
       if (!is.null(pathList)){
         pathList$Comparison <- cont[[i]]
