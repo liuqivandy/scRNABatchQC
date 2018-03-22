@@ -1,2 +1,3 @@
 import(ggplot2, gplots, reshape2, scater, scran, cluster, limma, dynamicTreeCut, Rtsne, WebGestaltR, rmdformats, SingleCellExperiment)
+
 export(scRNABatchQC, prepareSCRNAData)
