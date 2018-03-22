@@ -1,2 +1,2 @@
 import(ggplot2, gplots, reshape2, SingleCellExperiment, scater, scran, cluster, limma, dynamicTreeCut, Rtsne, data.table, WebGestaltR, rmdformats)
-export(scRNABatchQC)
+export(scRNABatchQC, prepareSCRNAData)
