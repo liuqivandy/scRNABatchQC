@@ -25,6 +25,7 @@ Then you can install scRNABatchQC by:
 	devtools::install_github("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
+
 # Quick start
 
 Here we show the most basic steps.
