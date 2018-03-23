@@ -65,22 +65,32 @@
 }
 
 .getMultiplePathway <- function(sces, metaObjectName) {
-  fNo <- which(names(metadata(sces[[1]]$sce)) == metaObjectName)
-  if(fNo == 0){
-    stop(paste0(metaObjectName, " is not exists in object sces"))
-  }
-  
   sdata<-NULL
   for (i in 1:length(sces)) {
     sce<-sces[[i]]$sce
+    fNo <- which(names(metadata(sce)) == metaObjectName)
+    if(fNo == 0){
+      next
+    }
     spathway = metadata(sce)[[fNo]]
     spathway$Sample = names(sces)[i]
     sdata<-rbind(sdata, spathway)
   }
   
+  if(is.null(sdata)){
+    stop(paste0(metaObjectName, " is not exists in object sces"))
+  }
+
   sdata$FDR[sdata$FDR==Inf]<-max(sdata$FDR[sdata$FDR!=Inf]) + 1
   
   mdata<-reshape2::dcast(sdata, Pathway~Sample, value.var="FDR", fill=0)
+  
+  for(sample in names(sces)){
+    if(!(sample %in% colnames(mdata))){
+      mdata[,sample]<-abs(rnorm(nrow(mdata), 0, 0.01))
+    }
+  }
+  
   rownames(mdata)<-mdata$Pathway
   mdata<-as.matrix(mdata[,c(2:ncol(mdata)),drop=F])
   
@@ -195,15 +205,15 @@
     }
     
     if(!is.null(diffPathList)){
+      diffPathList[diffPathList==Inf]<-max(diffPathList[diffPathList!=Inf]) + 1
       mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
       for (con in cont){
         if (!(con %in% colnames(mDiffPathway))){
-          mDiffPathway[,con]<-rnorm(nrow(mDiffPathway), 0, 0.01)
+          mDiffPathway[,con]<-abs(rnorm(nrow(mDiffPathway), 0, 0.01))
         }
       }
       rownames(mDiffPathway)<-mDiffPathway$Pathway
       mDiffPathway<-mDiffPathway[,-1,drop=F]
-      mDiffPathway[mDiffPathway==Inf]<-max(mDiffPathway[mDiffPathway!=Inf]) + 1
     }
   }
   
