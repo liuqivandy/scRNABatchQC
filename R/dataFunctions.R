@@ -45,7 +45,7 @@
 
 .getMetaData <- function(sces, metaObjectName) {
   fNo <- which(names(metadata(sces[[1]]$sce)) == metaObjectName)
-  if(fNo == 0){
+  if(length(fNo) == 0){
     stop(paste0(metaObjectName, " is not exists in object sces"))
   }
   
@@ -69,7 +69,7 @@
   for (i in 1:length(sces)) {
     sce<-sces[[i]]$sce
     fNo <- which(names(metadata(sce)) == metaObjectName)
-    if(fNo == 0){
+    if(length(fNo) == 0){
       next
     }
     spathway = metadata(sce)[[fNo]]
@@ -103,7 +103,7 @@
   }
   
   fNo <- which(colnames(colData(sces[[1]]$sce)) == feature)
-  if(fNo == 0){
+  if(length(fNo) == 0){
     stop(paste0("Feature ", feature, " is not exists in object sces"))
   }
   
@@ -120,7 +120,7 @@
   }
   
   fNo <- which(colnames(rowData(sces[[1]]$sce)) == feature)
-  if(fNo == 0){
+  if(length(fNo) == 0){
     stop(paste0("Feature ", feature, " is not exists in object sces"))
   }
   
