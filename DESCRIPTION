@@ -4,7 +4,7 @@ Date: 2018-02-14
 Title: a package for quality control of multiple single cell RNAseq data
 Author: Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu
 Maintainer: "Quanhu SHENG" <shengqh@gmail.com>
-Depends: pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, WebGestaltR, rmdformats, limma, scater, scran, SingleCellExperiment
+Depends: R.utils, pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, WebGestaltR, rmdformats, limma, scater, scran, SingleCellExperiment
 Description: 
   Multiple single cell data quality control
 License: GPL (>= 2)
