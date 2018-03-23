@@ -114,7 +114,7 @@ heatmapMargins<-c(10,10)
 
 # Overview
 
-*scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report include five sections:*
+**scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report include five sections:**
 
   * _**QC Summary**_ - Overview of Quality Control in each scRNA-seq experiment. 
   * _**Technical View**_ - Technical factors across multiple scRNA-seq experiments. 
@@ -153,7 +153,7 @@ A short description of Table 1 metrics is provided below:
 
 # Technical View
 
-*This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondrial RNA and ribosomal RNA, the expression cumulative plot, the detection rate, the mean-variance trend, the variance explained by various technical features.*
+**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondrial RNA and ribosomal RNA, the expression cumulative plot, the detection rate, the mean-variance trend, the variance explained by various technical features.**
 
 <hr>
 

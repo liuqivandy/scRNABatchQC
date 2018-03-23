@@ -1,6 +1,6 @@
 # Pairwise Difference
 
-*This section identifies global pairwise difference across experiments. scRNABatchQC first detects differentially expressed genes between two experiments and then performs functional enrichment analysis on differentially expressed genes. Genes and pathways will help discriminate real biological effects from technical noise.*
+**This section identifies global pairwise difference across experiments. scRNABatchQC first detects differentially expressed genes between two experiments and then performs functional enrichment analysis on differentially expressed genes. Genes and pathways will help discriminate real biological effects from technical noise.**
 
 <hr>
 
