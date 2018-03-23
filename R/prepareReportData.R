@@ -5,9 +5,8 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
     if(file.exists(scesFile)){
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
-    }
-    else{
-      sces <- prepareSCRNADataSet(sampleTable, organism)
+    } else{
+      sces <- prepareSCRNADataSet(sampleTable, organism, cachePrefix)
       save(sces, file=scesFile)
     }
   }else{
@@ -20,8 +19,7 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
     if(file.exists(scesAllFile)){
       cat("Loading from cache file", scesAllFile, " ...\n")
       load(scesAllFile)
-    }
-    else{
+    } else{
       scesall <- preparePCATSNEData(sces)
       save(scesall, file=scesAllFile)
     }
@@ -35,8 +33,7 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
     if(file.exists(diffFCFile)){
       cat("Loading from cache file", diffFCFile, " ...\n")
       load(diffFCFile)
-    }
-    else{
+    } else{
       diffFC <- .getDiffGenes(scesall, organism = organism,  FDR = 0.01, geneNo = 50)
       save(diffFC, file=diffFCFile)
     }
