@@ -107,6 +107,7 @@ hasDifference<-length(sces) > 2
 
 heatmapKeysize<-0.6
 heatmapColors<-bluered(75)
+heatmapPathwayColors<-colorpanel(75,low="white",high="red")
 heatmapMargins<-c(10,10)
 
 ```

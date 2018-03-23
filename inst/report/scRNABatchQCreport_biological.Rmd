@@ -14,7 +14,7 @@ scRNABatchQC first selects the top 50 genes with highest and significant biologi
 
 
 ```{r plotPathwaySimilarityHVG, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityHVG", "Heatmap of enriched pathways for highly variable genes"), fig.height=10, cache=FALSE, fig.width=10}
-heatmap.2(hvgPathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapColors)
+heatmap.2(hvgPathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapPathwayColors)
 ```
 
 scRNABatchQC performs the functional enrichment analysis for the highly variable genes in each experiment. `r figRef("plotPathwaySimilarityHVG")` shows the log-pvalue for enriched pathways in each experiment and pathway similarity across experiments.
@@ -30,7 +30,7 @@ scRNABatchQC selects the top 50 differentially expressed genes along the first p
 <hr>
 
 ```{r plotPathwaySimilarityPC1Gene, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityPC1Gene", "Heatmap of enriched pathways for PC1 genes"), fig.height=10, cache=FALSE, fig.width=10}
-heatmap.2(pc1Pathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapColors)
+heatmap.2(pc1Pathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapPathwayColors)
 ```
 
 scRNABatchQC performs the functional enrichment analysis for the PC1 genes in each experiment. `r figRef("plotPathwaySimilarityPC1Gene")` shows the log-pvalue for enriched pathways in each experiment and pathway similarity across experiments.
