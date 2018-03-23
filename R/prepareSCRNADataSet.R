@@ -45,13 +45,13 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   colnames(allCount) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$sce)[2])
   
   if(length(sces) > 1){
-  for (i in 2:length(sces)) {
-    allCount <- merge(allCount, counts(sces[[i]]$sce), by = "row.names", all = T)
-    rownames(allCount) <- allCount[, 1]
-    allCount <- allCount[, -1]
-    conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$sce)[2]))
-    colnames(allCount)[(ncol(allCount) - dim(sces[[i]]$sce)[2] + 1):ncol(allCount)] <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$sce)[2])
-  }
+    for (i in 2:length(sces)) {
+      allCount <- merge(allCount, counts(sces[[i]]$sce), by = "row.names", all = T)
+      rownames(allCount) <- allCount[, 1]
+      allCount <- allCount[, -1]
+      conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$sce)[2]))
+      colnames(allCount)[(ncol(allCount) - dim(sces[[i]]$sce)[2] + 1):ncol(allCount)] <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$sce)[2])
+    }
   }
   allCount[is.na(allCount)] <- 0
   
