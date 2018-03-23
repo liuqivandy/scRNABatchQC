@@ -3,9 +3,6 @@ scRNABatchQC
 * [Introduction](#introduction)
 * [Download and installation](#download)
 * [Quick Start](#example)
-* [Usage](#usage)
-* [Report](#report)
-* [Citation](#citation)
 
 <a name="introduction"/>
 
@@ -17,9 +14,14 @@ scRNABatchQC is an R package for quality control of multiple single cell RNAseq 
 
 # Download and installation
 
-You can install scRNABatchQC package in R from [github](https://github.com/liuqivandy/scRNABatchQC/) by following codes:
+Before you install scRNABatchQC, a modified version of WebGestatR is highly recommended to be installed by:
 
-	# install.packages("devtools")
+	library(devtools)
+	devtools::install_github("shengqh/WebGestaltR")
+
+Then you can install scRNABatchQC by:
+
+	library(devtools)
 	devtools::install_github("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
@@ -29,34 +31,7 @@ You can install scRNABatchQC package in R from [github](https://github.com/liuqi
 Here we show the most basic steps.
 
 	library(scRNABatchQC)
-
-<a name="usage"/>
-
-# Usage
-
-## Function 1
-
-	library(scRNABatchQC)
-	function1()
-
-## Function 2
-
-	library(scRNABatchQC)
-	function1()
-
-
-<a name="report"/>
-
-# Report
-
-<a name="citation"/>
-
-# Citation
-
-If you use scRNABatchQC for publishing research, please cite: 
-
-
-
-
-
-
+	setwd("/scratch/scRNABatchQC/")
+	organism = "mmusculus"
+	sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), File = c("count1.csv", "count2.csv", "count3.csv"))
+	scRNABatchQC(sampleTable, organism, "scRNABatchQCreport.html", cache=TRUE )
