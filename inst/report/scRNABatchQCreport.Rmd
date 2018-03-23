@@ -251,7 +251,7 @@ plot.new()
 print(plotAllPCA(scesall, scolors))
 ```
 
-The PCA Plot for the first two components (Figure `r figRef("plotPCA")`) shows the relationships between cells within or across scRNA-seq experiments.
+The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the relationships between cells within or across scRNA-seq experiments.
 
 <hr>
 
@@ -259,7 +259,7 @@ The PCA Plot for the first two components (Figure `r figRef("plotPCA")`) shows t
 print(plotAllTSNE(scesall, scolors))
 ```
 
-The tSNE plot for the first two components (Figure `r figRef("plotTSNE")`) shows the relationships between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
+The tSNE plot for the first two components (`r figRef("plotTSNE")`) shows the relationships between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
 
 <hr>
 
