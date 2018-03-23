@@ -128,8 +128,8 @@ scRNABatchQC report include five sections:
 pw<-.getMetaData(sces, "filters")
 pw<-cbind(data.frame("EID"=names(sces)), pw)
 pw<-subset(pw, select=-c(Sample))
-pw$mtRNA<-format(as.numeric(as.character(pw$mtRNA)), digits = 2, nsmall = 1)
-pw$rRNA<-format(as.numeric(as.character(pw$rRNA)), digits = 2, nsmall = 1)
+pw$mtRNA<-paste0(format(as.numeric(as.character(pw$mtRNA)), digits = 2, nsmall = 1), "%")
+pw$rRNA<-paste0(format(as.numeric(as.character(pw$rRNA)), digits = 2, nsmall = 1), "%")
 kable(pw, caption=tabRef("tableSummary", "Summary of Quality Metrics."), row.names=FALSE)
 ```
 
