@@ -7,8 +7,13 @@ scRNABatchQC<-function(sampleTable, organism, outputFile, cache){
   
   reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   
+  outputFile <- getAbsolutePath(outputFile)
+  output_dir = dirname(outputFile)
+  output_file = basename(outputFile)
+  
+  cat("Output report to:", outputFile, "\n")
   rmarkdown::render(reportRmd,
-                    output_dir = getwd(),
-                    output_file = outputFile,
+                    output_dir = output_dir,
+                    output_file = output_file,
                     params = list(data = plotData))
 }
