@@ -1,6 +1,6 @@
 # Biological View
 
-This section presents the similarity/difference on the high-variable genes and genes differentially expressed along the first principal component (PC1 genes) between scRNA-seq experiments. scRNABatchQC calculates the pairwise similarity of highly variable genes and PC1 genes and their enriched pathways across experiments. Two experiments with similar highly variable genes or PC1 gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise.
+*This section presents the similarity/difference on the high-variable genes and genes differentially expressed along the first principal component (PC1 genes) between scRNA-seq experiments. scRNABatchQC calculates the pairwise similarity of highly variable genes and PC1 genes and their enriched pathways across experiments. Two experiments with similar highly variable genes or PC1 gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise.*
 
 <hr>
 

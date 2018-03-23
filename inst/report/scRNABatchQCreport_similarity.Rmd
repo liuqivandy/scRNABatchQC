@@ -1,6 +1,6 @@
 # Expression Similarity
 
-This section presents the global expression similarity across multiple scRNA-seq experiments and also expression profiles similarity between cell populations using PCA and tSNE.
+*This section presents the global expression similarity across multiple scRNA-seq experiments and also expression profiles similarity between cell populations using PCA and tSNE.*
 
 <hr>
 
