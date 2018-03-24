@@ -46,13 +46,20 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
   hvgBiologicalSimilarity<-.getBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
   pc1geneBiologicalSimilarity<-.getBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
 
+  pw<-.getMetaData(sces, "filters")
+  pw<-cbind(data.frame("EID"=names(sces)), pw)
+  pw<-subset(pw, select=-c(Sample))
+  pw$mtRNA<-paste0(format(as.numeric(as.character(pw$mtRNA)), digits = 2, nsmall = 1), "%")
+  pw$rRNA<-paste0(format(as.numeric(as.character(pw$rRNA)), digits = 2, nsmall = 1), "%")
+  
   plotData<-list(sces=sces, 
                  scesall=scesall, 
                  diffFC=diffFC, 
                  hvgPathways=hvgPathways, 
                  pc1Pathways=pc1Pathways,
                  hvgBiologicalSimilarity=hvgBiologicalSimilarity,
-                 pc1geneBiologicalSimilarity=pc1geneBiologicalSimilarity
+                 pc1geneBiologicalSimilarity=pc1geneBiologicalSimilarity,
+                 tableSummary=pw
                  )
   
   cat("Report data prepared.\n")
