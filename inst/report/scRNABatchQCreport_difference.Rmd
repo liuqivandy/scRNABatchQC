@@ -4,16 +4,16 @@
 
 <hr>
 
-```{r plotDiffGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffGenes", "Heatmap of differentially expressed genes in pairwise comparison"), fig.height=10, fig.width=10}
-heatmap.2(as.matrix(diffFC$genes), cexRow = 0.6, margins =heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```{r plotDiffGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffGenes", "Heatmap of differentially expressed genes in pairwise comparison"), fig.height=getHeatmapHeight(plotData$diffFC$genes), fig.width=10}
+heatmap.2(as.matrix(plotData$diffFC$genes), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
 ```
 
 scRNABatchQC detects differentially expressed genes between two experiments (FC>2 & FDR<0.01). `r figRef("plotDiffGenes")` shows the absolute value of log2 transformed fold change of differentially expressed genes in each pairwise comparison.
 
 <hr>
 
-```{r plotDiffPathway, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes"), fig.height=10, fig.width=10}
-heatmap.2(as.matrix(diffFC$pathways), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapPathwayColors)
+```{r plotDiffPathway, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes"), fig.height=getHeatmapHeight(plotData$diffFC$pathways), fig.width=10}
+heatmap.2(as.matrix(plotData$diffFC$pathways), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapPathwayColors)
 ```
 
 scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. `r figRef("plotDiffPathway")` shows the log-pvalue for enriched pathways in each pairwise comparison.
