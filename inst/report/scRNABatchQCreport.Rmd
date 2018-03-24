@@ -83,6 +83,11 @@ tabRef <- local({
     }
   }
 })
+
+getHeatmapHeight<-function(rowCount){
+  max(10, rowCount / 100 * 10)
+}
+
 options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
 ```
 

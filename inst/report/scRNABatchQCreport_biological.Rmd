@@ -4,8 +4,8 @@
 
 <hr>
 
-```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityHVGenes", "Heatmap of top50 highly variable genes"), fig.height=10, fig.width=10}
-plotBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio", cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityHVGenes", "Heatmap of top50 highly variable genes"), fig.height=getHeatmapHeight(plotData$hvgBiologicalSimilarity), fig.width=10}
+heatmap.2(plotData$hvgBiologicalSimilarity, cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
 ```
 
 scRNABatchQC first selects the top 50 genes with highest and significant biological variance in each experiment (FDR<0.01) and then clusters experiments based on the similarity on highly variable genes. `r figRef("plotBiologicalSimilarityHVGenes")` shows the biological variance of top 50 genes in each experiment and their similarity across experiments.
@@ -21,8 +21,8 @@ scRNABatchQC performs the functional enrichment analysis for the highly variable
 
 <hr>
 
-```{r plotBiologicalSimilarityPC1Genes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityPC1Genes", "Heatmap of top50 PC1 genes"), fig.height=10, fig.width=10}
-plotBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC", cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
+```{r plotBiologicalSimilarityPC1Genes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityPC1Genes", "Heatmap of top50 PC1 genes"), fig.height=getHeatmapHeight(plotData$pc1geneBiologicalSimilarity), fig.width=10}
+heatmap.2(plotData$pc1geneBiologicalSimilarity, cexRow = 0.5, margins = heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
 ```
 
 scRNABatchQC selects the top 50 differentially expressed genes along the first principle component (PC1 genes) in each experiment (FDR<0.01). `r figRef("plotBiologicalSimilarityPC1Genes")` shows differential expression of top 50 PC1 genes in each experiment and genes similarity across experiments.
