@@ -220,3 +220,39 @@
   r <- list(genes=mDiffFC,pathways=mDiffPathway)
   return(r)
 }
+
+### Biological features similarity
+### select the top 50 genes (adjustable) with FDR<0.01
+### .getBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
+### .getBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+.getBiologicalSimilarity <- function(sces, objectName, filterName, valueName, defaultValue = 0) {
+  objIndex <- which(names(sces[[1]]) == objectName)
+  sobj <- sces[[1]][[objIndex]]
+  filterIndex  <- which(colnames(sobj) == filterName)
+  valueIndex  <- which(colnames(sobj) == valueName)
+  
+  genelist <- c()
+  for (i in 1:length(sces)) {
+    sce <- sces[[i]]
+    sobj <- sce[[objIndex]]
+    sobj <- sobj[sobj[, filterIndex] < 0.01, ]
+    sgene <- rownames(sobj)[order(abs(sobj[,valueName]), decreasing = TRUE)][1:min(50, dim(sobj)[1])]
+    genelist <- c(genelist, sgene)
+  }
+  genelist <- unique(genelist)
+  
+  sdata <- NULL
+  for (i in 1:length(sces)) {
+    sce <- sces[[i]]
+    sobj <- sce[[objIndex]]
+    matchid <- rownames(sobj) %in% genelist
+    filtered <- sobj[matchid,]
+    sdata <- rbind(sdata, data.frame(Sample = names(sces)[i], Feature = rownames(filtered), Value = filtered[, valueIndex]))
+  }
+  
+  mdata <- dcast(sdata, Feature ~ Sample, value.var = "Value", fill = defaultValue)
+  rownames(mdata) <- mdata$Feature
+  mdata <- as.matrix(mdata[, c(2:ncol(mdata))])
+  
+  return(mdata)
+}

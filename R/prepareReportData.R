@@ -43,7 +43,17 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
   
   hvgPathways<-.getMultiplePathway(sces, metaObjectName="hvgPathway")
   pc1Pathways<-.getMultiplePathway(sces, metaObjectName="pc1Pathway")
-  plotData<-list(sces=sces, scesall=scesall, diffFC=diffFC, hvgPathways=hvgPathways, pc1Pathways=pc1Pathways)
+  hvgBiologicalSimilarity<-.getBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
+  pc1geneBiologicalSimilarity<-.getBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
+
+  plotData<-list(sces=sces, 
+                 scesall=scesall, 
+                 diffFC=diffFC, 
+                 hvgPathways=hvgPathways, 
+                 pc1Pathways=pc1Pathways,
+                 hvgBiologicalSimilarity=hvgBiologicalSimilarity,
+                 pc1geneBiologicalSimilarity=pc1geneBiologicalSimilarity
+                 )
   
   cat("Report data prepared.\n")
   return(plotData)
