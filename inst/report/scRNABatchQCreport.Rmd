@@ -22,7 +22,7 @@ library(DT)
 library(RCurl)
 library(htmltools)
 
-knitr::opts_chunk$set(echo = TRUE, autodep=TRUE, cache.comments=FALSE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, autodep=TRUE, cache.comments=FALSE, message=FALSE, warning=FALSE, dpi=300)
 
 addLinkTag<-function(text,link) {
   result<-paste0("<a href='",link,"' target='_blank'>",text,"</a>")
