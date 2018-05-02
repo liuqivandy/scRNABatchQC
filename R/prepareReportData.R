@@ -6,7 +6,7 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else{
-      sces <- prepareSCRNADataSet(sampleTable, organism, cachePrefix)
+      sces <- prepareSCRNADataSet(sampleTable, organism)
       save(sces, file=scesFile)
     }
   }else{
