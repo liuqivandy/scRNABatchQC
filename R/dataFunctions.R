@@ -205,7 +205,11 @@
     }
     
     if(!is.null(diffPathList)){
-      diffPathList[diffPathList==Inf]<-max(diffPathList[diffPathList!=Inf]) + 1
+      infDiffIndex<-diffPathList$FDR==Inf
+      if(sum(infDiffIndex) > 0){
+        maxFdr<-max(diffPathList$FDR[diffPathList$FDR!=Inf,])
+        diffPathList$FDR[infDiffIndex]<-maxFdr+1
+      }
       mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
       for (con in cont){
         if (!(con %in% colnames(mDiffPathway))){
