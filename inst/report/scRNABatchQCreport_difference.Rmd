@@ -21,7 +21,7 @@ scRNABatchQC performs the functional enrichment analysis for differentially expr
 <hr>
 
 ```{r tableDiffPathway, echo=FALSE, results="asis"}
-pw<-diffFC$pathways
+pw<-plotData$diffFC$pathways
 pw[pw<0]<-0
 pw10<-10 ^ (-pw)
 pw10[pw10>0.9]<-1
