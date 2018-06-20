@@ -38,7 +38,7 @@ prepareSCRNAData <- function(counts, organism) {
   #is mitochondrial genes (human 14 mitochondrial genes and mouse 13 mitochondrial genes)
   is.mito <- grepl("^mt-|^MT-", rownames(sce)) 
   
-  sce <- calculateQCMetrics(sce, feature_controls = list(Mt = is.mito))
+  sce <- doCall("calculateQCMetrics", object = sce, feature_controls = list(Mt = is.mito), compact=FALSE, .ignoreUnusedArgs=TRUE)
   
   maxMtRNAPercentage<-max(sce$pct_counts_Mt)
   maxRRNAPercentage<-0
@@ -47,7 +47,11 @@ prepareSCRNAData <- function(counts, organism) {
   libsize.drop <- isOutlier(sce$total_counts, nmads = 3, type = "lower", log = TRUE)
   FCount<-sum(libsize.drop)
   
-  feature.drop <- isOutlier(sce$total_features, nmads = 3, type = "lower", log = TRUE)
+  if(is.numeric(sce$total_features_by_X)){
+    feature.drop <- isOutlier(sce$total_features_by_X, nmads = 3, type = "lower", log = TRUE)
+  }else{
+    feature.drop <- isOutlier(sce$total_features, nmads = 3, type = "lower", log = TRUE)
+  }
   FGene<-sum(feature.drop)
   
   FrRNA<-0
