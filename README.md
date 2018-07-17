@@ -21,8 +21,8 @@ Before you install scRNABatchQC, a modified version of WebGestatR is highly reco
 
 Then you can install scRNABatchQC by:
 
-	library(devtools)
-	devtools::install_github("liuqivandy/scRNABatchQC")
+	source("https://bioconductor.org/biocLite.R")
+	biocLite("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
 
