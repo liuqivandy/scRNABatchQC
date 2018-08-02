@@ -1,6 +1,6 @@
 Package: scRNABatchQC
-Version: 0.9.1
-Date: 2018-02-14
+Version: 0.9.2
+Date: 2018-08-02
 Title: a package for quality control of multiple single cell RNAseq data
 Author: Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu
 Maintainer: "Quanhu SHENG" <shengqh@gmail.com>
