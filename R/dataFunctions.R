@@ -174,50 +174,55 @@
     diffglist <- unique(c(diffglist, diffgenes))
   }
   
-  diffFC<-NULL
-  for (i in 1:coefNo) {
-    matchid <- rownames(pairTables[[i]]) %in% diffglist
-    diffFC <- rbind(diffFC, data.frame(Comparison=cont[i], Gene=rownames(pairTables[[i]])[matchid], LogFold=pairTables[[i]]$logFC[matchid]))
-  }
-  mDiffFC<-dcast(diffFC, Gene ~ Comparison, value.var="LogFold", fill=0)
-  rownames(mDiffFC)<-mDiffFC$Gene
-  
-  for (con in cont){
-    if (!(con %in% colnames(mDiffFC))){
-      mDiffFC[,con]<-rnorm(nrow(mDiffFC), 0, 0.01)
-    }
-  }
-  mDiffFC<-mDiffFC[,-1,drop=F] 
-  
+  mDiffFC<-NULL
   mDiffPathway<-NULL
-  if(!missing(organism)){
-    diffPathList<-NULL
+  if(length(diffglist) > 0){
+    diffFC<-NULL
     for (i in 1:coefNo) {
-      cat("pathway analysis of", i, ":", cont[i], "\n")
-      
-      diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
-      alldiffgenes<-rownames(diffvs)
-      pathList<-.getWebGestaltPathway(alldiffgenes, organism)
-      if (!is.null(pathList)){
-        pathList$Comparison <- cont[[i]]
-        diffPathList<-rbind(diffPathList, pathList)
+      matchid <- rownames(pairTables[[i]]) %in% diffglist
+      diffFC <- rbind(diffFC, data.frame(Comparison=cont[i], Gene=rownames(pairTables[[i]])[matchid], LogFold=pairTables[[i]]$logFC[matchid]))
+    }
+    mDiffFC<-dcast(diffFC, Gene ~ Comparison, value.var="LogFold", fill=0)
+    rownames(mDiffFC)<-mDiffFC$Gene
+    
+    for (con in cont){
+      if (!(con %in% colnames(mDiffFC))){
+        mDiffFC[,con]<-rnorm(nrow(mDiffFC), 0, 0.01)
       }
     }
+    mDiffFC<-mDiffFC[,-1,drop=F] 
     
-    if(!is.null(diffPathList)){
-      infDiffIndex<-diffPathList$FDR==Inf
-      if(sum(infDiffIndex) > 0){
-        maxFdr<-max(diffPathList$FDR[diffPathList$FDR!=Inf,])
-        diffPathList$FDR[infDiffIndex]<-maxFdr+1
-      }
-      mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
-      for (con in cont){
-        if (!(con %in% colnames(mDiffPathway))){
-          mDiffPathway[,con]<-abs(rnorm(nrow(mDiffPathway), 0, 0.01))
+    if(!missing(organism)){
+      diffPathList<-NULL
+      for (i in 1:coefNo) {
+        cat("pathway analysis of", i, ":", cont[i], "\n")
+        
+        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
+        if(nrow(diffvs) > 1){
+          alldiffgenes<-rownames(diffvs)
+          pathList<-.getWebGestaltPathway(alldiffgenes, organism)
+          if (!is.null(pathList)){
+            pathList$Comparison <- cont[[i]]
+            diffPathList<-rbind(diffPathList, pathList)
+          }
         }
       }
-      rownames(mDiffPathway)<-mDiffPathway$Pathway
-      mDiffPathway<-mDiffPathway[,-1,drop=F]
+      
+      if(!is.null(diffPathList)){
+        infDiffIndex<-diffPathList$FDR==Inf
+        if(sum(infDiffIndex) > 0){
+          maxFdr<-max(diffPathList$FDR[diffPathList$FDR!=Inf,])
+          diffPathList$FDR[infDiffIndex]<-maxFdr+1
+        }
+        mDiffPathway<-dcast(diffPathList, Pathway ~ Comparison, value.var="FDR", fill=0)
+        for (con in cont){
+          if (!(con %in% colnames(mDiffPathway))){
+            mDiffPathway[,con]<-abs(rnorm(nrow(mDiffPathway), 0, 0.01))
+          }
+        }
+        rownames(mDiffPathway)<-mDiffPathway$Pathway
+        mDiffPathway<-mDiffPathway[,-1,drop=F]
+      }
     }
   }
   

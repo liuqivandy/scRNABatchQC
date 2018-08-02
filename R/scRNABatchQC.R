@@ -5,7 +5,8 @@ scRNABatchQC<-function(sampleTable, organism, outputFile, cache){
     plotData<-prepareReportData(sampleTable, organism)
   }
   
-  reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
+  reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
+  #reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   
   outputFile <- getAbsolutePath(outputFile)
   output_dir = dirname(outputFile)
