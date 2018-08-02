@@ -74,8 +74,8 @@ prepareSCRNAData <- function(counts, organism) {
   
   ##quickCluster and normalization
   high.ave <- rowData(sce)$ave.count >= 0.1
-  clusters <- quickCluster(sce, subset.row=high.ave, method="igraph")
-  sce <- computeSumFactors(sce, cluster=clusters, subset.row=high.ave, min.mean=NULL, positive=TRUE)
+  clusters <- quickCluster(sce, subset.row = high.ave, method = "igraph")
+  sce <- computeSumFactors(sce, cluster = clusters, subset.row = high.ave, min.mean = 0, positive = TRUE)
   
   sizeFactorZero <- sizeFactors(sce) == 0
   sce <- sce[, !sizeFactorZero]

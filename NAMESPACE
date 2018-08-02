@@ -1,3 +1,3 @@
-import(R.utils, ggplot2, gplots, reshape2, scater, scran, cluster, limma, dynamicTreeCut, Rtsne, WebGestaltR, rmdformats, SingleCellExperiment)
+import(R.utils, ggplot2, gplots, reshape2, scater, scran, cluster, limma, dynamicTreeCut, Rtsne, WebGestaltR, rmdformats, SingleCellExperiment, data.table, Matrix.utils)
 
-export(scRNABatchQC, prepareSCRNAData)
+export(scRNABatchQC, prepareSCRNAData, prepareSCRNADataSet)
