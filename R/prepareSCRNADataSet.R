@@ -35,35 +35,28 @@ prepareSCRNADataSet <- function(sampleTable, organism){
 ##' @importFrom Scater calculateQCMetrics isOutlier calcAverage nexprs normalize runPCA .get_palette
 ##' @importFrom Scran quickCluster computeSumFactors trendVar decomposeVar
 ##' @importFrom Rtsne Rtsne
-##' @importFrom data.table data.table
-##' @importFrom Matrix.utils merge
+##' @importFrom Matrix Matrix
 ##' @export preparePCATSNEData
 ##' @examples 
 ##' #sces <- prepareSCRNADataSet(sampleTable)
 ##' #sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   
-  allct <- data.table(cbind(rownames(counts(sces[[1]]$sce)), counts(sces[[1]]$sce)), key = "V1")
+  allct <- as(counts(sces[[1]]$sce), "RsparseMatrix")
   conditions <- rep(names(sces)[1], dim(sces[[1]]$sce)[2])
-  colnames(allct)[2:ncol(allct)] <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$sce)[2])
-  
+  colnames(allct) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$sce)[2])
+
   if(length(sces) > 1){
-    for (i in 2:length(sces)) {
-      
-      dt <- data.table(cbind(rownames(counts(sces[[i]]$sce)), counts(sces[[i]]$sce)), key = "V1")
-      
-      allct <- merge(allct, dt, by = "V1", all = T)
-      
-      conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$sce)[2]))
-      colnames(allct)[(ncol(allct) - dim(sces[[i]]$sce)[2] + 1):ncol(allct)] <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$sce)[2])
-    }
+	  for (i in 2:length(sces)) {
+	  	mat <- as(counts(sces[[i]]$sce), "RsparseMatrix")
+	  	colnames(mat) <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$sce)[2])
+
+	  	allct <- .mergeSparseMatrix(allct, mat)
+	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$sce)[2]))
+	  }
   }
-  allct[is.na(allct)] <- 0
   
-  alldt <- apply(allct[, -1], 2, as.numeric)
-  rownames(alldt) <- allct$V1
-  
-  sceall <- SingleCellExperiment(list(counts = alldt))
+  sceall <- SingleCellExperiment(list(counts = allct))
   
   colData(sceall)$condition <- conditions
   
