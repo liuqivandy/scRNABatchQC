@@ -13,7 +13,7 @@ prepareReportData<-function(sampleTable, organism, cachePrefix){
     sces <- prepareSCRNADataSet(sampleTable, organism)
   }
   
-  cat("Preparing PCA and TSNe data ...\n")
+  cat("Preparing PCA and tSNE data ...\n")
   if(!missing(cachePrefix)){
     scesAllFile = paste0(cachePrefix, "_scesall.rdata")
     if(file.exists(scesAllFile)){
