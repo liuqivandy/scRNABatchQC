@@ -265,3 +265,25 @@
   
   return(mdata)
 }
+
+.mergeSparseMatrix <- function(mat1, mat2) {
+  mat1_diff_mat2_rownames <- setdiff(rownames(mat2), rownames(mat1))
+  mat2_diff_mat1_rownames <- setdiff(rownames(mat1), rownames(mat2))
+  
+  allrown <- union(rownames(mat1), rownames(mat2))
+  
+  suppmat1 <- Matrix(nrow = length(mat1_diff_mat2_rownames), ncol = ncol(mat1), 0)
+  rownames(suppmat1) <- mat1_diff_mat2_rownames
+  colnames(suppmat1) <- colnames(mat1)
+  
+  suppmat2 <- Matrix(nrow = length(mat2_diff_mat1_rownames), ncol = ncol(mat2), 0)
+  rownames(suppmat2) <- mat2_diff_mat1_rownames
+  colnames(suppmat2) <- colnames(mat2)
+  
+  mat1_more <- rbind(mat1, suppmat1)
+  mat2_more <- rbind(mat2, suppmat2)
+  
+  mat <- cbind(mat1_more[allrown, ], mat2_more[allrown, ])
+  
+  return(mat)
+}
