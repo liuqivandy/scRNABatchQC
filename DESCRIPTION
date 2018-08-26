@@ -1,10 +1,10 @@
 Package: scRNABatchQC
-Version: 0.9.2
+Version: 0.9.3
 Date: 2018-08-02
 Title: a package for quality control of multiple single cell RNAseq data
 Author: Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu
 Maintainer: "Quanhu SHENG" <shengqh@gmail.com>
-Depends: R.utils, pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, WebGestaltR, rmdformats, limma, scater, scran, SingleCellExperiment
+Depends: R.utils, pheatmap, cluster, dynamicTreeCut, ggplot2, gplots, Rtsne, reshape2, cluster, dynamicTreeCut, WebGestaltR, rmdformats, limma, scran, Matrix, DelayedMatrixStats
 biocViews:
 Description: 
   Multiple single cell data quality control
