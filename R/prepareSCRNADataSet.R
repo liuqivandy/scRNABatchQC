@@ -71,7 +71,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   pca_tsne_data$condition <- sapply(rownames(pca_tsne_data$pca$x), function(x) strsplit(x, "cell")[[1]][1])
 
   set.seed(100)
-  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = perplexity)
+  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = perplexity, check_duplicates = FALSE)
   
   pca_tsne_data$tsne <- tsne_out$Y
 
