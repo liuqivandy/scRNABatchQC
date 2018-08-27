@@ -151,6 +151,7 @@
     diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
     diffglist <- unique(c(diffglist, diffgenes))
   }
+  diffglist <- na.omit(diffglist)
   
   mDiffFC <- NULL
   mDiffPathway <- NULL
