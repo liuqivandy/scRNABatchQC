@@ -21,7 +21,7 @@ Before you install scRNABatchQC, a modified version of WebGestatR is highly reco
 
 Then you can install scRNABatchQC by:
 
-	install_github("liuqivandy/scRNABatchQC", ref = "PJ")
+	install_github("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
 
