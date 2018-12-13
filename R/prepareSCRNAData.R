@@ -33,7 +33,11 @@ prepareSCRNAData <- function(counts, organism) {
   
   scdata$total_counts_Mt <- Matrix::colSums(counts[scdata$is.mito, ])
   scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt)
-  scdata$pct_counts_Mt <- 100 * Matrix::colSums(counts[scdata$is.mito, ]) / Matrix::colSums(counts)
+  scdata$pct_counts_Mt <- 100 * scdata$total_counts_Mt/scdata$total_counts
+  
+  scdata$is.rRNA<-grepl("^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",rownames(counts))
+  scdata$total_counts_rRNA <- Matrix::colSums(counts[scdata$is.rRNA, ])
+  scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
   scdata$libsize.drop <- .findOutlier(scdata$total_counts, nmads = 3, type = "lower", log = TRUE)
   scdata$feature.drop <- .findOutlier(scdata$total_features, nmads = 3, type = "lower", log = TRUE)
