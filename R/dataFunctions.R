@@ -310,7 +310,7 @@
     current <- by.chunk == element
     cur.exprs <- exprs_mat[current, , drop = FALSE]
    
-    R_squared[current] <- cor(t(cur.exprs),x,use="complete.obs") ^ 2 
+    R_squared[current] <- cor(t(cur.exprs),x,use="pairwise.complete.obs") ^ 2 
   }
   
   
@@ -337,7 +337,7 @@
     
     pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt))), digits = 2, nsmall = 1), "%") #mtRNA
     
-    pw[i, 8] <- paste0(format(as.numeric(as.character(0)), digits = 2, nsmall = 1), "%") # rRNA
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA))), digits = 2, nsmall = 1), "%") # rRNA
     pw[i, 9] <- sum(sces[[i]]$libsize.drop) # F-Count
     pw[i, 10] <- sum(sces[[i]]$feature.drop) # F-Gene
     pw[i, 11] <- 0 # F-rRNA
