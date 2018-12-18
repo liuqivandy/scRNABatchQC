@@ -288,15 +288,13 @@
   return(dat < lower.limit | upper.limit < dat)
 }
 
-.getVarExplainedData <- function(sce, feature, chunk = 1000, nvars_to_plot = 10, min_marginal_r2 = 0) {
+.getVarExplainedbyFeature <- function(sce, feature, chunk = 1000) {
   
   exprs_mat <- sce$data
-  rsquared_mat <- matrix(NA_real_, nrow = nrow(exprs_mat), ncol = length(feature), dimnames=list(rownames(sce$data), feature))
-  tss <- rowVars(DelayedArray(exprs_mat)) * (ncol(sce$data) - 1) 
+ 
   
   x <- sce[feature][[1]]
-  design <- model.matrix(~x)
-  QR <- qr(design)
+
   
   ngenes <- nrow(sce$data)
   
@@ -306,27 +304,18 @@
     by.chunk <- factor(integer(ngenes))
   }
   
-  rss <- numeric(ngenes)
+  R_squared <- numeric(ngenes)
   
   for (element in levels(by.chunk)) {
     current <- by.chunk == element
     cur.exprs <- exprs_mat[current, , drop = FALSE]
-    effects <- qr.qty(QR, as.matrix(t(cur.exprs)))
-    rss[current] <- colSums(effects[-seq_len(QR$rank), , drop = FALSE] ^ 2) # no need for special colSums, as this is always dense.
+   
+    R_squared[current] <- cor(t(cur.exprs),x,use="complete.obs") ^ 2 
   }
   
-  rsquared_mat[, 1] <- 1 - rss/tss
   
-  median_rsquared <- apply(rsquared_mat, 2, median, na.rm=TRUE)
-  oo_median <- order(median_rsquared, decreasing = TRUE)
-  keep_var <- median_rsquared >= min_marginal_r2
-  oo_median <- oo_median[keep_var[oo_median]]
   
-  chosen_rsquared <- rsquared_mat[, head(oo_median, nvars_to_plot), drop=FALSE]
-  df <- suppressMessages(reshape2::melt(chosen_rsquared))
-  colnames(df) <- c("Feature", "Expl_Var", "R_squared")
-  
-  Pct_Var_Explained <- 100 * df$R_squared
+  Pct_Var_Explained <- 100 * R_squared
   return(Pct_Var_Explained)
 }
 
