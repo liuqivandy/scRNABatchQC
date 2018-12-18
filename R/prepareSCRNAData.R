@@ -39,9 +39,9 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$total_counts_rRNA <- Matrix::colSums(counts[scdata$is.rRNA, ])
   scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
-  scdata$libsize.drop <- .findOutlier(scdata$total_counts, nmads = 3, type = "lower", log = TRUE)
-  scdata$feature.drop <- .findOutlier(scdata$total_features, nmads = 3, type = "lower", log = TRUE)
-  scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, nmads = 3, type = "higher")
+  scdata$libsize.drop <- .findOutlier(scdata$total_counts,  type = "lower")
+  scdata$feature.drop <- .findOutlier(scdata$total_features, type = "lower", log = TRUE, lower.limit=500)
+  scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, type = "higher",upper.limit=0.2)
   
   scdata$counts <- scdata$rawdata[, !(scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)]
   
