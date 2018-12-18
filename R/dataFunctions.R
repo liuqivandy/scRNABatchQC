@@ -269,18 +269,14 @@
   return(mat)
 }
 
-.findOutlier <- function (dat, nmads = 5, type = c("lower", "higher"), 
-                          logTransform = FALSE, min_diff = NA) {
-  if (logTransform) {
-    dat <- log2(dat)
-  }
+.findOutlier <- function (dat, nmads = 3, type = c("lower", "higher"), upper.limit=NA, lower.limit=NA) {
   
   med <- median(dat, na.rm = TRUE)
   mad <- mad(dat, center = med, na.rm = TRUE)
   
-  diff.val <- max(min_diff, nmads * mad, na.rm = TRUE)
-  upper.limit <- med + diff.val
-  lower.limit <- med - diff.val
+  diff.val <- nmads * mad
+  upper.limit <- max(upper.limit, med + diff.val,na.rm=TRUE)
+  lower.limit <- min(lower.limit, med - diff.val,na.rm=TRUE)
   
   type <- match.arg(type)
   if (type == "lower") {
