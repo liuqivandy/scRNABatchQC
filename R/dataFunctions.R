@@ -275,8 +275,8 @@
   mad <- mad(dat, center = med, na.rm = TRUE)
   
   diff.val <- nmads * mad
-  upper.limit <- max(upper.limit, med + diff.val,na.rm=TRUE)
-  lower.limit <- min(lower.limit, med - diff.val,na.rm=TRUE)
+  upper.limit <- min(upper.limit, med + diff.val,na.rm=TRUE)
+  lower.limit <- max(lower.limit, med - diff.val,na.rm=TRUE)
   
   type <- match.arg(type)
   if (type == "lower") {
