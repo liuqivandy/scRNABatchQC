@@ -135,7 +135,7 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sce
   pct_var_explained <- c()
   sample <- c()
   for (i in 1:length(sces)) {
-    tmp_pct_VE <- .getVarExplainedData(sces[[i]], feature)
+    tmp_pct_VE <- .getVarExplainedbyFeature(sces[[i]], feature)
     pct_var_explained <- c(pct_var_explained, tmp_pct_VE)
     sample <- c(sample, rep(names(sces)[i], length(tmp_pct_VE)))
   }
