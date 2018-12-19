@@ -43,8 +43,10 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
   scdata$libsize.drop <- .findOutlier(scdata$log10_total_counts,  type = "lower")
+  ##filter cells with less than 200 genes or 3 mad lower
   scdata$feature.drop <- .findOutlier(scdata$log10_total_features, type = "lower", lower.limit=2)
-  scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, type = "higher",upper.limit=0.2)
+  ##filter cells with larger than 20% mtRNA or 3mad higher
+  scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, type = "higher",upper.limit=20)
   
   is.drop<- (scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)
   
