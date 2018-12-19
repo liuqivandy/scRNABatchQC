@@ -70,11 +70,11 @@ prepareSCRNAData <- function(counts, organism) {
   
   
   
-  scdata$meanvar <- .getMeanVarTrend(scdata)
+  scdata$hvginfo <- .getMeanVarTrend(scdata)
   
   ##select the top 500 highly variable genes for the PCA
-  feature_set <- head(scdata$meanvar$hvginfo)
-  scdata$pca <- prcomp(t(scdata$data[feature_set, , drop = FALSE]), rank. = 10)
+  hvggenes <- rownames(head(scdata$hvginfo,500))
+  scdata$pca <- prcomp(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), rank. = 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
   fit <- lmFit(scdata$data, design)
