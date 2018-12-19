@@ -84,7 +84,7 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$pc1genes <- topTable(fit, coef = 2, n = 200)
 ## enriched pathways in top 200 hvgs and pc1 genes
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(head(scdata$meanvar$hvg,200)  organism)
+    scdata$hvgPathway <- .getIndividualPathway(head(scdata$meanvar$hvg,200),organism)
     scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, organism)
   }
 
