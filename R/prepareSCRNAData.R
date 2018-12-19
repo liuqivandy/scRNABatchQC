@@ -80,11 +80,11 @@ prepareSCRNAData <- function(counts, organism) {
   fit <- lmFit(scdata$data, design)
   fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
-  ##select the top 200 pc1 genes
+  ##select the top 100 pc1 genes
   scdata$pc1genes <- topTable(fit, coef = 2, n = 200)
-
+## enriched pathways in top 200 hvgs and pc1 genes
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(scdata$meanvar$hvg,  organism)
+    scdata$hvgPathway <- .getIndividualPathway(head(scdata$meanvar$hvg,200)  organism)
     scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, organism)
   }
 
