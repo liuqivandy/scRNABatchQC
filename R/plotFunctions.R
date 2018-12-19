@@ -104,20 +104,24 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), size = DEFA
 ##variance trend
 plotVarianceTrend <- function(sces, scolors = 1:length(sces), 
                               pointSize=DEFAULT_POINT_SIZE, lineSize=DEFAULT_LINE_SIZE) {
-  vartrend_dat <- data.frame()
+  meanvar_dat <- data.frame()
+
   for (i in 1:length(sces)) {
-    tmpvartrend <- data.frame(mean = sces[[i]]$hvg$mean, 
-                              total = sces[[i]]$hvg$total, 
-                              trend = sces[[i]]$varTrend$trend(sces[[i]]$hvg$mean),
-                              Sample = rep(names(sces)[i], length(sces[[i]]$hvg$mean)))
-    vartrend_dat <- rbind(vartrend_dat, tmpvartrend)
+    tmpmeanvar <- data.frame(mean = sces[[i]]$meanvar$hvginfo$mean, 
+                              var= sces[[i]]$meanvar$hvginfo$var, 
+                              
+                              Sample = rep(names(sces)[i], length(sces[[i]]$meanvar$hvginfo$mean)))
+        
+    
+    meanvar_dat<- rbind(meanvar_dat, tmpmeanvar)
+    
   }
   
-  pp <- ggplot(vartrend_dat, aes_string(x = "mean", y = "total", group = "Sample", colour = "Sample")) + geom_point()
-  pl <- ggplot(vartrend_dat, aes_string(x = "mean", y = "trend", group = "Sample", colour = "Sample")) + geom_line(alpha = 0.3, size = 1.5)
-  p <- ggplot(vartrend_dat) + 
-    geom_point(pp$mapping, size=pointSize) + 
-    geom_line(pl$mapping, size=lineSize) + 
+  #pp <- ggplot(meanvar_dat, aes_string(x = "mean", y = "var", group = "Sample", colour = "Sample")) + geom_point(size=pointSize)+geom_smooth()
+  #pl <- ggplot(trend_dat, aes_string(x = "mean", y = "var", group = "Sample", colour = "Sample")) + geom_line(alpha = 0.3, size = 1.5)
+  p <- ggplot(meanvar_dat, aes_string(x = "mean", y = "var", group = "Sample", colour = "Sample"))  + 
+    geom_point(size=pointSize) + 
+    geom_smooth(size=lineSize) + 
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
     ylab("Variance of log-expression") +
