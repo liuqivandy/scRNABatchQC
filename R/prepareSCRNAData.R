@@ -66,26 +66,26 @@ prepareSCRNAData <- function(counts, organism) {
   
   scdata$data <- log2(counts_norm_lib_size[to.keep, ] + 1)
   
-  scdata$mean <- apply(scdata$data, 1, mean)
-  scdata$var <- apply(scdata$data, 1, var)
   
-  scdata$varTrend <- trendVar(scdata$data, parametric = TRUE)
-  scdata$trends <- scdata$varTrend$trend(scdata$mean)
   
-  scdata$hvg <- decomposeVar(scdata$data, scdata$varTrend)
   
-  feature_set <- head(order(scdata$var, decreasing = T), n = 500)
+  
+  scdata$meanvar <- .getMeanVarTrend(scdata)
+  
+  ##select the top 500 highly variable genes for the PCA
+  feature_set <- head(scdata$meanvar$hvginfo)
   scdata$pca <- prcomp(t(scdata$data[feature_set, , drop = FALSE]), rank. = 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
   fit <- lmFit(scdata$data, design)
   fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
-  scdata$pc1genes <- topTable(fit, coef = 2, n = dim(scdata$data)[1], sort.by = "none")
+  ##select the top 200 pc1 genes
+  scdata$pc1genes <- topTable(fit, coef = 2, n = 200)
 
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(scdata$hvg, "FDR", organism)
-    scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, "adj.P.Val", organism)
+    scdata$hvgPathway <- .getIndividualPathway(scdata$meanvar$hvginfo[,500],  organism)
+    scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, organism)
   }
 
   return(scdata)
