@@ -210,20 +210,20 @@
 }
 
 ### Biological features similarity
-### select the top 50 genes (adjustable) with FDR<0.01
-### .getBiologicalSimilarity(sces, objectName="hvg", filterName="FDR", valueName="bio")
-### .getBiologicalSimilarity(sces, objectName="pc1genes", filterName="adj.P.Val", valueName="logFC")
-.getBiologicalSimilarity <- function(sces, objectName, filterName, valueName, defaultValue = 0) {
+### select the top 50 genes (adjustable) to plot the heatmap and pathway analysis
+### .getBiologicalSimilarity(sces, objectName="hvg",valueName="zval")
+### .getBiologicalSimilarity(sces, objectName="pc1genes",valueName="logFC")
+.getBiologicalSimilarity <- function(sces, objectName="hvg",valueName="zval",topn=50,defaultValue=0) {
   objIndex <- which(names(sces[[1]]) == objectName)
   sobj <- sces[[1]][objIndex][[1]]
-  filterIndex  <- which(colnames(sobj) == filterName)
+  #filterIndex  <- which(colnames(sobj) == filterName)
   valueIndex  <- which(colnames(sobj) == valueName)
   
   genelist <- c()
   for (i in 1:length(sces)) {
     sobj <- sces[[i]][objIndex][[1]]
-    sobj <- sobj[sobj[, filterIndex] < 0.01, ]
-    sgene <- rownames(sobj)[order(abs(sobj[, valueName]), decreasing = TRUE)][1:min(50, dim(sobj)[1])]
+   #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
+    sgene <- rownames(head(sobj,topn))
     genelist <- c(genelist, sgene)
   }
   genelist <- unique(genelist)
@@ -235,7 +235,7 @@
     filtered <- sobj[matchid, ]
     sdata <- rbind(sdata, data.frame(Sample = names(sces)[i], 
                                      Feature = rownames(filtered), 
-                                     Value = filtered[, valueIndex]))
+                                     Value = abs(filtered[, valueIndex])))
   }
   
   mdata <- dcast(sdata, Feature ~ Sample, value.var = "Value", fill = defaultValue)
