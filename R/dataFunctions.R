@@ -356,11 +356,11 @@
   rownames(hvginfo) <- rownames (sce$data)
   hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
   
-  data_x_bin_plot<-cut(x=mean_x,breaks=20)
-  mean_x_plot<-tapply(X=mean_x,INDEX=data_x_bin_plot, FUN=mean)
-  mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
+  #data_x_bin_plot<-cut(x=mean_x,breaks=20)
+ # mean_x_plot<-tapply(X=mean_x,INDEX=data_x_bin_plot, FUN=mean)
+ # mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
   
-  return(list(hvginfo=hvginfo,trend=data.frame(x=mean_x_plot,y=mean_y_plot)))
+  return(hvginfo=hvginfo)
  }
 
 
