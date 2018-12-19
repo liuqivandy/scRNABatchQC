@@ -44,9 +44,9 @@ prepareReportData <- function(sampleTable, organism, cachePrefix) {
   hvgPathways <- .getMultiplePathway(sces, metaObjectName = "hvgPathway")
   pc1Pathways <- .getMultiplePathway(sces, metaObjectName = "pc1Pathway")
   hvgBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "hvg", 
-                                                      filterName = "FDR", valueName = "bio")
+                                                       valueName = "zval")
   pc1geneBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "pc1genes",
-                                                          filterName = "adj.P.Val", valueName = "logFC")
+                                                          , valueName = "logFC")
 
   pw <- .prepareTableSummary(sces)
   
