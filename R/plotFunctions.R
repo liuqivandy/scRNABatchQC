@@ -107,8 +107,8 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
   meanvar_dat <- data.frame()
 
   for (i in 1:length(sces)) {
-    tmpmeanvar <- data.frame(mean = sces[[i]]$meanvar$hvginfo$mean, 
-                              var= sces[[i]]$meanvar$hvginfo$var, 
+    tmpmeanvar <- data.frame(mean = sces[[i]]$hvginfo$mean, 
+                              var= sces[[i]]$hvginfo$var, 
                               
                               Sample = rep(names(sces)[i], length(sces[[i]]$meanvar$hvginfo$mean)))
         
