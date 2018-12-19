@@ -33,10 +33,8 @@
   }
 }
 
-.getIndividualPathway <- function(sobj, filterName, organism) {
-  filterIndex  <- which(colnames(sobj) == filterName)
-  
-  sobj <- sobj[sobj[, filterIndex] < 0.01, ]
+.getIndividualPathway <- function(sobj, organism) {
+
   sgenes <- rownames(sobj)
   sdata <- .getWebGestaltPathway(sgenes, organism)
   return(sdata)
