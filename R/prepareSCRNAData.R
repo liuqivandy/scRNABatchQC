@@ -28,6 +28,9 @@ prepareSCRNAData <- function(counts, organism) {
   
   scdata$total_counts <- Matrix::colSums(counts)
   scdata$total_features <- Matrix::colSums(counts != 0)
+  scdata$log10_total_counts<-log10(scdata$total_counts)
+  scdata$log10_total_features <- log10(scdata$total_features)
+  
   
   scdata$is.mito <- grepl("^mt-|^MT-", rownames(counts))
   
@@ -39,23 +42,17 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$total_counts_rRNA <- Matrix::colSums(counts[scdata$is.rRNA, ])
   scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
-  scdata$libsize.drop <- .findOutlier(scdata$total_counts,  type = "lower", log=TRUE)
-  scdata$feature.drop <- .findOutlier(scdata$total_features, type = "lower", log = TRUE, lower.limit=500)
+  scdata$libsize.drop <- .findOutlier(scdata$log10_total_counts,  type = "lower")
+  scdata$feature.drop <- .findOutlier(scdata$log10_total_features, type = "lower", lower.limit=2)
   scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, type = "higher",upper.limit=0.2)
   
-  scdata$counts <- scdata$rawdata[, !(scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)]
+  is.drop<- (scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)
   
-  scdata$total_counts <- Matrix::colSums(scdata$counts)
-  scdata$log10_total_counts <- log10(scdata$total_counts)
-  scdata$total_features <- Matrix::colSums(scdata$counts != 0)
-  scdata$log10_total_features <- log10(scdata$total_features)
+  scdata$counts <- scdata$rawdata[, !is.drop]
   
-  scdata$is.mito <- grepl("^mt-|^MT-", rownames(scdata$counts))
-  
-  scdata$total_counts_Mt <- Matrix::colSums(scdata$counts[scdata$is.mito, ])
-  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt)
 
-  scdata$lib_size <- scdata$total_counts/mean(scdata$total_counts)
+##normalize to 10000
+  scdata$lib_size <- scdata$total_counts/10,000
   
   counts_norm_lib_size <- t(apply(scdata$counts, 1, function(x) x/scdata$lib_size ))
   
