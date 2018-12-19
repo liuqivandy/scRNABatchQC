@@ -321,10 +321,10 @@
 
 
 
-##find the highly variable genes
-##return the hvginfo, including the mean, variance and zval of each gene
+##find the topn highly variable genes and the mean-variance trend
+##return the hvginfo, including the mean, variance and zval of top 500 gene
 ## return the mean-variance trend
-.getMeanVarTrend<-function(sce,chunk=1000){
+.getMeanVarTrend<-function(sce,chunk=1000,topn=500){
     
 	ngenes <- nrow(sce$data)
   
@@ -362,7 +362,7 @@
   mean_x_plot<-tapply(X=mean_x,INDEX=data_x_bin_plot, FUN=mean)
   mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
   
-  return(list(hvginfo=hvginfo,trend=data.frame(x=mean_x_plot,y=mean_y_plot)))
+  return(list(hvginfo=hvginfo[1:topn,],trend=data.frame(x=mean_x_plot,y=mean_y_plot)))
  }
 
 
