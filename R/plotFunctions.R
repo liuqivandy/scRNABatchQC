@@ -3,24 +3,24 @@ DEFAULT_LINE_SIZE <- 1.5
 DEFAULT_POINT_SIZE <- 1
 
 ### package cluster, dynamicTreeCut
-plotClusterSeparateness <- function(sce, ...) {
+#plotClusterSeparateness <- function(sce, ...) {
   ####check the separateness of clusters using the silhouette width
-  pcs <- sce$pca$x
-  my.dist <- dist(pcs)
-  my.tree <- hclust(my.dist, method = "ward.D2")
+ # pcs <- sce$pca$x
+ # my.dist <- dist(pcs)
+  #my.tree <- hclust(my.dist, method = "ward.D2")
   
-  my.clusters <- unname(cutreeDynamic(my.tree, distM = as.matrix(my.dist), verbose = 0))
+  #my.clusters <- unname(cutreeDynamic(my.tree, distM = as.matrix(my.dist), verbose = 0))
   
-  sce$cluster <- factor(my.clusters)
+  #sce$cluster <- factor(my.clusters)
   
   ####check the separatedness of clusters using the silhouette width
-  clust.col <- rainbow(10)
-  sil <- silhouette(my.clusters, dist = my.dist)
-  sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
-  sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
-  plot(sil, main = paste(length(unique(my.clusters)), "clusters"), 
-       border = sil.cols, col = sil.cols, do.col.sort = FALSE, ...)
-}
+ # clust.col <- rainbow(10)
+ # sil <- silhouette(my.clusters, dist = my.dist)
+ # sil.cols <- clust.col[ifelse(sil[, 3] > 0, sil[, 1], sil[, 2])]
+ # sil.cols <- sil.cols[order(-sil[, 1], sil[, 3])]
+  #plot(sil, main = paste(length(unique(my.clusters)), "clusters"), 
+ #      border = sil.cols, col = sil.cols, do.col.sort = FALSE, ...)
+#}
 
 plotDensity <- function(sces, feature, featureLabel = "", 
                         scolors = 1:length(sces), size = DEFAULT_LINE_SIZE ) {
