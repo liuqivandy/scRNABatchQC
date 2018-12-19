@@ -319,6 +319,54 @@
   return(Pct_Var_Explained)
 }
 
+
+
+##find the highly variable genes
+##return the hvginfo, including the mean, variance and zval of each gene
+## return the mean-variance trend
+.getMeanVarTrend<-function(sce,chunk=1000){
+    
+	ngenes <- nrow(sce$data)
+  
+  if (ngenes > chunk) {
+    by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
+  } else {
+    by.chunk <- factor(integer(ngenes))
+  }
+  
+  gene_mean <- gene_var<- numeric(ngenes)
+  
+  
+  for (element in levels(by.chunk)) {
+    current <- by.chunk == element
+    cur.exprs <- sce$data[current, , drop = FALSE]
+   
+    gene_mean[current] <- apply(cur.exprs,1,mean)
+	gene_var[current]<-apply(cur.exprs,1,var)
+	
+  }
+ 
+  data_x_bin<-cut(x=gene_mean,breaks=150)
+  mean_x<-tapply(X=gene_mean,INDEX=data_x_bin,FUN=mean)
+  mean_y <- tapply(X = gene_var, INDEX = data_x_bin, FUN=mean)
+  sd_y<- tapply(X=gene_var,INDEX=data_x_bin,FUN=sd)
+  gene.dispersion.scaled <- (gene_var - mean_y[as.numeric(x = data_x_bin)])/sd_y[as.numeric(x = data_x_bin)]
+  gene.dispersion.scaled[is.na(x = gene.dispersion.scaled)] <- 0
+  
+  
+  hvginfo<-data.frame(mean=gene_mean,var=gene_var,zval=gene.dispersion.scaled)
+  rownames(hvginfo) <- rownames (sce$data)
+  hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
+  
+  data_x_bin_plot<-cut(x=mean_x,breaks=20)
+  mean_x_plot<-tapply(X=mean_x,INDEX=data_x_bin_plot, FUN=mean)
+  mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
+  
+  return(list(hvginfo=hvginfo,trend=data.frame(x=mean_x_plot,y=mean_y_plot)))
+ }
+
+
+
 .prepareTableSummary <- function(sces) {
   pw <- matrix(nrow = length(sces), ncol = 13)
   
