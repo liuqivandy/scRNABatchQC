@@ -51,7 +51,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
 	  	allct <- .mergeSparseMatrix(allct, mat)
 	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$data)[2]))
-		feature_set<-unqiue(c(featureset,rownames(head(sces[[1]]$hvg,1000))))
+		feature_set<-unique(c(featureset,rownames(head(sces[[1]]$hvg,1000))))
 	  }
   }
   
