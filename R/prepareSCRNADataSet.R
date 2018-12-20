@@ -62,7 +62,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   #to.keep <- num.cells > 0
   
   #scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
- pca_tsne_data$logcounts<- scesdata <- allct
+  scesdata <- allct
   
   #scevar <- apply(scesdata, 1, var)
   
