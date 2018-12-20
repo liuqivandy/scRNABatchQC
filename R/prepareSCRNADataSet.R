@@ -39,7 +39,7 @@ prepareSCRNADataSet <- function(sampleTable, organism){
 ##' #sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   pca_tsne_data <- list()
-  
+  feature_set<-rownames(head(sces[[1]]$hvg,1000))
   allct <- as(sces[[1]]$data, "RsparseMatrix")
   conditions <- rep(names(sces)[1], dim(sces[[1]]$data)[2])
   colnames(allct) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$data)[2])
@@ -51,22 +51,24 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
 	  	allct <- .mergeSparseMatrix(allct, mat)
 	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$data)[2]))
+		feature_set<-unqiue(c(featureset,rownames(head(sces[[1]]$hvg,1000))))
 	  }
   }
   
-  lib_size <- Matrix::colSums(allct)/mean(Matrix::colSums(allct))
+  #lib_size <- Matrix::colSums(allct)/mean(Matrix::colSums(allct))
   
-  counts_norm_lib_size <- t(apply(allct, 1, function(x) x/lib_size ))
-  num.cells <- Matrix::rowSums(allct != 0)
-  to.keep <- num.cells > 0
+ # counts_norm_lib_size <- t(apply(allct, 1, function(x) x/lib_size ))
+  #num.cells <- Matrix::rowSums(allct != 0)
+  #to.keep <- num.cells > 0
   
-  scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
-  pca_tsne_data$logcounts <- scesdata
+  #scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
+ pca_tsne_data$logcounts<- scesdata <- allct
   
-  scevar <- apply(scesdata, 1, var)
+  #scevar <- apply(scesdata, 1, var)
   
-  feature_set <- head(order(scevar, decreasing = T), n = 500)
-  pca_tsne_data$pca <- prcomp(t(scesdata[feature_set, , drop = FALSE]), rank. = ncomponents)
+  #feature_set <- head(order(scevar, decreasing = T), n = 500)
+   
+ pca_tsne_data$pca <- prcomp(t(scesdata[rownames(scesdata)%in%feature_set, , drop = FALSE]), rank. = ncomponents)
   
   pca_tsne_data$condition <- sapply(rownames(pca_tsne_data$pca$x), function(x) strsplit(x, "cell")[[1]][1])
 
