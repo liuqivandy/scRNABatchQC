@@ -184,7 +184,7 @@ print(plotDensity(sces,"pct_counts_Mt", "The proportion of reads mapped to mitoc
 <hr>
 
 ```{r plotRibosomalRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal RNA"), fig.height=4}
-plot.new()
+print(plotDensity(sces,"pct_counts_rRNA", "The proportion of reads mapped to ribosomal RNA", scolors))
 
 ```
 
@@ -241,7 +241,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts
 <hr>
 
 ```{r plotVarianceRRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVarianceRRNA", "The percentage of expression variances explained by the proportion of rRNA reads"), fig.height=4}
-plot.new()
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_rRNA"))
 ```
 
 `r figRef("plotVarianceRRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of ribosomal RNA reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
