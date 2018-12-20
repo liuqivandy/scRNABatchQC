@@ -72,7 +72,7 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$hvg <- .getMeanVarTrend(scdata)
   
   ##select the top 500 highly variable genes for the PCA
-  hvggenes <- rownames(head(scdata$hvg,500))
+  hvggenes <- rownames(head(scdata$hvg,1000))
   scdata$pca <- prcomp(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), rank. = 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
@@ -83,7 +83,7 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$pc1genes <- topTable(fit, coef = 2, n = 500)
 ## enriched pathways in top 200 hvgs and pc1 genes
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(head(scdata$hvg,500),organism)
+    scdata$hvgPathway <- .getIndividualPathway(head(scdata$hvg,1000),organism)
     scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, organism)
   }
 
