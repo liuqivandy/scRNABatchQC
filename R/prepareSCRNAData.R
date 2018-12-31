@@ -69,7 +69,7 @@ prepareSCRNAData <- function(counts, organism) {
   
   
   
-  scdata$hvg <- .getMeanVarTrend(scdata)
+  scdata$hvg <- .getMeanVarTrend(scdata$data)
   
   ##select the top 1000 highly variable genes for the PCA
   hvggenes <- rownames(head(scdata$hvg,1000))
