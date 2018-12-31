@@ -337,7 +337,7 @@
   
   for (element in levels(by.chunk)) {
     current <- by.chunk == element
-    cur.exprs <- sce$data[current, , drop = FALSE]
+    cur.exprs <- data[current, , drop = FALSE]
    
     gene_mean[current] <- apply(cur.exprs,1,mean)
 	gene_var[current]<-apply(cur.exprs,1,var)
