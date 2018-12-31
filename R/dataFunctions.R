@@ -176,7 +176,7 @@
       for (i in 1:coefNo) {
         cat("pathway analysis of", i, ":", cont[i], "\n")
         
-        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
+        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 0.6 & pairTables[[i]]$adj.P.Val < FDR, ]
         if (nrow(diffvs) > 1) {
           alldiffgenes <- rownames(diffvs)
           pathList <- .getWebGestaltPathway(alldiffgenes, organism)
@@ -322,9 +322,9 @@
 ##find the highly variable genes and the mean-variance trend
 ##return the hvginfo, including the mean, variance and zval of each gene
 ## return the mean-variance trend
-.getMeanVarTrend<-function(sce,chunk=1000){
+.getMeanVarTrend<-function(data,chunk=1000){
     
-	ngenes <- nrow(sce$data)
+	ngenes <- nrow(data)
   
   if (ngenes > chunk) {
     by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
@@ -353,7 +353,7 @@
   
   
   hvginfo<-data.frame(mean=gene_mean,var=gene_var,zval=gene.dispersion.scaled)
-  rownames(hvginfo) <- rownames (sce$data)
+  rownames(hvginfo) <- rownames (data)
   hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
   
   #data_x_bin_plot<-cut(x=mean_x,breaks=20)
