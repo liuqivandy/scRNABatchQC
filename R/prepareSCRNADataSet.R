@@ -39,7 +39,7 @@ prepareSCRNADataSet <- function(sampleTable, organism){
 ##' #sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   pca_tsne_data <- list()
-  feature_set<-rownames(head(sces[[1]]$hvg,1000))
+  
   allct <- as(sces[[1]]$data, "RsparseMatrix")
   conditions <- rep(names(sces)[1], dim(sces[[1]]$data)[2])
   colnames(allct) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$data)[2])
@@ -51,7 +51,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
 	  	allct <- .mergeSparseMatrix(allct, mat)
 	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$data)[2]))
-		feature_set<-unique(c(feature_set,rownames(head(sces[[1]]$hvg,1000))))
+		
 	  }
   }
   
@@ -62,14 +62,17 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   #to.keep <- num.cells > 0
   
   #scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
-  pca_tsne_data$logcounts<-scesdata<-allct
+  pca_tsne_data$logcounts<-allct
  
+   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data)
   
+  ##select the top 1000 highly variable genes for the PCA
+  feature_set <- rownames(head(pca_tsne_data$hvg,1000))
   #scevar <- apply(scesdata, 1, var)
   
   #feature_set <- head(order(scevar, decreasing = T), n = 500)
    
- pca_tsne_data$pca <- prcomp(t(scesdata[rownames(scesdata)%in%feature_set, , drop = FALSE]), rank. = ncomponents)
+ pca_tsne_data$pca <- prcomp(t(allct[rownames(allct)%in%feature_set, , drop = FALSE]), rank. = ncomponents)
   
   pca_tsne_data$condition <- sapply(rownames(pca_tsne_data$pca$x), function(x) strsplit(x, "cell")[[1]][1])
 
