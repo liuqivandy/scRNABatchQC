@@ -64,7 +64,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   #scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
   pca_tsne_data$logcounts<-allct
  
-   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data)
+   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
   
   ##select the top 1000 highly variable genes for the PCA
   feature_set <- rownames(head(pca_tsne_data$hvg,1000))
