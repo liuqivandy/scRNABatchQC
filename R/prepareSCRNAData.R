@@ -35,7 +35,7 @@ prepareSCRNAData <- function(counts, organism) {
   scdata$is.mito <- grepl("^mt-|^MT-", rownames(counts))
   
   scdata$total_counts_Mt <- Matrix::colSums(counts[scdata$is.mito, ])
-  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt)
+  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)
   scdata$pct_counts_Mt <- 100 * scdata$total_counts_Mt/scdata$total_counts
   
   scdata$is.rRNA<-grepl("^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",rownames(counts))
