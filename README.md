@@ -2,7 +2,7 @@ scRNABatchQC
 ==========
 * [Introduction](#introduction)
 * [Installation](#installation)
-* [Quick Start](#example)
+* [Usage](#example)
 
 <a name="introduction"/>
 
@@ -27,7 +27,7 @@ Step 3: Install scRNABatchQC by:
   
 <a name="example"/>
 
-# Quick start
+# Usage
 
 An example to run scRNABatchQC.
         
