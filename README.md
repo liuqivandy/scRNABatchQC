@@ -14,12 +14,14 @@ scRNABatchQC is an R package for quality control of multiple single cell RNAseq 
 
 # Download and installation
 
-Before you install scRNABatchQC, a modified version of WebGestatR is highly recommended to be installed by:
+Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) . After installation , update your path to include the directory where pandoc’s binaries are installed.
+
+Step 2: Install a modified version of WebGestatR by:
 
 	library(devtools)
 	install_github("shengqh/WebGestaltR")
 
-Then you can install scRNABatchQC by:
+Step 3: Install scRNABatchQC by:
 
 	install_github("liuqivandy/scRNABatchQC")
   
