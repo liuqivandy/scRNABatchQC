@@ -21,6 +21,7 @@ prepareSCRNADataSet <- function(sampleTable, organism){
     counts <- as.matrix(read.csv(countFile, row.names=1, header=T))
     result[[n]] <- prepareSCRNAData(counts, organism)
   }
+  if (sum(sampleTable[,1]!=make.names(sampleTable[,1]))>0) sampleTable[,1]<-paste0("S",sampleTable[,1])
   names(result) <- sampleTable[, 1]
   return(result)
 }
