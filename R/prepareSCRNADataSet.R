@@ -42,12 +42,12 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
   
   allct <- as(sces[[1]]$data, "RsparseMatrix")
   conditions <- rep(names(sces)[1], dim(sces[[1]]$data)[2])
-  colnames(allct) <- paste0(names(sces)[1], "cell", 1:dim(sces[[1]]$data)[2])
+  colnames(allct) <- paste0(names(sces)[1], 1:dim(sces[[1]]$data)[2])
 
   if(length(sces) > 1){
 	  for (i in 2:length(sces)) {
 	  	mat <- as(sces[[i]]$data, "RsparseMatrix")
-	  	colnames(mat) <- paste0(names(sces)[i], "cell", 1:dim(sces[[i]]$data)[2])
+	  	colnames(mat) <- paste0(names(sces)[i], 1:dim(sces[[i]]$data)[2])
 
 	  	allct <- .mergeSparseMatrix(allct, mat)
 	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$data)[2]))
@@ -74,7 +74,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
    
  pca_tsne_data$pca <- prcomp(t(allct[rownames(allct)%in%feature_set, , drop = FALSE]), rank. = ncomponents)
   
-  pca_tsne_data$condition <- sapply(rownames(pca_tsne_data$pca$x), function(x) strsplit(x, "cell")[[1]][1])
+  pca_tsne_data$condition <- conditions
 
   set.seed(100)
   tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = perplexity, check_duplicates = FALSE)
