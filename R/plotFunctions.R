@@ -28,7 +28,7 @@ plotDensity <- function(sces, feature, featureLabel = "",
   featureLabel <- ifelse(featureLabel == "", feature, featureLabel)
 
   p <- ggplot(featureData, aes(x = Value)) + 
-    geom_density(aes(color = Sample), size = size) + 
+    stat_density(aes(color = Sample), size = size,geom="line",position="identity") + 
     scale_colour_manual(values = scolors) +
     xlab(featureLabel) + theme_classic()
   
