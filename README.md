@@ -14,7 +14,7 @@ scRNABatchQC is an R package for generating a single html report to check and co
 
 # Installation
 
-Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) . After installation , update your path to include the directory where pandoc’s binaries are installed.
+Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) (pandoc is required to convert files from markup format into html format). After installation , update your path to include the directory where pandoc’s binaries are installed. 
 
 Step 2: Install a modified version of WebGestatR by:
 
