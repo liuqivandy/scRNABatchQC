@@ -1,18 +1,18 @@
 scRNABatchQC
 ==========
 * [Introduction](#introduction)
-* [Download and installation](#download)
+* [Installation](#installation)
 * [Quick Start](#example)
 
 <a name="introduction"/>
 
 # Introduction
 
-scRNABatchQC is an R package for quality control of multiple single cell RNAseq data.
+scRNABatchQC is an R package for generating a single html report to check and compare quality of multiple single cell RNA-seq datasets.
 
-<a name="download"/>
+<a name="installation"/>
 
-# Download and installation
+# Installation
 
 Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) . After installation , update your path to include the directory where pandoc’s binaries are installed.
 
@@ -29,7 +29,7 @@ Step 3: Install scRNABatchQC by:
 
 # Quick start
 
-Here we show the most basic steps.
+Some basic codes to run scRNABatchQC.
         
 	
 	
