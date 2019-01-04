@@ -2,7 +2,7 @@ scRNABatchQC<-function(inputfiles,samplenames, organism, outputFile, cache){
   if(!missing(cache) & cache){
     plotData<-prepareReportData(inputfiles,samplenames, organism, outputFile)
   }else{
-    plotData<-prepareReportData(intputfiles,samplenames, organism)
+    plotData<-prepareReportData(inputfiles,samplenames, organism)
   }
   
   #reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
