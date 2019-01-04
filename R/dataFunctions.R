@@ -12,6 +12,20 @@
   unloadNamespace(pkg)
 }
 
+.tosparse<-function(datatable){
+   i_list <- lapply(datatable, function(x) which(x != 0))
+   counts <- unlist(lapply(i_list, length), use.names = F)
+
+  sparseMatrix(
+    i = unlist(i_list, use.names = F),
+    j = rep(1:ncol(datatable), counts),
+    x = unlist(lapply(datatable, function(x) x[x != 0]), use.names = F),
+    dims = dim(datatable),
+    dimnames = list(NULL, names(datatable)))
+}
+	
+	
+	}
 .getRange<-function(values){
   rangeCount<-range(values)
   medianCount<-median(values)
