@@ -18,12 +18,12 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism){
   if (nfiles!=length(samplenames)) {stop("the inputfiles and samplenames donnot have the same length", call. = FALSE)}
   if (sum(samplenames!=make.names(samplenames))>0) samplenames<-paste0("S",samplenames)
  
-  for (n in 1:nfiles) {
+  for (ind in 1:nfiles) {
    
     
-    cat("Preparing ", samplenames[i], "\n")
+    cat("Preparing ", samplenames[ind], "\n")
     
-    result[[n]] <- prepareSCRNAData(inputfiles[i], organism)
+    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism)
   }
   
   names(result) <- samplenames
