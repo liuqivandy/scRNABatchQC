@@ -10,19 +10,23 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet <- function(sampleTable, organism){
+prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism){
   result <- list()
+  nfiles<-length(inputfiles)
   
-  n <- 1
-  for (n in 1:nrow(sampleTable)) {
-    sampleName<-as.character(sampleTable[n,1])
-    countFile<-as.character(sampleTable[n,2])
-    cat("Preparing ", sampleName, "\n")
-    counts <- as.matrix(read.csv(countFile, row.names=1, header=T))
-    result[[n]] <- prepareSCRNAData(counts, organism)
+  if (is.null(samplenames)){samplenames=paste0("S",1:nfiles)}
+  if (nfiles!=length(samplenames)) {stop("the inputfiles and samplenames donnot have the same length", call. = FALSE)}
+  if (sum(samplenames!=make.names(samplenames))>0) samplenames<-paste0("S",samplenames)
+ 
+  for (n in 1:nfiles) {
+   
+    
+    cat("Preparing ", samplenames[i], "\n")
+    
+    result[[n]] <- prepareSCRNAData(inputfiles[i], organism)
   }
-  if (sum(sampleTable[,1]!=make.names(sampleTable[,1]))>0) sampleTable[,1]<-paste0("S",sampleTable[,1])
-  names(result) <- sampleTable[, 1]
+  
+  names(result) <- samplenames
   return(result)
 }
 
