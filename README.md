@@ -36,4 +36,4 @@ An example to run scRNABatchQC.
 	setwd("/scratch/scRNABatchQC/")     # set working directory
 	library(scRNABatchQC)
 	
-	scRNABatchQC(inputfiles=(c("count1.csv", "count2.csv", "count3.csv")), organism="mmusculus", "scRNABatchQCreport.html", cache=TRUE )
+	scRNABatchQC(inputfiles=(c("count1.csv", "count2.csv", "count3.csv")), organism="mmusculus", outputFile="scRNABatchQCreport.html", cache=TRUE )
