@@ -14,13 +14,10 @@
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv", header = F, row.names = 1))
 ##' #sce1 <- prepareSCRNAData(count1)
-prepareSCRNAData <- function(counts, organism) {
-  if(!is.matrix(counts)){
-    counts <- as.matrix(counts)
-  }
-  stopifnot(is.matrix(counts))
+prepareSCRNAData <- function(inputfile, organism) {
   
-  counts <- as(counts, "RsparseMatrix")
+  rawdata<-data.frame(fread(inputfile),row.names=1)
+  counts<-.tosparse(rawdata)
   
   scdata <- list()
   
