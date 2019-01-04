@@ -22,7 +22,8 @@
     j = rep(1:ncol(datatable), counts),
     x = unlist(lapply(datatable, function(x) x[x != 0]), use.names = F),
     dims = dim(datatable),
-    dimnames = list(NULL, names(datatable)))
+    dimnames = dimnames(datatable))
+  
 }
 	
 	
