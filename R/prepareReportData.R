@@ -1,4 +1,4 @@
-prepareReportData <- function(sampleTable, organism, cachePrefix) {
+prepareReportData <- function(inputfiles,samplenames, organism, cachePrefix) {
   cat("Preparing sample statistics data ...\n")
   if (!missing(cachePrefix)) {
     scesFile <- paste0(cachePrefix, "_sces.rdata")
@@ -6,11 +6,11 @@ prepareReportData <- function(sampleTable, organism, cachePrefix) {
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else {
-      sces <- prepareSCRNADataSet(sampleTable, organism)
+      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism)
       save(sces, file=scesFile)
     }
   } else {
-    sces <- prepareSCRNADataSet(sampleTable, organism)
+    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism)
   }
   
   cat("Preparing PCA and tSNE data ...\n")
