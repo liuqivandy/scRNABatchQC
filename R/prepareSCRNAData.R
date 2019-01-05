@@ -51,7 +51,7 @@ prepareSCRNAData <- function(inputfile, organism) {
   
 
 ##normalize to 10000
-  scdata$lib_size <- scdata$total_counts/10000
+  scdata$lib_size <- scdata$total_counts[!is.drop]/10000
   
   counts_norm_lib_size <- t(apply(scdata$counts, 1, function(x) x/scdata$lib_size ))
   
