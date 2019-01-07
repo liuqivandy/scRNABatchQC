@@ -52,14 +52,14 @@ prepareSCRNAData <- function(inputfile, organism) {
   gene.keep <- num.cells > 0
 
 
-  scdata$data <- scdata$rawdata[gene.keep, !is.drop]
+  scdata$data <- counts[gene.keep, !is.drop]
 
 
 
 
 ##normalize to 10000
 
- lib_size <- 10000/scdata$total_counts[!cell.drop]
+ lib_size <- 10000/scdata$total_counts[!is.drop]
   
 
 rowind<-scdata$data@i+1  
