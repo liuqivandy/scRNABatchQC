@@ -322,6 +322,7 @@
   for (i in 1:length(sces)) {
     sobj <- sces[[i]][objIndex][[1]]
    #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
+    if (objectName=="hvg") {sobj<-sobj[order(sobj[,valueIndex],decreasing=T),]}
     sgene <- rownames(head(sobj,topn))
     genelist <- c(genelist, sgene)
   }
