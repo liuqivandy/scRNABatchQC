@@ -29,14 +29,14 @@ prepareSCRNAData <- function(inputfile, organism) {
   scdata$log10_total_features <- log10(scdata$total_features)
   
   
-  scdata$is.mito <- grepl("^mt-|^MT-", rownames(counts))
+  is.mito <- grepl("^mt-|^MT-", rownames(counts))
   
-  scdata$total_counts_Mt <- Matrix::colSums(counts[scdata$is.mito, ])
+  scdata$total_counts_Mt <- Matrix::colSums(counts[is.mito, ])
   scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)
   scdata$pct_counts_Mt <- 100 * scdata$total_counts_Mt/scdata$total_counts
   
-  scdata$is.rRNA<-grepl("^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",rownames(counts))
-  scdata$total_counts_rRNA <- Matrix::colSums(counts[scdata$is.rRNA, ])
+  is.rRNA<-grepl("^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",rownames(counts))
+  scdata$total_counts_rRNA <- Matrix::colSums(counts[is.rRNA, ])
   scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
   scdata$libsize.drop <- .findOutlier(scdata$log10_total_counts,  type = "lower")
@@ -47,21 +47,28 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   is.drop<- (scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)
   
-  scdata$counts <- scdata$rawdata[, !is.drop]
-  
+  num.cells <- Matrix::rowSums(scdata$rawdata != 0)
+
+  gene.keep <- num.cells > 0
+
+
+  scdata$data <- scdata$rawdata[gene.keep, !is.drop]
+
+
+
 
 ##normalize to 10000
-  scdata$lib_size <- scdata$total_counts[!is.drop]/10000
+
+ lib_size <- 10000/scdata$total_counts[!cell.drop]
   
-  counts_norm_lib_size <- t(apply(scdata$counts, 1, function(x) x/scdata$lib_size ))
+
+rowind<-scdata$data@i+1  
+colind<-findInterval(seq(scdata$data@x)-1,scdata$data@p[-1])+1
+scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
+
   
-  scdata$ave.counts <- apply(counts_norm_lib_size, 1, mean)
-  
-  scdata$num.cells <- Matrix::rowSums(scdata$counts != 0)
-  to.keep <- scdata$num.cells > 0
-  
-  scdata$data <- log2(counts_norm_lib_size[to.keep, ] + 1)
-  
+
+#####
   
   
   
@@ -70,7 +77,7 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   ##select the top 1000 highly variable genes for the PCA
   hvggenes <- rownames(head(scdata$hvg,1000))
-  scdata$pca <- prcomp(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), rank. = 10)
+  scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), rank. = 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
   fit <- lmFit(scdata$data, design)
