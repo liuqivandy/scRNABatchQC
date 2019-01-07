@@ -60,9 +60,9 @@
 
 	       
 ###
-.getIndividualPathway <- function(sobj, organism) {
+.getIndividualPathway <- function(sgenes, organism) {
 
-  sgenes <- rownames(sobj)
+  
   sdata <- .getWebGestaltPathway(sgenes, organism)
   return(sdata)
 }
