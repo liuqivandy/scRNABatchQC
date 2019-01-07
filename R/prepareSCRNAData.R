@@ -53,8 +53,8 @@ prepareSCRNAData <- function(inputfile, organism) {
 
 
   scdata$data <- counts[gene.keep, !is.drop]
-
-
+  
+  scdata$ave.counts <- rowMeans(scdata$data)
 
 
 ##normalize to 10000
