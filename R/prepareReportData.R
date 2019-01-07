@@ -1,5 +1,8 @@
 prepareReportData <- function(inputfiles,samplenames, organism, cachePrefix) {
   cat("Preparing sample statistics data ...\n")
+    na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
+    if (is.na(na.organism)) 
+        stop("invalid 'organism' argument, only hsapiens or mmusculus is allowed ")
   if (!missing(cachePrefix)) {
     scesFile <- paste0(cachePrefix, "_sces.rdata")
     if (file.exists(scesFile)) {
