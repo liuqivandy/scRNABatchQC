@@ -217,7 +217,7 @@ The variance of gene expression is driven by both uninteresting technical noise 
 <hr>
 
 ```{r log10_total_counts, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "The percentage of expression variances explained by the library size"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts"))
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_counts"))
 ```
 
 `r figRef("log10_total_counts")` shows the percentage of expression variance that is explained by the log-transformed total number of counts for each gene. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the library sizes contribute substantially to the gene expression abundance. If so, this technical factor may need to be modeled into the downstream analysis.  Different contributions of library sizes to expression variances across multiple experiments are indicative of the presence of batch effects.
@@ -225,7 +225,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts
 <hr>
 
 ```{r log10_total_features, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "The percentage of expression variances explained by the total number of expressed genes"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_features"))
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_features"))
 ```
 
 `r figRef("log10_total_features")` shows the percentage of expression variance of each gene that is explained by the log-transformed number of genes detected in each cell. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
@@ -233,15 +233,15 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_featur
 <hr>
 
 ```{r log10_total_counts_Mt, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "The percentage of expression variances explained by the proportion of mitochondrial reads"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_Mt"))
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_Mt"))
 ```
 
 `r figRef("log10_total_counts_Mt")` shows the percentage of expression variance of each gene that is explained by the percentage of mitochondrial reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
 
 <hr>
 
-```{r plotVarianceRRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVarianceRRNA", "The percentage of expression variances explained by the proportion of rRNA reads"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "log10_total_counts_rRNA"))
+```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of rRNA reads"), fig.height=4}
+print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
 ```
 
 `r figRef("plotVarianceRRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of ribosomal RNA reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
