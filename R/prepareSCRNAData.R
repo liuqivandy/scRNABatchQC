@@ -105,8 +105,8 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   scdata$pc1genes <- topTable(fit, coef = 2, n = 500)
 ## enriched pathways in top 1000 hvgs and 500 pc1 genes
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(head(scdata$hvg,1000),organism)
-    scdata$pc1Pathway <- .getIndividualPathway(scdata$pc1genes, organism)
+    scdata$hvgPathway <- .getIndividualPathway(hvggenes,organism)
+    scdata$pc1Pathway <- .getIndividualPathway(rownames(scdata$pc1genes), organism)
   }
 
   return(scdata)
