@@ -43,49 +43,63 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism){
 ##' #sces <- prepareSCRNADataSet(sampleTable)
 ##' #sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
-  pca_tsne_data <- list()
-  
-  allct <- as(sces[[1]]$data, "RsparseMatrix")
-  conditions <- rep(names(sces)[1], dim(sces[[1]]$data)[2])
-  colnames(allct) <- paste0(names(sces)[1], 1:dim(sces[[1]]$data)[2])
 
-  if(length(sces) > 1){
-	  for (i in 2:length(sces)) {
-	  	mat <- as(sces[[i]]$data, "RsparseMatrix")
-	  	colnames(mat) <- paste0(names(sces)[i], 1:dim(sces[[i]]$data)[2])
-
-	  	allct <- .mergeSparseMatrix(allct, mat)
-	  	conditions <- c(conditions, rep(names(sces)[i], dim(sces[[i]]$data)[2]))
-		
-	  }
-  }
-  
-  #lib_size <- Matrix::colSums(allct)/mean(Matrix::colSums(allct))
-  
- # counts_norm_lib_size <- t(apply(allct, 1, function(x) x/lib_size ))
-  #num.cells <- Matrix::rowSums(allct != 0)
-  #to.keep <- num.cells > 0
-  
-  #scesdata <- log2(counts_norm_lib_size[to.keep, ] + 1)
-  pca_tsne_data$logcounts<-allct
- 
-   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
-  
-  ##select the top 1000 highly variable genes for the PCA
-  feature_set <- rownames(head(pca_tsne_data$hvg,1000))
-  #scevar <- apply(scesdata, 1, var)
-  
-  #feature_set <- head(order(scevar, decreasing = T), n = 500)
+   pca_tsne_data <- list()
    
- pca_tsne_data$pca <- prcomp(t(allct[rownames(allct)%in%feature_set, , drop = FALSE]), rank. = ncomponents)
-  
-  pca_tsne_data$condition <- conditions
+   lenind<-sapply(sces,function(x){dim(x$data)[2]})
+    pca_tsne_data$condition <-rep(names(lenind),lenind)
 
+
+    pca_tsne_data$logcounts<-sces[[1]]$data
+
+     colnames(pca_tsne_data$logcounts) <- paste0(names(lenind)[1], 1:lenind[1])
+
+    if(length(sces) > 1){
+
+	  for (i in 2:length(sces)) {
+
+	  	mat<-sces[[i]]$data
+                colnames(mat)<-paste0(names(lenind)[i], 1:lenind[i])
+	  	pca_tsne_data$logcounts <- .mergeSparseMatrix(pca_tsne_data$logcounts, mat)
+	  }
+
+     }
+
+  
+
+  
+
+ 
+
+   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
+
+  
+
+  ##select the top 1000 highly variable genes for the PCA
+
+  feature_set <- rownames(head(pca_tsne_data$hvg,1000))
+
+  #scevar <- apply(scesdata, 1, var)
+
+  
+
+  #feature_set <- head(order(scevar, decreasing = T), n = 500)
+
+   
+
+ pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = ncomponents)
+
+  
   set.seed(100)
+
   tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = perplexity, check_duplicates = FALSE)
   
   pca_tsne_data$tsne <- tsne_out$Y
 
+
   return(pca_tsne_data)
+
 }
+
+
 
