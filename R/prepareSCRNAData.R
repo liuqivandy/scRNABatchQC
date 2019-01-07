@@ -88,7 +88,7 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   scdata$hvg <- .getMeanVarTrend(scdata$data)
   
   ##select the top 1000 highly variable genes for the PCA
-  hvggenes <-  rownames(scdata)[order(scdata$hvg$zval,decreasing=T)][1:1000]
+  hvggenes <-  rownames(scdata$hvg)[order(scdata$hvg$zval,decreasing=T)][1:1000]
   scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), n= 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
