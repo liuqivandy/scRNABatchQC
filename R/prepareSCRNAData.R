@@ -25,18 +25,17 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   scdata$total_counts <- Matrix::colSums(counts)
   scdata$total_features <- Matrix::colSums(counts != 0)
-  scdata$log10_total_counts<-log10(scdata$total_counts)
-  scdata$log10_total_features <- log10(scdata$total_features)
+  
   
   
   is.mito <- grepl("^mt-|^MT-", rownames(counts))
   
   scdata$total_counts_Mt <- Matrix::colSums(counts[is.mito, ])
-  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)
   scdata$pct_counts_Mt <- 100 * scdata$total_counts_Mt/scdata$total_counts
   
   is.rRNA<-grepl("^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",rownames(counts))
   scdata$total_counts_rRNA <- Matrix::colSums(counts[is.rRNA, ])
+  
   scdata$pct_counts_rRNA<-100*scdata$total_counts_rRNA/scdata$total_counts
   
   scdata$libsize.drop <- .findOutlier(scdata$log10_total_counts,  type = "lower")
@@ -53,6 +52,11 @@ prepareSCRNAData <- function(inputfile, organism) {
   
 
   scdata$data <- counts[gene.keep, !is.drop]
+  scdata$log10_total_counts<-log10(scdata$total_counts)[!is.drop]
+  scdata$log10_total_features <- log10(scdata$total_features)[!is.drop]
+  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_rRNA)[!is.drop]
+  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)[!is.drop]
+  
   scdata$ave.counts <- rowMeans(scdata$data)
   scdata$num.cells<-scdata$num.cells[gene.keep]
 
