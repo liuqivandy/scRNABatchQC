@@ -492,7 +492,8 @@
 
  # mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
 
-  
+ #hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
+
 
   return(hvginfo=hvginfo)
 
