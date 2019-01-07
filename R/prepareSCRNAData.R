@@ -47,9 +47,9 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   is.drop<- (scdata$libsize.drop | scdata$feature.drop | scdata$mito.drop)
   
-  num.cells <- Matrix::rowSums(scdata$rawdata != 0)
+  scdata$num.cells <- Matrix::rowSums(counts != 0)
 
-  gene.keep <- num.cells > 0
+  gene.keep <- scdata$num.cells > 0
 
 
   scdata$data <- counts[gene.keep, !is.drop]
