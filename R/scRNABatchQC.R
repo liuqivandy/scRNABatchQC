@@ -1,4 +1,4 @@
-scRNABatchQC<-function(inputfiles,samplenames=NULL, organism="hsapiens", outputFile="report.html", cache=TRUE){
+scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", cache=TRUE){
   if(!missing(cache) & cache){
     plotData<-prepareReportData(inputfiles,samplenames, organism, outputFile)
   }else{
