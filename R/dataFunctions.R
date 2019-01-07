@@ -385,7 +385,7 @@
   return(dat < lower.limit | upper.limit < dat)
 }
 
-.getVarExplainedbyFeature <- function(sce, feature, chunk = 1000) {
+.getVarExplainedbyFeature2 <- function(sce, feature, chunk = 1000) {
   
   exprs_mat <- sce$data
  
@@ -416,7 +416,39 @@
   return(Pct_Var_Explained)
 }
 
+	       
+.getVarExplainedbyFeature <- function(sce, feature, chunk = 1000) {
+  
+  exprs_mat <- sce$data
+ 
+  
+  feature.data <- sce[[feature]]
+  expf<-mean(feature.data)
+  sdf<-sd(feature.data)
+  
+  ngenes <- nrow(sce$data)
+  ncells<-ncol(sce$data)
+  
+  if (ngenes > chunk) {
+    by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
+  } else {
+    by.chunk <- factor(integer(ngenes))
+  }
+  
+  R_squared <- numeric(ngenes)
+  
+  for (element in levels(by.chunk)) {
+    current <- by.chunk == element
+    cur.exprs <- exprs_mat[current, , drop = FALSE]
+    Exy= cur.exprs%*%feature.data/ncells-sce$hvg$mean[current]*expf
+    sdxy=sdf*sqrt(sce$hvg$var[current])
+    R_squared[current] <- (Exy/sdxy) ^ 2 
+    }
+  
+   Pct_Var_Explained <- 100 * R_squared
+   return(Pct_Var_Explained)
 
+  } 
 
 ##find the highly variable genes and the mean-variance trend
 ##return the hvginfo, including the mean, variance and zval of each gene
