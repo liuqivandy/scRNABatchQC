@@ -390,7 +390,7 @@
   exprs_mat <- sce$data
  
   
-  x <- sce[feature][[1]]
+  feature.data <- sce[[feature]]
 
   
   ngenes <- nrow(sce$data)
@@ -407,7 +407,7 @@
     current <- by.chunk == element
     cur.exprs <- exprs_mat[current, , drop = FALSE]
    
-    R_squared[current] <- cor(t(cur.exprs),x,use="pairwise.complete.obs") ^ 2 
+    R_squared[current] <- cor(as.matrix(t(cur.exprs)),feature.data,use="pairwise.complete.obs") ^ 2 
   }
   
   
