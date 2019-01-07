@@ -14,26 +14,36 @@
 
 ##convert the data frame to the sparse Matrix
 .tosparse<-function(datatable){
+
    i_list <- lapply(datatable, function(x) which(x != 0))
+
    counts <- unlist(lapply(i_list, length), use.names = F)
 
   sparseMatrix(
+
     i = unlist(i_list, use.names = F),
+
     j = rep(1:ncol(datatable), counts),
+
     x = unlist(lapply(datatable, function(x) x[x != 0]), use.names = F),
+
     dims = dim(datatable),
+
     dimnames = dimnames(datatable))
-  
+
 }
-	
-	
+	       
+	       
+#######	
 .getRange<-function(values){
   rangeCount<-range(values)
   medianCount<-median(values)
   result<-paste0("[", rangeCount[1], "-", medianCount, "-", rangeCount[2], "]")
   return(result)
 }
-
+	       
+	       
+####
 .getWebGestaltPathway <- function(genes, organism) {
   spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
                           enrichDatabase = "pathway_KEGG", interestGene = genes,
@@ -48,6 +58,8 @@
   }
 }
 
+	       
+###
 .getIndividualPathway <- function(sobj, organism) {
 
   sgenes <- rownames(sobj)
@@ -55,6 +67,7 @@
   return(sdata)
 }
 
+###
 .getMultiplePathway <- function(sces, metaObjectName) {
   sdata<-NULL
   for (i in 1:length(sces)) {
@@ -339,44 +352,84 @@
 ## return the mean-variance trend
 .getMeanVarTrend<-function(data,chunk=1000){
     
-	ngenes <- nrow(data)
+    ngenes <- nrow(data)
+
+     ncol<-ncol(data)
   
+
   if (ngenes > chunk) {
+
     by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
+
   } else {
+
     by.chunk <- factor(integer(ngenes))
+
   }
+
   
+
   gene_mean <- gene_var<- numeric(ngenes)
+
   
+
   
+
   for (element in levels(by.chunk)) {
+
     current <- by.chunk == element
+
     cur.exprs <- data[current, , drop = FALSE]
+
    
-    gene_mean[current] <- apply(cur.exprs,1,mean)
-	gene_var[current]<-apply(cur.exprs,1,var)
+
+    gene_mean[current]<-tmpMean <- rowMeans(cur.exprs)
+
+    gene_var[current]<- rowSums((cur.exprs-tmpMean)^2)/(ncol-1)
+
 	
+
   }
+
  
+
   data_x_bin<-cut(x=gene_mean,breaks=150)
+
   mean_x<-tapply(X=gene_mean,INDEX=data_x_bin,FUN=mean)
+
   mean_y <- tapply(X = gene_var, INDEX = data_x_bin, FUN=mean)
+
   sd_y<- tapply(X=gene_var,INDEX=data_x_bin,FUN=sd)
+
   gene.dispersion.scaled <- (gene_var - mean_y[as.numeric(x = data_x_bin)])/sd_y[as.numeric(x = data_x_bin)]
+
   gene.dispersion.scaled[is.na(x = gene.dispersion.scaled)] <- 0
+
   
+
   
+
   hvginfo<-data.frame(mean=gene_mean,var=gene_var,zval=gene.dispersion.scaled)
+
   rownames(hvginfo) <- rownames (data)
+
   hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
+
   
+
   #data_x_bin_plot<-cut(x=mean_x,breaks=20)
+
  # mean_x_plot<-tapply(X=mean_x,INDEX=data_x_bin_plot, FUN=mean)
+
  # mean_y_plot<-tapply(X=mean_y,INDEX=data_x_bin_plot,FUN=mean)
+
   
+
   return(hvginfo=hvginfo)
+
  }
+
+
 
 
 
