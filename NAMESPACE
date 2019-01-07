@@ -1,3 +1,3 @@
 #import(R.utils, ggplot2, gplots, reshape2, scran, cluster, limma, dynamicTreeCut, Rtsne, WebGestaltR, rmdformats, Matrix, DelayedMatrixStats)
-import(R.utils, ggplot2, gplots, limma, data.table,irlba, reshape2,Rtsne, WebGestaltR, rmdformats, Matrix, DelayedMatrixStats)
+import(R.utils, ggplot2, gplots, limma, data.table,irlba, reshape2,Rtsne, WebGestaltR, rmdformats, Matrix)
 export(scRNABatchQC, prepareSCRNAData, prepareSCRNADataSet, preparePCATSNEData)
