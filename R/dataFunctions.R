@@ -136,47 +136,118 @@
   return(result)
 }
 
-.getDiffGenes <- function(scesall, organism, FDR = 0.01, geneNo = 50) {
+.getDiffGenes <- function(scesall, organism, Log2FC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
   if(length(unique(scesall$condition)) == 1){
+
     return(list(genes = NULL, pathways = NULL))
+
   }
+
   
+
   design <- model.matrix( ~ 0 + as.factor(scesall$condition))
+
   snames <- unique(scesall$condition)
+
   colnames(design) <- snames
+
   
+
   cont <- c()
+
   compareNames <- c()
+
   
+
   for (i in 1 : (length(snames)-1)) {
+
     for (j in (i + 1) : length(snames)) {
+
       cont <- c(cont, paste0(snames[i], " - ", snames[j]))
+
       compareNames <- c(compareNames, paste0(snames[i], "_VS_", snames[j]))
+
     }
+
   }
+
   
+
   cat("performing differential analysis ...\n")
+
+  ngenes <- nrow(scesall$logcounts)
+
+     ncol<-ncol(data)
   
-  fit <- lmFit(scesall$logcounts, design)
-  contrast.matrix <- makeContrasts(contrasts = cont, levels = design)
+
+  if (ngenes > chunk) {
+
+    by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
+
+  } else {
+
+    by.chunk <- factor(integer(ngenes))
+
+  }
+
   
-  fit2 <- contrasts.fit(fit, contrast.matrix)
-  fit2 <- eBayes(fit2, trend = TRUE, robust = TRUE)
-  
+
   coefNo <- length(cont)
-  pairTables <- list()
+   pairTables <- vector("list",coefNo)
+
+  for (element in levels(by.chunk)) {
+
+    current <- by.chunk == element
+
+    cur.exprs <- scesall$logcounts[current, , drop = FALSE]
+
   
+
+  fit <- lmFit(cur.exprs, design)
+
+  contrast.matrix <- makeContrasts(contrasts = cont, levels = design)
+
+  
+
+  fit2 <- contrasts.fit(fit, contrast.matrix)
+
+  fit2 <- eBayes(fit2, trend = TRUE, robust = TRUE)
+
+  
+
+  
+
+  
+
+  
+
   for (i in 1 : coefNo) {
-    pairTables[[i]] <- topTable(fit2, coef = i, num = dim(scesall$logcounts)[1], sort.by = "none")
-  }
-  names(pairTables) <- cont
+
+    pairTables[[i]] <- rbind(pairTables[[i]],topTable(fit2, coef = i, num = dim(cur.exprs)[1], sort.by = "none"))
+
+     }
+
   
-  diffglist <- c()
-  for (i in 1:coefNo) {
-    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 1 & pairTables[[i]]$adj.P.Val < FDR, ]
-    diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
-    diffglist <- unique(c(diffglist, diffgenes))
+
   }
+
+  names(pairTables) <- cont
+
+ 
+
+
+  diffglist <- c()
+
+  for (i in 1:coefNo) {
+
+    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > Log2FC & pairTables[[i]]$adj.P.Val < FDR, ]
+
+    diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
+
+    diffglist <- unique(c(diffglist, diffgenes))
+
+  }
+
   diffglist <- na.omit(diffglist)
   
   mDiffFC <- NULL
