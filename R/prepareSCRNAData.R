@@ -62,7 +62,7 @@ prepareSCRNAData <- function(inputfile, organism) {
   scdata$data <- counts[gene.keep, !is.drop]
   scdata$log10_total_counts<-log10(scdata$total_counts)[!is.drop]
   scdata$log10_total_features <- log10(scdata$total_features)[!is.drop]
-  scdata$log10_total_counts_Mt <- log10(scdata$total_counts_rRNA)[!is.drop]
+  scdata$log10_total_counts_rRNA <- log10(scdata$total_counts_rRNA)[!is.drop]
   scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)[!is.drop]
   
   scdata$ave.counts <- Matrix::rowMeans(scdata$data)
@@ -86,6 +86,12 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   
   
   scdata$hvg <- .getMeanVarTrend(scdata$data)
+  ##explained by feature###
+  scdata$genevar_by_counts<-.getVarExplainedbyFeature(scdata,"log10_total_counts")
+  scdata$genevar_by_features<-.getVarExplainedbyFeature(scdata,"log10_total_features")
+  scdata$genevar_by_Mt<-.getVarExplainedbyFeature(scdata,"log10_total_counts_Mt")
+  scdata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
+  
   
   ##select the top 1000 highly variable genes for the PCA
   hvggenes <-  rownames(scdata$hvg)[order(scdata$hvg$zval,decreasing=T)][1:1000]
