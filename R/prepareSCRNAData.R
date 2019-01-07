@@ -77,7 +77,7 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   
   ##select the top 1000 highly variable genes for the PCA
   hvggenes <- rownames(head(scdata$hvg,1000))
-  scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), rank. = 10)
+  scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), n= 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
   fit <- lmFit(scdata$data, design)
