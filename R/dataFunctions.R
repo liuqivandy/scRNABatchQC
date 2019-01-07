@@ -454,9 +454,9 @@
 
    
 
-    gene_mean[current]<-tmpMean <- rowMeans(cur.exprs)
+    gene_mean[current]<-tmpMean <- Matrix::rowMeans(cur.exprs)
 
-    gene_var[current]<- rowSums((cur.exprs-tmpMean)^2)/(ncol-1)
+    gene_var[current]<- Matrix::rowSums((cur.exprs-tmpMean)^2)/(ncol-1)
 
 	
 
