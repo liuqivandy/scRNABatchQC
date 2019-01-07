@@ -50,11 +50,11 @@ prepareSCRNAData <- function(inputfile, organism) {
   scdata$num.cells <- Matrix::rowSums(counts != 0)
 
   gene.keep <- scdata$num.cells > 0
-
+  
 
   scdata$data <- counts[gene.keep, !is.drop]
-  
   scdata$ave.counts <- rowMeans(scdata$data)
+  scdata$num.cells<-scdata$num.cells[gene.keep]
 
 
 ##normalize to 10000
