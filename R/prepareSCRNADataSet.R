@@ -77,7 +77,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
   ##select the top 1000 highly variable genes for the PCA
 
-  feature_set <- rownames(head(pca_tsne_data$hvg,1000))
+  feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T),][1:1000]
 
   #scevar <- apply(scesdata, 1, var)
 
