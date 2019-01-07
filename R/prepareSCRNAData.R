@@ -65,7 +65,7 @@ prepareSCRNAData <- function(inputfile, organism) {
   scdata$log10_total_counts_Mt <- log10(scdata$total_counts_rRNA)[!is.drop]
   scdata$log10_total_counts_Mt <- log10(scdata$total_counts_Mt+1)[!is.drop]
   
-  scdata$ave.counts <- rowMeans(scdata$data)
+  scdata$ave.counts <- Matrix::rowMeans(scdata$data)
   scdata$num.cells<-scdata$num.cells[gene.keep]
 
 
