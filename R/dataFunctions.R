@@ -484,8 +484,6 @@
 
   rownames(hvginfo) <- rownames (data)
 
-  hvginfo<-hvginfo[order(hvginfo$zval,decreasing=T),]
-
   
 
   #data_x_bin_plot<-cut(x=mean_x,breaks=20)
