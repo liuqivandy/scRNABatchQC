@@ -21,8 +21,9 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   scdata <- list()
   
-  scdata$rawdata <- counts
-  
+  #scdata$rawdata <- counts
+  scdata$ngene<-dim(counts)[1]
+  scdata$ncell<-dim(counts)[2]
   scdata$total_counts <- Matrix::colSums(counts)
   scdata$total_features <- Matrix::colSums(counts != 0)
   
@@ -40,15 +41,14 @@ prepareSCRNAData <- function(inputfile, organism) {
   
   
   ###
-  scdata$log10_total_counts<-log10(scdata$total_counts)
-  scdata$log10_total_features <- log10(scdata$total_features)
+  
 
   
   #
   
-  scdata$libsize.drop <- .findOutlier(scdata$log10_total_counts,  type = "lower")
+  scdata$libsize.drop <- .findOutlier(scdata$total_counts,  log=TRUE,type = "lower")
   ##filter cells with less than 200 genes or 3 mad lower
-  scdata$feature.drop <- .findOutlier(scdata$log10_total_features, type = "lower", lower.limit=2)
+  scdata$feature.drop <- .findOutlier(scdata$total_features, log=TRUE,type = "lower", lower.limit=2)
   ##filter cells with larger than 20% mtRNA or 3mad higher
   scdata$mito.drop <- .findOutlier(scdata$pct_counts_Mt, type = "higher",upper.limit=20)
   
