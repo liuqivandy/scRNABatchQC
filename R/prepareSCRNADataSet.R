@@ -10,8 +10,10 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism, sampleRatio=1){
-  result <- list()
+prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1){
+
+ 
+   result <- list()
   nfiles<-length(inputfiles)
   
   if (is.null(samplenames)){samplenames=paste0("S",1:nfiles)}
