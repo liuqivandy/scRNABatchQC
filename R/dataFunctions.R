@@ -367,8 +367,8 @@
   return(mat)
 }
 
-.findOutlier <- function (dat, nmads = 3, type = c("lower", "higher"), upper.limit=NA, lower.limit=NA) {
-  
+.findOutlier <- function (dat, nmads = 3, log=FALSE, type = c("lower", "higher"), upper.limit=NA, lower.limit=NA) {
+  if(log){dat<-log10(dat)}
   med <- median(dat, na.rm = TRUE)
   mad <- mad(dat, center = med, na.rm = TRUE)
   
