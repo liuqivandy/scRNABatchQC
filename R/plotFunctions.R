@@ -1,6 +1,6 @@
 
-DEFAULT_LINE_SIZE <- 1.5
-DEFAULT_POINT_SIZE <- 1
+DEFAULT_LINE_SIZE <- 1
+DEFAULT_POINT_SIZE <- 0.8
 
 ### package cluster, dynamicTreeCut
 #plotClusterSeparateness <- function(sce, ...) {
