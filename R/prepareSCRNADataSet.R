@@ -10,7 +10,7 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism){
+prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism, sampleRatio=1){
   result <- list()
   nfiles<-length(inputfiles)
   
@@ -23,7 +23,7 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism){
     
     cat("Preparing ", samplenames[ind], "\n")
     
-    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism)
+    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism, sampleRatio)
   }
   
   names(result) <- samplenames
