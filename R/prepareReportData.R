@@ -1,4 +1,4 @@
-prepareReportData <- function(inputfiles,samplenames, organism, cachePrefix) {
+prepareReportData <- function(inputfiles,samplenames, organism, sampleRatio, cachePrefix) {
   cat("Preparing sample statistics data ...\n")
     na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
     if (is.na(na.organism)) 
@@ -9,11 +9,11 @@ prepareReportData <- function(inputfiles,samplenames, organism, cachePrefix) {
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else {
-      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism)
+      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio)
       save(sces, file=scesFile)
     }
   } else {
-    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism)
+    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio)
   }
   
   cat("Preparing PCA and tSNE data ...\n")
