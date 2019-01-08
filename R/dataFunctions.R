@@ -532,11 +532,41 @@
 
  }
 
-
-
-
-
 .prepareTableSummary <- function(sces) {
+  pw <- matrix(nrow = length(sces), ncol = 13)
+  
+  for (i in 1:length(sces)) {
+    pw[i, 1] <- names(sces)[i]
+    pw[i, 2] <- sum(sces[[i]]$total_counts) # Count
+    pw[i, 3] <- sces[[i]]$ncell #Cell
+    pw[i, 4] <- sces[[i]]$ngene #Gene
+    pw[i, 5] <- paste0("[", summary(sces[[i]]$total_counts)[1],
+                       "-", summary(sces[[i]]$total_counts)[3],
+                       "-", summary(sces[[i]]$total_counts))[6], "]") # R-Count
+    
+    pw[i, 6] <- paste0("[", summary(sces[[i]]$total_features)[1],
+                       "-", summary(sces[[i]]$total_features)[3],
+                       "-", summary(sces[[i]]$total_features)[6], "]") # R-Gene
+    
+    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt))), digits = 2, nsmall = 1), "%") #mtRNA
+    
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA))), digits = 2, nsmall = 1), "%") # rRNA
+    pw[i, 9] <- sum(sces[[i]]$libsize.drop) # F-Count
+    pw[i, 10] <- sum(sces[[i]]$feature.drop) # F-Gene
+    pw[i, 11] <- 0 # F-rRNA
+    pw[i, 12] <- sum(sces[[i]]$mito.drop) # F-mtRNA
+    pw[i, 13] <- sum(as.numeric(pw[i, 9:12]))
+  }
+  
+  colnames(pw) <- c("EID", "Count", "Cell", "Gene", "R-Count", "R-Gene", 
+                    "mtRNA", "rRNA", "F-Count", "F-Gene", "F-rRNA", "F-mtRNA", "F")
+  
+  return(as.data.frame(pw))
+}
+
+
+
+.prepareTableSummary2 <- function(sces) {
   pw <- matrix(nrow = length(sces), ncol = 13)
   
   for (i in 1:length(sces)) {
