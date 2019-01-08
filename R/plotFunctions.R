@@ -87,7 +87,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), size = DEFA
   avedetect <- data.frame()
   for (i in 1:length(sces)) {
     tmpavedec <- data.frame(avecount = log10(sces[[i]]$ave.counts), 
-                            detectrate = sces[[i]]$num.cells / dim(sces[[i]]$data)[2], 
+                            detectrate = sces[[i]]$num.cells / sces[[i]]$ncell, 
                             Sample = rep(names(sces)[i], length(log10(sces[[i]]$ave.counts))))
     avedetect <- rbind(avedetect, tmpavedec)
   }
