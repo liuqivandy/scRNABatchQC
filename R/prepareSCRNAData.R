@@ -14,8 +14,10 @@
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv", header = F, row.names = 1))
 ##' #sce1 <- prepareSCRNAData(count1)
-prepareSCRNAData <- function(inputfile, organism,sampleRatio=1) {
-  
+prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampleRatio=1) {
+   na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
+    if (is.na(na.organism)) 
+        stop("invalid 'organism' argument, only hsapiens or mmusculus is allowed ")
   rawdata<-data.frame(fread(inputfile),row.names=1)
   counts<-.tosparse(rawdata)
   
