@@ -542,7 +542,7 @@
     pw[i, 4] <- sces[[i]]$ngene #Gene
     pw[i, 5] <- paste0("[", summary(sces[[i]]$total_counts)[1],
                        "-", summary(sces[[i]]$total_counts)[3],
-                       "-", summary(sces[[i]]$total_counts))[6], "]") # R-Count
+                       "-", summary(sces[[i]]$total_counts)[6], "]") # R-Count
     
     pw[i, 6] <- paste0("[", summary(sces[[i]]$total_features)[1],
                        "-", summary(sces[[i]]$total_features)[3],
