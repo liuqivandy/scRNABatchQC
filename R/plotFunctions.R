@@ -74,7 +74,7 @@ plotAveCountVSNumberOfCells <- function(sces, scolors = 1:length(sces), size = D
   
   p <- ggplot(avedetect, aes_string(x = "avecount", y = "numberOfCells", 
                                     group = "Sample", colour = "Sample")) + 
-    geom_point() + xlab("log10(Average count of genes)") + ylab("Number of cells") +
+    geom_point(size=pointSize)  + xlab("log10(Average count of genes)") + ylab("Number of cells") +
     scale_color_manual(values = scolors) +
     theme_classic()
   
@@ -94,7 +94,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), size = DEFA
   
   p <- ggplot(avedetect, aes_string(x = "avecount", y = "detectrate", 
                                     group = "Sample", colour = "Sample")) + 
-    geom_point() + xlab("Average count of genes") + ylab("Detection rate") +
+    geom_smooth(size=lineSize) + xlab("Average count of genes") + ylab("Detection rate") +
     scale_color_manual(values = scolors) +
     theme_classic()
   
