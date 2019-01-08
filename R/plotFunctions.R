@@ -23,12 +23,12 @@ DEFAULT_POINT_SIZE <- 1
 #}
 
 plotDensity <- function(sces, feature, featureLabel = "", 
-                        scolors = 1:length(sces), size = DEFAULT_LINE_SIZE ) {
+                        scolors = 1:length(sces), lineSize = DEFAULT_LINE_SIZE ) {
   featureData <- .getColData(sces, feature)
   featureLabel <- ifelse(featureLabel == "", feature, featureLabel)
 
   p <- ggplot(featureData, aes(x = Value)) + 
-    stat_density(aes(color = Sample), size = size,geom="line",position="identity") + 
+    stat_density(aes(color = Sample), size = lineSize,geom="line",position="identity") + 
     scale_colour_manual(values = scolors) +
     xlab(featureLabel) + theme_classic()
   
@@ -37,7 +37,7 @@ plotDensity <- function(sces, feature, featureLabel = "",
 
 ### top 500 genes count distribution
 plotGeneCountDistribution <- function(sces, scolors = 1:length(sces), 
-                                      nfeatures = 500, size = DEFAULT_LINE_SIZE) {
+                                      nfeatures = 500, lineSize = DEFAULT_LINE_SIZE) {
   prop_mat <- c()
   
   for (i in 1:length(sces)) {
@@ -54,7 +54,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
   p <- ggplot(prop_to_plot, 
               aes_string(x = "Feature", y = "Proportion_Library", 
                          group = "Sample", colour = "Sample")) +
-    geom_line(size = size) + 
+    geom_line(size = lineSize) + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
     scale_color_manual(values = scolors) +
     theme_classic()
@@ -63,27 +63,27 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
 }
 
 
-plotAveCountVSNumberOfCells <- function(sces, scolors = 1:length(sces), size = DEFAULT_POINT_SIZE) {
-  avedetect <- data.frame()
-  for (i in 1:length(sces)) {
-    tmpavedec <- data.frame(avecount = log10(sces[[i]]$ave.counts), 
-                            numberOfCells = sces[[i]]$num.cells, 
-                            Sample = rep(names(sces)[i], length(sces[[i]]$ave.counts)))
-    avedetect <- rbind(avedetect, tmpavedec)
-  }
+#plotAveCountVSNumberOfCells <- function(sces, scolors = 1:length(sces), size = DEFAULT_POINT_SIZE) {
+#  avedetect <- data.frame()
+#  for (i in 1:length(sces)) {
+#    tmpavedec <- data.frame(avecount = log10(sces[[i]]$ave.counts), 
+#                            numberOfCells = sces[[i]]$num.cells, 
+#                            Sample = rep(names(sces)[i], length(sces[[i]]$ave.counts)))
+#    avedetect <- rbind(avedetect, tmpavedec)
+ # }
   
-  p <- ggplot(avedetect, aes_string(x = "avecount", y = "numberOfCells", 
-                                    group = "Sample", colour = "Sample")) + 
-    geom_point(size=pointSize)  + xlab("log10(Average count of genes)") + ylab("Number of cells") +
-    scale_color_manual(values = scolors) +
-    theme_classic()
-  
-  return(p)
-}
+ # p <- ggplot(avedetect, aes_string(x = "avecount", y = "numberOfCells", 
+ #                                   group = "Sample", colour = "Sample")) + 
+ #   geom_point(size=pointSize)  + xlab("log10(Average count of genes)") + ylab("Number of cells") +
+ #   scale_color_manual(values = scolors) +
+ #   theme_classic()
+ # 
+ # return(p)
+#}
 
 ####averge count vs. detection rate
 
-plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), size = DEFAULT_POINT_SIZE) {
+plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = DEFAULT_LINE_SIZE) {
   avedetect <- data.frame()
   for (i in 1:length(sces)) {
     tmpavedec <- data.frame(avecount = log10(sces[[i]]$ave.counts), 
@@ -131,7 +131,7 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 }
 
 plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sces), 
-                                                    feature, size = DEFAULT_LINE_SIZE) {
+                                                    feature, lineSize = DEFAULT_LINE_SIZE) {
   if(missing(feature)){
     stop("Need to specify feature of plotMultiSamplesOneExplanatoryVariables")
   }
@@ -147,7 +147,7 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sce
   dat <- data.frame(Pct_Var_Explained = pct_var_explained,  Sample = sample)
   
   p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
-    geom_line(stat = "density", size = size, trim = T) + 
+    geom_line(stat = "density", size = lineSize, trim = T) + 
     geom_vline(xintercept = 1, linetype = 2) + 
     scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
     xlab(paste0("% variance explained (log10-scale)")) + 
@@ -198,7 +198,7 @@ plotSampleSimilarity <- function(sces, ...) {
 
 ####################### PCA ##############
 
-plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), size = DEFAULT_LINE_SIZE) {
+plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFAULT_POINT_SIZE) {
   pcadata <- data.frame(PC1 = pca_tsne_data$pca$x[, 1], PC2 = pca_tsne_data$pca$x[, 2], Sample = (pca_tsne_data$condition))
   
   eigs <- pca_tsne_data$pca$sdev ^ 2
@@ -206,7 +206,7 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), size = DEFAULT_L
   pc2pct <- eigs[2] / sum(eigs)
   
   p_pca <- ggplot(pcadata, aes(x = PC1, y = PC2, label = Sample)) + 
-    geom_point(aes(col = Sample), size = size) + 
+    geom_point(aes(col = Sample), size = pointSize) + 
     xlab(paste0("PC1(", round(pc1pct * 100), "%)")) + 
     ylab(paste0("PC2(", round(pc2pct * 100), "%)")) + 
     scale_colour_manual(values = scolors) + theme_classic()
@@ -216,11 +216,11 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), size = DEFAULT_L
 
 ####################### TSNE ##############
 
-plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), size = DEFAULT_LINE_SIZE) {
+plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFAULT_POINT_SIZE) {
   tsnedata <- data.frame(D1 = pca_tsne_data$tsne[, 1], D2 = pca_tsne_data$tsne[, 2], Sample = (pca_tsne_data$condition))
   
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
-    geom_point(aes(col = Sample), size = size) + 
+    geom_point(aes(col = Sample), size = pointSize) + 
     xlab("Dimension 1") + ylab("Dimension 2") + 
     scale_colour_manual(values = scolors) + theme_classic()
   
