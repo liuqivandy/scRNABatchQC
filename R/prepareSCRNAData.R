@@ -14,7 +14,7 @@
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv", header = F, row.names = 1))
 ##' #sce1 <- prepareSCRNAData(count1)
-prepareSCRNAData <- function(inputfile, organism) {
+prepareSCRNAData <- function(inputfile, organism,sampleRatio=1) {
   
   rawdata<-data.frame(fread(inputfile),row.names=1)
   counts<-.tosparse(rawdata)
@@ -108,6 +108,12 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
     scdata$hvgPathway <- .getIndividualPathway(hvggenes,organism)
     scdata$pc1Pathway <- .getIndividualPathway(rownames(scdata$pc1genes), organism)
   }
-
+  ###only output partial samples to perform comparison between samples
+  if (sampleRatio<1){
+       nsample=round(dim(scdata$data)[2]*sampleRatio,0)
+       sampleind<-sample(1:dim(scdata$data)[2],nsample)
+       scdata$data<-scdata$data[,sampleind]
+   }
+  #######
   return(scdata)
 }
