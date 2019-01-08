@@ -1,4 +1,4 @@
-prepareReportData <- function(inputfiles,samplenames, organism, sampleRatio, cachePrefix) {
+prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"), sampleRatio=1, cachePrefix) {
   cat("Preparing sample statistics data ...\n")
     na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
     if (is.na(na.organism)) 
