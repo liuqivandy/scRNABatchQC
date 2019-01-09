@@ -199,7 +199,7 @@ plotSampleSimilarity <- function(sces, ...) {
 
 plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFAULT_POINT_SIZE) {
   pcadata <- data.frame(PC1 = pca_tsne_data$pca$x[, 1], PC2 = pca_tsne_data$pca$x[, 2], Sample = (pca_tsne_data$condition))
-  
+  nsample<-length(unique(pca_tsne_data$condition))
   eigs <- pca_tsne_data$pca$sdev ^ 2
   pc1pct <- eigs[1] / sum(eigs)
   pc2pct <- eigs[2] / sum(eigs)
@@ -208,7 +208,7 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFA
     geom_point(aes(col = Sample), size = pointSize) + 
     xlab(paste0("PC1(", round(pc1pct * 100), "%)")) + 
     ylab(paste0("PC2(", round(pc2pct * 100), "%)")) + 
-    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
   
   return(p_pca)
 }
@@ -217,11 +217,11 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFA
 
 plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFAULT_POINT_SIZE) {
   tsnedata <- data.frame(D1 = pca_tsne_data$tsne[, 1], D2 = pca_tsne_data$tsne[, 2], Sample = (pca_tsne_data$condition))
-  
+  nsample<-length(unique(pca_tsne_data$condition))
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
     geom_point(aes(col = Sample), size = pointSize) + 
     xlab("Dimension 1") + ylab("Dimension 2") + 
-    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
   
   return(p_tsne)
 }
