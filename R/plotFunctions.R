@@ -125,9 +125,8 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
     ylab("Variance of log-expression") +
-    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10))
-  
-  return(p)
+    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    return(p)
 }
 
 plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sces), 
