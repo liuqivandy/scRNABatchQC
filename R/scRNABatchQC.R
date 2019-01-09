@@ -1,7 +1,5 @@
 scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE){
-  na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
-  if (is.na(na.organism)) 
-        stop("invalid 'organism' argument, only hsapiens or mmusculus is allowed ")
+  organism<-match.arg(organism)
   if(!missing(cache) & cache){
     plotData<-prepareReportData(inputfiles,samplenames, organism, outputFile, sampleRatio)
   }else{
