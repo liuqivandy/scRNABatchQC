@@ -135,8 +135,10 @@
   colnames(result)<-names(sces)
   return(result)
 }
-
-.getDiffGenes <- function(scesall, organism, Log2FC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
+###############
+###########	       
+	       
+.getDiffGenes2<- function(scesall, organism, Log2FC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
   if(length(unique(scesall$condition)) == 1){
 
     return(list(genes = NULL, pathways = NULL))
@@ -177,7 +179,7 @@
 
   ngenes <- nrow(scesall$logcounts)
 
-     ncol<-ncol(data)
+ #    ncol<-ncol(data)
   
 
   if (ngenes > chunk) {
@@ -307,7 +309,186 @@
   r <- list(genes = mDiffFC, pathways = mDiffPathway)
   return(r)
 }
+	      
+##################################
+.getDiffGenes <- function(scesall, organism, Log2FC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
+ 
+ if(length(unique(scesall$condition)) == 1){
 
+    return(list(genes = NULL, pathways = NULL))
+
+  }
+
+  
+
+  design <- model.matrix( ~ 0 + as.factor(scesall$condition))
+
+  snames <- unique(scesall$condition)
+
+  colnames(design) <- snames
+
+  
+
+  cont <- c()
+
+  compareNames <- c()
+
+  
+
+  for (i in 1 : (length(snames)-1)) {
+
+    for (j in (i + 1) : length(snames)) {
+
+      cont <- c(cont, paste0(snames[i], " - ", snames[j]))
+
+      compareNames <- c(compareNames, paste0(snames[i], "_VS_", snames[j]))
+
+    }
+
+  }
+ 
+   
+ filtereddata<-scesall$logcounts[scesall$hvg$var>0,]
+  
+
+  cat("performing differential analysis ...\n")
+
+  ngenes <- nrow(filtereddata)
+
+  
+  
+
+  if (ngenes > chunk) {
+
+    by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
+
+  } else {
+
+    by.chunk <- factor(integer(ngenes))
+
+  }
+
+  
+
+  coefNo <- length(cont)
+  pairTables <- vector("list",coefNo)
+
+  for (element in levels(by.chunk)) {
+
+    current <- by.chunk == element
+
+    cur.exprs <- filtereddata[current, , drop = FALSE]
+
+  
+
+  fit <- lmFit(cur.exprs, design)
+
+  contrast.matrix <- makeContrasts(contrasts = cont, levels = design)
+
+  
+
+  fit2 <- contrasts.fit(fit, contrast.matrix)
+
+  fit2 <- eBayes(fit2, trend = TRUE, robust = TRUE)
+
+  
+
+  
+
+  
+
+  
+
+  for (i in 1 : coefNo) {
+
+    pairTables[[i]] <- rbind(pairTables[[i]],topTable(fit2, coef = i, num = dim(cur.exprs)[1], sort.by = "none"))
+
+     }
+
+  
+
+  }
+
+  names(pairTables) <- cont
+
+ 
+
+
+  diffglist <- c()
+
+  for (i in 1:coefNo) {
+
+    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > Log2FC & pairTables[[i]]$adj.P.Val < FDR, ]
+
+    diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
+
+    diffglist <- unique(c(diffglist, diffgenes))
+
+  }
+
+  diffglist <- na.omit(diffglist)
+   
+  mDiffFC <- NULL
+  mDiffPathway <- NULL
+  if(length(diffglist) > 0){
+    diffFC <- NULL
+    for (i in 1:coefNo) {
+      matchid <- rownames(pairTables[[i]]) %in% diffglist
+      diffFC <- rbind(diffFC, data.frame(Comparison = cont[i], 
+                                         Gene = rownames(pairTables[[i]])[matchid], 
+                                         LogFold = pairTables[[i]]$logFC[matchid]))
+    }
+    mDiffFC <- dcast(diffFC, Gene ~ Comparison, value.var = "LogFold", fill = 0)
+    rownames(mDiffFC) <- mDiffFC$Gene
+    
+    for (con in cont) {
+      if (!(con %in% colnames(mDiffFC))) {
+        mDiffFC[, con] <- rnorm(nrow(mDiffFC), 0, 0.01)
+      }
+    }
+    mDiffFC <- mDiffFC[, -1, drop = F] 
+    
+    if (!missing(organism)) {
+      diffPathList <- NULL
+      for (i in 1:coefNo) {
+        cat("pathway analysis of", i, ":", cont[i], "\n")
+        
+        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 0.6 & pairTables[[i]]$adj.P.Val < FDR, ]
+        if (nrow(diffvs) > 1) {
+          alldiffgenes <- rownames(diffvs)
+          pathList <- .getWebGestaltPathway(alldiffgenes, organism)
+          if (!is.null(pathList)) {
+            pathList$Comparison <- cont[[i]]
+            diffPathList <- rbind(diffPathList, pathList)
+          }
+        }
+      }
+      
+      if (!is.null(diffPathList)) {
+        infDiffIndex <- diffPathList$FDR == Inf
+        if (sum(infDiffIndex) > 0) {
+          maxFdr <- max(diffPathList$FDR[diffPathList$FDR != Inf])
+          diffPathList$FDR[infDiffIndex] <- maxFdr + 1
+        }
+        mDiffPathway <- dcast(diffPathList, Pathway ~ Comparison, value.var = "FDR", fill = 0)
+        for (con in cont){
+          if (!(con %in% colnames(mDiffPathway))) {
+            mDiffPathway[, con] <- abs(rnorm(nrow(mDiffPathway), 0, 0.01))
+          }
+        }
+        rownames(mDiffPathway) <- mDiffPathway$Pathway
+        mDiffPathway <- mDiffPathway[, -1, drop = F]
+      }
+    }
+  }
+  
+  r <- list(genes = mDiffFC, pathways = mDiffPathway)
+  return(r)
+}
+	       
+
+	       
+	       
 ### Biological features similarity
 ### select the top 50 genes (adjustable) to plot the heatmap and pathway analysis
 ### .getBiologicalSimilarity(sces, objectName="hvg",valueName="zval")
