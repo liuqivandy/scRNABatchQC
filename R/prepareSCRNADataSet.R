@@ -12,9 +12,7 @@
 ##' #sces <- prepareSCRNADataSet(sampleTable)
 prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1){
     
-   na.organism <- pmatch(organism, c("hsapiens","mmusculus"))
-    if (is.na(na.organism)) 
-         stop("invalid 'organism' argument, only hsapiens or mmusculus is allowed ")
+  organism<-match.arg(organism)
  
   result <- list()
   nfiles<-length(inputfiles)
