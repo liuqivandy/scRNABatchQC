@@ -131,30 +131,17 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 
 plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sces), 
                                                     feature, lineSize = DEFAULT_LINE_SIZE) {
-  if(missing(feature)){
-    stop("Need to specify feature of plotMultiSamplesOneExplanatoryVariables")
-  }
+  featureData <- .getColData(sces, feature)
   featureLabel<- switch(feature,"genevar_by_counts"="by total counts","genevar_by_features"="by total number of genes","genevar_by_Mt"="by total number of mtRNA", "genevar_by_rRNA"="by total number of rRNA")
-  pct_var_explained <- c()
-  sample <- c()
-  for (i in 1:length(sces)) {
-    tmp_pct_VE <- sces[[i]][[feature]]
-    pct_var_explained <- c(pct_var_explained, tmp_pct_VE)
-    sample <- c(sample, rep(names(sces)[i], length(tmp_pct_VE)))
-  }
-  
-  dat <- data.frame(Pct_Var_Explained = pct_var_explained,  Sample = sample)
-  
-  p <- ggplot(dat, aes(x = Pct_Var_Explained, colour = Sample)) + 
-    geom_line(stat = "density", size = lineSize, trim = T) + 
+  p <- ggplot(featureData, aes(x = Value)) + 
+    stat_density(aes(color = Sample), size = lineSize,geom="line",position="identity") + 
     geom_vline(xintercept = 1, linetype = 2) + 
     scale_x_log10(breaks = 10 ^ (-3:2), labels = c(0.001, 0.01, 0.1, 1, 10, 100)) + 
     xlab(paste0("% variance explained ",featureLabel, "(log10)")) + 
     ylab("Density") + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+scale_fill_discrete(breaks=unique(Sample))
-  
-  return(p)
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    return(p)
 }
 
 ###########Global similarity#####################################
