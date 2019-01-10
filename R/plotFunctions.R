@@ -195,7 +195,11 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFA
     geom_point(aes(col = Sample), size = pointSize) + 
     xlab(paste0("PC1(", round(pc1pct * 100), "%)")) + 
     ylab(paste0("PC2(", round(pc2pct * 100), "%)")) + 
-    scale_colour_manual(values = scolors,breaks=unique(pcadata$Sample)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
+    scale_colour_manual(values = scolors,breaks=unique(pcadata$Sample)) +
+    theme_classic()+
+    guides(col = guide_legend(ncol=ceiling(nsample/10)))+
+    ggtitle("PCA")+
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(p_pca)
 }
@@ -206,9 +210,9 @@ plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEF
   tsnedata <- data.frame(D1 = pca_tsne_data$tsne[, 1], D2 = pca_tsne_data$tsne[, 2], Sample = (pca_tsne_data$condition),stringsAsFactors=FALSE)
   nsample<-length(unique(pca_tsne_data$condition))
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
-    geom_point(aes(col = Sample), size = pointSize) + 
-    xlab("Dimension 1") + ylab("Dimension 2") + 
-    scale_colour_manual(values = scolors,breaks=unique(tsnedata$Sample)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
+    geom_point(aes(col = Sample), size = pointSize) + labs(title="tSNE",x="t-SNE1",y="t-SNE2")+
+    scale_colour_manual(values = scolors,breaks=unique(tsnedata$Sample)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))+
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(p_tsne)
 }
