@@ -4,7 +4,7 @@ Date: 2018-08-02
 Title: a package for quality control of multiple single cell RNAseq data
 Author: Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu
 Maintainer: "Quanhu SHENG" <shengqh@gmail.com>
-Depends: R.utils,  ggplot2, irlba, data.table, reshape2, gplots, Rtsne, WebGestaltR, rmdformats, limma, Matrix, statmod, DT, RCurl
+Depends: R.utils,  ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, limma, Matrix, statmod, DT, RCurl
 biocViews:
 Description: 
   Multiple single cell data quality control
