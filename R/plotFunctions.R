@@ -30,7 +30,10 @@ plotDensity <- function(sces, feature, featureLabel = "",
   p <- ggplot(featureData, aes(x = Value)) + 
     stat_density(aes(color = Sample), size = lineSize,geom="line",position="identity") + 
     scale_colour_manual(values = scolors) +
-    xlab(featureLabel) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    xlab(featureLabel) + theme_classic()+
+    guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
+    ggtitle(featureLabel)+
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(p)
 }
@@ -57,7 +60,9 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
     geom_line(size = lineSize) + 
     xlab("Number of features") + ylab("Cumulative proportion of library") +
     scale_color_manual(values = scolors) +
-    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
+    ggtitle("Cumulative percentage of highly expressed genes")+
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(p)
 }
@@ -96,7 +101,9 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
                                     group = "Sample", colour = "Sample")) + 
     geom_smooth(size=lineSize) + xlab("Average count of genes") + ylab("Detection rate") +
     scale_color_manual(values = scolors) +
-    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
+    ggtitle("Detection rate")+
+    theme(plot.title = element_text(hjust = 0.5))
   
   return(p)
 }
@@ -125,7 +132,9 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
     scale_color_manual(values = scolors) + 
     xlab("Mean log-expression") + 
     ylab("Variance of log-expression") +
-    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
+    ggtitle("Mean-Variance trend")+
+    theme(plot.title = element_text(hjust = 0.5))
     return(p)
 }
 
@@ -140,7 +149,9 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sce
     xlab(paste0("% variance explained ",featureLabel, "(log10)")) + 
     ylab("Density") + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
+    ggtitle(paste0("Var explained by ",featureLabel))+
+    theme(plot.title = element_text(hjust = 0.5))
     return(p)
 }
 
