@@ -58,7 +58,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
               aes_string(x = "Feature", y = "Proportion_Library", 
                          group = "Sample", colour = "Sample")) +
     geom_line(size = lineSize) + 
-    xlab("Number of features") + ylab("Cumulative proportion of library") +
+    xlab("Number of genes") + ylab("Cumulative proportion of library") +
     scale_color_manual(values = scolors) +
     theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle("Cumulative percentage of highly expressed genes")+
