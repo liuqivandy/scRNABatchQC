@@ -152,7 +152,7 @@ plotMultiSamplesOneExplanatoryVariables <- function(sces, scolors = 1:length(sce
     xlab(paste0("% variance explained ",featureLabel, "(log10)")) + 
     ylab("Density") + 
     scale_color_manual(values = scolors) +
-    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))
+    coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+scale_fill_discrete(breaks=unique(Sample))
   
   return(p)
 }
@@ -208,7 +208,7 @@ plotAllPCA <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEFA
     geom_point(aes(col = Sample), size = pointSize) + 
     xlab(paste0("PC1(", round(pc1pct * 100), "%)")) + 
     ylab(paste0("PC2(", round(pc2pct * 100), "%)")) + 
-    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
+    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))+scale_fill_discrete(breaks=unique(Sample))
   
   return(p_pca)
 }
@@ -221,7 +221,7 @@ plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEF
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
     geom_point(aes(col = Sample), size = pointSize) + 
     xlab("Dimension 1") + ylab("Dimension 2") + 
-    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))
+    scale_colour_manual(values = scolors) + theme_classic()+guides(col = guide_legend(ncol=ceiling(nsample/10)))+scale_fill_discrete(breaks=unique(Sample))
   
   return(p_tsne)
 }
