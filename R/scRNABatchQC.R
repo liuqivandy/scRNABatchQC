@@ -1,9 +1,9 @@
-scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE, nHVGs=1000,nPC=10,sf=10000,FC=1.5,FDR=0.01){
+scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE, nHVGs=1000,nPC=10,sf=10000,logFC=0.58,FDR=0.01){
   organism<-match.arg(organism)
   if(!missing(cache) & cache){
-    plotData<-prepareReportData(inputfiles,samplenames, organism, outputFile, sampleRatio,nHVGs, nPC, sf, FC, FDR)
+    plotData<-prepareReportData(inputfiles,samplenames, organism, outputFile, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
   }else{
-    plotData<-prepareReportData(inputfiles,samplenames, organism, sampleRatio, nHVGs, nPC, sf, FC, FDR)
+    plotData<-prepareReportData(inputfiles,samplenames, organism, sampleRatio, nHVGs, nPC, sf, logFC, FDR)
   }
   
   #reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
