@@ -453,7 +453,7 @@
       for (i in 1:coefNo) {
         cat("pathway analysis of", i, ":", cont[i], "\n")
         
-        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > 0.6 & pairTables[[i]]$adj.P.Val < FDR, ]
+        diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > logFC & pairTables[[i]]$adj.P.Val < FDR, ]
         if (nrow(diffvs) > 1) {
           alldiffgenes <- rownames(diffvs)
           pathList <- .getWebGestaltPathway(alldiffgenes, organism)
