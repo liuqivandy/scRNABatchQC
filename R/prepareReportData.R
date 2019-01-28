@@ -7,11 +7,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else {
-      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
+      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf)
       save(sces, file=scesFile)
     }
   } else {
-    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
+    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf)
   }
   
   cat("Preparing PCA and tSNE data ...\n")
@@ -21,11 +21,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", scesAllFile, " ...\n")
       load(scesAllFile)
     } else {
-      scesall <- preparePCATSNEData(sces)
+      scesall <- preparePCATSNEData(sces,nHVGs,nPC)
       save(scesall, file=scesAllFile)
     }
   } else {
-    scesall <- preparePCATSNEData(sces)
+    scesall <- preparePCATSNEData(sces,nHVGs, nPC)
   }
 
   cat("Preparing differential expression analysis data ...\n")
@@ -35,11 +35,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", diffFCFile, " ...\n")
       load(diffFCFile)
     } else {
-      diffFC <- .getDiffGenes(scesall, organism = organism,  FDR = 0.01, geneNo = 50)
+      diffFC <- .getDiffGenes(scesall, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
       save(diffFC, file = diffFCFile)
     }
   }else{
-    diffFC <- .getDiffGenes(scesall, organism = organism,  FDR = 0.01, geneNo = 50)
+    diffFC <- .getDiffGenes(scesall, organism = organism,  logFC=logFC, FDR=FDR , geneNo = 50)
   }
   
   hvgPathways <- .getMultiplePathway(sces, metaObjectName = "hvgPathway")
