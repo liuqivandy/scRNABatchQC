@@ -248,6 +248,11 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
 
 <hr>
 
+
+
+```{r child="scRNABatchQCreport_biological.Rmd", eval=hasSimilarity, echo=FALSE}
+```
+
 ```{r child="scRNABatchQCreport_similarity.Rmd", eval=hasSimilarity, echo=FALSE}
 ```
 
@@ -266,9 +271,6 @@ print(plotAllTSNE(plotData$scesall, scolors))
 The tSNE plot for the first two components (`r figRef("plotTSNE")`) shows the relationships between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
 
 <hr>
-
-```{r child="scRNABatchQCreport_biological.Rmd", eval=hasSimilarity, echo=FALSE}
-```
 
 ```{r child="scRNABatchQCreport_difference.Rmd", eval=hasDifference, echo=FALSE}
 ```
