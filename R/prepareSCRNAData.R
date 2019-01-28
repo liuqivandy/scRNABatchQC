@@ -69,7 +69,7 @@ prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampl
   scdata$num.cells<-scdata$num.cells[gene.keep]
 
 
-##normalize to 10000
+##normalize to scale factor (sf), the default is 10000
 
  lib_size <- sf/scdata$total_counts[!is.drop]
   
@@ -93,9 +93,9 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   scdata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
   
   
-  ##select the top 1000 highly variable genes for the PCA
+  ##select the top HVGs highly variable genes for the PCA, default is 1000
   hvggenes <-  rownames(scdata$hvg)[order(scdata$hvg$zval,decreasing=T)][1:nHVGs]
-  scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), n= 10)
+  scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), n= 2)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
   fit <- lmFit(scdata$data, design)
@@ -105,8 +105,8 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   scdata$pc1genes <- topTable(fit, coef = 2, n = 500)
 ## enriched pathways in top 1000 hvgs and 500 pc1 genes
   if(!missing(organism)){
-    scdata$hvgPathway <- .getIndividualPathway(hvggenes,organism)
-    scdata$pc1Pathway <- .getIndividualPathway(rownames(scdata$pc1genes), organism)
+    scdata$hvgPathway <- .getIndividualPathway(hvggenes,organism=organism)
+    scdata$pc1Pathway <- .getIndividualPathway(rownames(scdata$pc1genes), organism=organism)
   }
   ###only output partial samples to perform comparison between samples
   if (sampleRatio<1){
