@@ -228,7 +228,7 @@ plotAllTSNE <- function(pca_tsne_data, scolors = 1:length(sces), pointSize = DEF
   return(p_tsne)
 }
 
-plotPairwiseDifference <- function(scesall, FDR = 0.01, geneNo = 50, ...) {
-  diffFC <- .getDiffGenes(scesall, FDR = FDR, geneNo = geneNo)
+plotPairwiseDifference <- function(scesall, logFC=1,FDR = 0.01, geneNo = 50, ...) {
+  diffFC <- .getDiffGenes(scesall, logFC=logFC,FDR = FDR, geneNo = geneNo)
   heatmap.2(as.matrix(diffFC$genes), cexRow = 0.6, cexCol = 0.6, ...)
 }
