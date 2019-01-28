@@ -14,7 +14,7 @@
 ##' @examples 
 ##' #count1 <- as.matrix(read.csv("sample1.csv", header = F, row.names = 1))
 ##' #sce1 <- prepareSCRNAData(count1)
-prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampleRatio=1) {
+prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampleRatio=1,nHVGs=1000,sf=10000) {
   organism<-match.arg(organism)
   rawdata<-data.frame(fread(inputfile),row.names=1)
   counts<-.tosparse(rawdata)
@@ -71,7 +71,7 @@ prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampl
 
 ##normalize to 10000
 
- lib_size <- 10000/scdata$total_counts[!is.drop]
+ lib_size <- sf/scdata$total_counts[!is.drop]
   
 
 rowind<-scdata$data@i+1  
@@ -94,7 +94,7 @@ scdata$data@x<-log2(scdata$data@x*lib_size[colind]+1)
   
   
   ##select the top 1000 highly variable genes for the PCA
-  hvggenes <-  rownames(scdata$hvg)[order(scdata$hvg$zval,decreasing=T)][1:1000]
+  hvggenes <-  rownames(scdata$hvg)[order(scdata$hvg$zval,decreasing=T)][1:nHVGs]
   scdata$pca <- prcomp_irlba(t(scdata$data[rownames(scdata$data)%in%hvggenes, , drop = FALSE]), n= 10)
   
   design <- model.matrix( ~ scdata$pca$x[, 1])
