@@ -10,7 +10,7 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1){
+prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1,nHVGs=1000, nPC=10, sf=1000, logFC=0.58, FDR=0.01){
     
   organism<-match.arg(organism)
  
@@ -26,7 +26,7 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
     
     cat("Preparing ", samplenames[ind], "\n")
     
-    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism, sampleRatio)
+    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
   }
   
   names(result) <- samplenames
@@ -45,7 +45,7 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
 ##' @examples 
 ##' #sces <- prepareSCRNADataSet(sampleTable)
 ##' #sceall <- preparePCATSNEData(sces)
-preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
+preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10, perplexity = 20) {
 
    pca_tsne_data <- list()
    
@@ -80,7 +80,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
   ##select the top 1000 highly variable genes for the PCA
 
-  feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:1000]
+  feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:nHVGs]
 
   #scevar <- apply(scesdata, 1, var)
 
@@ -90,7 +90,7 @@ preparePCATSNEData <- function(sces, ncomponents = 10, perplexity = 20) {
 
    
 
- pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = ncomponents)
+ pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = nPC)
 
   
   set.seed(100)
