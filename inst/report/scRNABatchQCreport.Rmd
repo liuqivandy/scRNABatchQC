@@ -124,9 +124,9 @@ displayDiffPathway<-DISPLAY_FIGURE & hasDiffPathway
 **scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report include five sections:**
 
   * _**QC Summary**_ - Overview of Quality Control in each scRNA-seq experiment. 
-  * _**Technical View**_ - Technical factors across multiple scRNA-seq experiments. 
-  * _**Expression Similarity**_ - Expression Similarity between cells across multiple scRNA-seq experiments. 
+  * _**Technical View**_ - Technical features across multiple scRNA-seq experiments. 
   * _**Biological View**_ - Biological features across multiple scRNA-seq experiments.
+  * _**Expression Similarity**_ - Expression Similarity between all cells across multiple scRNA-seq experiments. 
   * _**Pairwise Difference**_ - Genes and pathways that cause the pairwise difference among scRNA-seq experiments.
 
 # QC Summary
