@@ -1,4 +1,4 @@
-prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"), sampleRatio=1, cachePrefix) {
+prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"), sampleRatio=1, cachePrefix,nHVGs=1000,nPC=10,sf=10000,logFC=1.5,FDR=0.01) {
   cat("Preparing sample statistics data ...\n")
     organism<-match.arg(organism)
   if (!missing(cachePrefix)) {
@@ -7,11 +7,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else {
-      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio)
+      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
       save(sces, file=scesFile)
     }
   } else {
-    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio)
+    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
   }
   
   cat("Preparing PCA and tSNE data ...\n")
