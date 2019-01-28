@@ -10,7 +10,7 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
-prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1,nHVGs=1000, nPC=10, sf=1000, logFC=0.58, FDR=0.01){
+prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1,nHVGs=1000, nPC=10, sf=10000){
     
   organism<-match.arg(organism)
  
@@ -26,7 +26,7 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
     
     cat("Preparing ", samplenames[ind], "\n")
     
-    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism, sampleRatio,nHVGs, nPC, sf, logFC, FDR)
+    result[[ind]] <- prepareSCRNAData(inputfiles[ind], organism=organism, sampleRatio=sampleRatio,nHVGs=nHVGs, nPC=nPC, sf=sf)
   }
   
   names(result) <- samplenames
@@ -45,7 +45,7 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
 ##' @examples 
 ##' #sces <- prepareSCRNADataSet(sampleTable)
 ##' #sceall <- preparePCATSNEData(sces)
-preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10, perplexity = 20) {
+preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10) {
 
    pca_tsne_data <- list()
    
@@ -95,7 +95,7 @@ preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10, perplexity = 20) {
   
   set.seed(100)
 
-  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = perplexity, check_duplicates = FALSE)
+  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = 20, check_duplicates = FALSE)
   
   pca_tsne_data$tsne <- tsne_out$Y
 
