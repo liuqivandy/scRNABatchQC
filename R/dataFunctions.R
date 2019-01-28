@@ -311,7 +311,7 @@
 }
 	      
 ##################################
-.getDiffGenes <- function(scesall, organism, Log2FC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
+.getDiffGenes <- function(scesall, organism, LogFC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
  
  if(length(unique(scesall$condition)) == 1){
 
@@ -418,7 +418,7 @@
 
   for (i in 1:coefNo) {
 
-    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > Log2FC & pairTables[[i]]$adj.P.Val < FDR, ]
+    diffvs <- pairTables[[i]][abs(pairTables[[i]]$logFC) > logFC & pairTables[[i]]$adj.P.Val < FDR, ]
 
     diffgenes <- rownames(diffvs)[order(abs(diffvs$logFC), decreasing = TRUE)][1:min(geneNo, dim(diffvs)[1])]
 
