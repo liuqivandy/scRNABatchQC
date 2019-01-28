@@ -1,4 +1,4 @@
-prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"), sampleRatio=1, cachePrefix,nHVGs=1000,nPC=10,sf=10000,logFC=1.5,FDR=0.01) {
+prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"), sampleRatio=1, cachePrefix,nHVGs=1000,nPC=10,sf=10000,logFC=0.58,FDR=0.01) {
   cat("Preparing sample statistics data ...\n")
     organism<-match.arg(organism)
   if (!missing(cachePrefix)) {
