@@ -7,11 +7,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", scesFile, " ...\n")
       load(scesFile)
     } else {
-      sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf)
+      sces <- prepareSCRNADataSet(inputfiles=inputfiles,samplenames=samplenames, organism=organism, sampleRatio=sampleRatio,nHVGs=nHVGs,sf=sf)
       save(sces, file=scesFile)
     }
   } else {
-    sces <- prepareSCRNADataSet(inputfiles,samplenames, organism, sampleRatio,nHVGs, nPC, sf)
+    sces <- prepareSCRNADataSet(inputfiles=inputfiles,samplenames=samplenames, organism=organism, sampleRatio=sampleRatio,nHVGs=nHVGs,sf=sf)
   }
   
   cat("Preparing PCA and tSNE data ...\n")
@@ -21,11 +21,11 @@ prepareReportData <- function(inputfiles,samplenames=NULL, organism=c("hsapiens"
       cat("Loading from cache file", scesAllFile, " ...\n")
       load(scesAllFile)
     } else {
-      scesall <- preparePCATSNEData(sces,nHVGs,nPC)
+      scesall <- preparePCATSNEData(sces,nHVGs=nHVGs,nPC=nPC)
       save(scesall, file=scesAllFile)
     }
   } else {
-    scesall <- preparePCATSNEData(sces,nHVGs, nPC)
+    scesall <- preparePCATSNEData(sces,nHVGs=nHVGs, nPC=nPC)
   }
 
   cat("Preparing differential expression analysis data ...\n")
