@@ -21,7 +21,7 @@
 #' #Check the quality of two single cell RNA-seq datasets from human
 #' scRNABatchQC(inputfiles=c("data1.csv","data2.csv"))  
 #' 
-#' @import limma ape permute GUniFrac Rtsne R.utils knitr kableExtra rmdformats statmod
+#' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl
 #' @importFrom devtools session_info
 #' 
 #' @export
