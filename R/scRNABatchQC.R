@@ -1,3 +1,27 @@
+#' scRNABatchQC
+#' 
+#' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
+
+#' @param inputfiles; a character vector giving the names of scRNA-seq files containing gene-cell count matrices; each file should be delimited, either in tsv or csv format
+#' @param samplenames; the names of experiments, if it is NULL(default), the names are set to S1, S2....
+#' @param organism; a character string giving the organism, either hsapiens or mmusculus; (default: "hsapiens")
+#' @param outputFile; a character string giving the output File name (default: report.html) 
+#' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1)
+#' @param nHVGs integer; the number of highly variable genes (default: 1000)
+#' @param nPC integer; the number of principle components (default: 10)
+#' @param sf integer; Scale factor  (default: 10000)
+#' @param logFC float; log fold change cutoff to select differentially expressed genes  (default: 1)
+#' @param FDR float; FDR cutoff to select differentially expressed genes (default:0.01)
+#' 
+
+#' @examples
+#' library(scRNABatchQC)  
+
+
+#' #Check the quality of two single cell RNA-seq datasets from human
+#' scRNABatchQC(inputfiles=c("data1.csv","data2.csv"))  
+#' 
+
 scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE, nHVGs=1000,nPC=10,sf=10000,logFC=1,FDR=0.01){
   organism<-match.arg(organism)
   if(!missing(cache) & cache){
