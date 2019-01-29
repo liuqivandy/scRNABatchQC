@@ -1,16 +1,19 @@
 ---
 title: "scRNABatchQC Report"
 output: 
-  rmdformats::material:
-    self_contained: false
-    thumbnails: true
-    lightbox: true
-    gallery: true
-    highlight: tango  
+  html_document:
+    toc: true
+    toc_depth: 2
 params:
   data: plotData
   displayFigure: TRUE
 ---
+
+<style>
+.figure p.caption {
+  font-size: 1.5em;
+}
+</style>
 
 ```{r setup, include=FALSE}
 library(RColorBrewer)
@@ -34,24 +37,26 @@ figRef <- local({
   created <- logical()
   used <- logical()
   function(label, caption, prefix = options("figcap.prefix"), 
-           sep = options("figcap.sep"), prefix.highlight = options("figcap.prefix.highlight")) {
-    i <- which(names(tag) == label)
-    if (length(i) == 0) {
-      i <- length(tag) + 1
-      tag <<- c(tag, i)
-      names(tag)[length(tag)] <<- label
-      used <<- c(used, FALSE)
-      names(used)[length(used)] <<- label
-      created <<- c(created, FALSE)
-      names(created)[length(created)] <<- label
-    }
-    if (!missing(caption)) {
-      created[label] <<- TRUE
-      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
-             " ", caption)
-    } else {
-      used[label] <<- TRUE
-      paste(prefix, tag[label])
+           sep = options("figcap.sep"), prefix.highlight = options("figcap.prefix.highlight"), trunk.eval=TRUE) {
+    if(trunk.eval){ 
+      i <- which(names(tag) == label)
+      if (length(i) == 0) {
+        i <- length(tag) + 1
+        tag <<- c(tag, i)
+        names(tag)[length(tag)] <<- label
+        used <<- c(used, FALSE)
+        names(used)[length(used)] <<- label
+        created <<- c(created, FALSE)
+        names(created)[length(created)] <<- label
+      }
+      if (!missing(caption)) {
+        created[label] <<- TRUE
+        paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
+               " ", caption)
+      } else {
+        used[label] <<- TRUE
+        paste(prefix, tag[label])
+      }
     }
   }
 })
@@ -62,24 +67,26 @@ tabRef <- local({
   created <- logical()
   used <- logical()
   function(label, caption, prefix = options("tabcap.prefix"), 
-           sep = options("tabcap.sep"), prefix.highlight = options("tabcap.prefix.highlight")) {
-    i <- which(names(tag) == label)
-    if (length(i) == 0) {
-      i <- length(tag) + 1
-      tag <<- c(tag, i)
-      names(tag)[length(tag)] <<- label
-      used <<- c(used, FALSE)
-      names(used)[length(used)] <<- label
-      created <<- c(created, FALSE)
-      names(created)[length(created)] <<- label
-    }
-    if (!missing(caption)) {
-      created[label] <<- TRUE
-      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
-             " ", caption)
-    } else {
-      used[label] <<- TRUE
-      paste(prefix, tag[label])
+           sep = options("tabcap.sep"), prefix.highlight = options("tabcap.prefix.highlight"), trunk.eval=TRUE) {
+    if(trunk.eval){
+      i <- which(names(tag) == label)
+      if (length(i) == 0) {
+        i <- length(tag) + 1
+        tag <<- c(tag, i)
+        names(tag)[length(tag)] <<- label
+        used <<- c(used, FALSE)
+        names(used)[length(used)] <<- label
+        created <<- c(created, FALSE)
+        names(created)[length(created)] <<- label
+      }
+      if (!missing(caption)) {
+        created[label] <<- TRUE
+        paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, 
+              " ", caption)
+      } else {
+        used[label] <<- TRUE
+        paste(prefix, tag[label])
+      }
     }
   }
 })
@@ -113,6 +120,11 @@ heatmapMargins<-c(10,10)
 
 hasDiffGenes<-!is.null(plotData$diffFC$genes)
 displayDiffGenes<-DISPLAY_FIGURE & hasDiffGenes
+if(hasDiffGenes){
+  drawHeatmap<-nrow(plotData$diffFC$genes) > 1
+}else{
+  drawHeatmap<-FALSE
+}
 
 hasDiffPathway<-!is.null(plotData$diffFC$pathways)
 displayDiffPathway<-DISPLAY_FIGURE & hasDiffPathway
@@ -159,7 +171,7 @@ A short description of Table 1 metrics is provided below:
 
 <hr>
 
-```{r density_total_counts, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "Total count distribution"), fig.height=4}
+```{r density_total_counts, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "The total number of counts"), fig.height=4}
 print(plotDensity(sces,"total_counts", "The total number of counts", scolors))
 ```
 
@@ -244,7 +256,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_Mt"))
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
 ```
 
-`r figRef("plotVarianceRRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of ribosomal RNA reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+`r figRef("plotVariancerRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of ribosomal RNA reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
 
 <hr>
 
