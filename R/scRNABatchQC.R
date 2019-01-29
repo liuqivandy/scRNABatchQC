@@ -1,11 +1,24 @@
 scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE, nHVGs=1000,nPC=10,sf=10000,logFC=1,FDR=0.01){
   organism<-match.arg(organism)
-  if(!missing(cache) & cache){
-    plotData<-prepareReportData(inputfiles=inputfiles,samplenames=samplenames, organism=organism,  sampleRatio=sampleRatio,nHVGs=nHVGs, nPC=nPC, sf=sf, logFC=logFC, FDR=FDR)
+  if(cache){
+    cacheFile<-paste0(outputFile, ".rdata")
+    if(file.exists(cacheFile)){
+      load(cacheFile)
+    }else{
+      plotData<-prepareReportData(inputfiles=inputfiles,samplenames=samplenames, organism=organism,  sampleRatio=sampleRatio,nHVGs=nHVGs, nPC=nPC, sf=sf, logFC=logFC, FDR=FDR)
+      save(plotData, file=cacheFile)
+      cat("Cachefile saved")
+    }
   }else{
     plotData<-prepareReportData(inputfiles=inputfiles,samplenames=samplenames, organism=organism,  sampleRatio=sampleRatio,nHVGs=nHVGs, nPC=nPC, sf=sf, logFC=logFC, FDR=FDR)
   }
-  
+  plotData$sampleRatio=sampleRatio
+  plotData$nHVGs = nHVGs
+  plotData$nPC=nPC
+  plotData$sf=sf
+  plotData$logFC=logFC
+  plotData$FDR=FDR
+
   #reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
   reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   
