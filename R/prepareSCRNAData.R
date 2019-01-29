@@ -1,19 +1,19 @@
-##' prepareSCRNAData
-##'
-##' The function prepare statistics information from single cell RNAseq data table.
-##'
-##' @param count the count table with first column as gene name
-##' @return a named list containing scRNA data, 
-##'                                 hvg:high variance genes, 
-##'                                 pc1genes: genes in first principle component,
-##'                                 varTrend: variance trend fit result
-##' @importFrom scran trendVar decomposeVar
-##' @importFrom limma lmFit eBayes topTable
-##' @importFrom Matrix Matrix
-##' @export prepareSCRNAData
-##' @examples 
-##' #count1 <- as.matrix(read.csv("sample1.csv", header = F, row.names = 1))
-##' #sce1 <- prepareSCRNAData(count1)
+#' prepareSCRNAData
+#' @description prepare statistics information from one single cell RNAseq data table
+
+#' @param inputfile; the input file name of gene-by-cell count matrix; each file should be delimited, either in tsv or csv format
+#' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1)
+#' @param nHVGs integer; the number of highly variable genes (default: 1000)
+#' @param sf integer; Scale factor  (default: 10000)
+ 
+#' @return a named list containing scRNA data, 
+#'                                 hvggenes:high variance genes, 
+#'                                 pc1genes: genes in first principle component,
+#'                                
+
+#' @examples
+#' library(scRNABatchQC)
+#' sce<-prepareSCRNAData(inputfile="data1.csv")
 prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampleRatio=1,nHVGs=1000,sf=10000) {
   organism<-match.arg(organism)
   rawdata<-data.frame(fread(inputfile),row.names=1)
