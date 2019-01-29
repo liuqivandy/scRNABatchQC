@@ -14,6 +14,10 @@
 #' @examples
 #' library(scRNABatchQC)
 #' sce<-prepareSCRNAData(inputfile="data1.csv")
+#' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl
+#' @importFrom devtools session_info
+#' 
+#' @export
 prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampleRatio=1,nHVGs=1000,sf=10000) {
   organism<-match.arg(organism)
   rawdata<-data.frame(fread(inputfile),row.names=1)
