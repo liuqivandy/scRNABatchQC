@@ -4,11 +4,12 @@
 
 <hr>
 
-```{r plotDiffGenes, eval=displayDiffGenes, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffGenes", "Heatmap of differentially expressed genes in pairwise comparison"), fig.height=getHeatmapHeight(plotData$diffFC$genes), fig.width=10}
+
+```{r plotDiffGenes, eval=drawHeatmap, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffGenes", "Heatmap of differentially expressed genes in pairwise comparison", trunk.eval=drawHeatmap), fig.height=getHeatmapHeight(plotData$diffFC$genes), fig.width=10}
 heatmap.2(as.matrix(plotData$diffFC$genes), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapColors)
 ```
 
-scRNABatchQC detects differentially expressed genes between two experiments (logFC>1 & FDR<0.01, default, we can sepcify logFC, FDR to change the default criteria). 
+scRNABatchQC detects differentially expressed genes between two experiments (logFC>`r plotData$logFC` & FDR<`r plotData$FDR`). 
 
 ```{r showDiffGenes, eval=hasDiffGenes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 cat(paste0(figRef("plotDiffGenes"), " shows the absolute value of log2 transformed fold change of differentially expressed genes in each pairwise comparison."))

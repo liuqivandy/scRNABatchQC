@@ -1,7 +1,7 @@
 
 <hr>
 
-```{r plotDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes"), fig.height=getHeatmapHeight(plotData$diffFC$pathways), fig.width=10}
+```{r plotDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes", trunk.eval=displayDiffPathway), fig.height=getHeatmapHeight(plotData$diffFC$pathways), fig.width=10}
 heatmap.2(as.matrix(plotData$diffFC$pathways), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapPathwayColors)
 ```
 
