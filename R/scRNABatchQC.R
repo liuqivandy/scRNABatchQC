@@ -21,7 +21,10 @@
 #' #Check the quality of two single cell RNA-seq datasets from human
 #' scRNABatchQC(inputfiles=c("data1.csv","data2.csv"))  
 #' 
-
+#' @import limma ape permute GUniFrac Rtsne R.utils knitr kableExtra rmdformats statmod
+#' @importFrom devtools session_info
+#' 
+#' @export
 scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusculus"),outputFile="report.html", sampleRatio=1,cache=FALSE, nHVGs=1000,nPC=10,sf=10000,logFC=1,FDR=0.01){
   organism<-match.arg(organism)
   if(!missing(cache) & cache){
