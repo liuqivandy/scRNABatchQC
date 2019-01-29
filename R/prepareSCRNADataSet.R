@@ -10,6 +10,10 @@
 ##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
 ##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
 ##' #sces <- prepareSCRNADataSet(sampleTable)
+#' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl
+#' @importFrom devtools session_info
+#' 
+#' @export
 prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1,nHVGs=1000, sf=10000){
     
   organism<-match.arg(organism)
