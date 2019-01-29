@@ -43,18 +43,20 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
   return(result)
 }
 
-##' preparePCATSNEData
-##'
-##' The function prepare statistics information from multiple scRNA dataset.
-##'
-##' @param sces a named list of scRNA data
-##' @return a list with PCA and TSNE data
-##' @importFrom Rtsne Rtsne
-##' @importFrom Matrix Matrix
-##' @export preparePCATSNEData
-##' @examples 
-##' #sces <- prepareSCRNADataSet(sampleTable)
-##' #sceall <- preparePCATSNEData(sces)
+#' preparePCATSNEData
+#'
+#' @description generate the PCA and tSNE data for the combined samples.
+#'
+#' @param sces a named list of scRNA data
+#' @param nHVGs integer; the number of highly variable genes (default:1000)
+#' @param nPC integer: the number of principal components (default:10)
+#' @return a list with PCA and TSNE data
+#' @importFrom Rtsne Rtsne
+#' @importFrom Matrix Matrix
+#' @export preparePCATSNEData
+#' @examples 
+#' #sces <- prepareSCRNADataSet(inputfiles=c("data1.csv","data2.csv"))
+#' #sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10) {
 
    pca_tsne_data <- list()
