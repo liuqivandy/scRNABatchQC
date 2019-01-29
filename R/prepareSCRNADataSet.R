@@ -1,19 +1,25 @@
-##' prepareSCRNADataSet
-##'
-##' The function read multiple count table and prepare statistics information for each table
-##'
-##' @param sampleTable the sample table with first column as sample name, second column as file location
-##' @param organism the organism for annotation
-##' @return a named list of scRNA data
-##' @export prepareSCRNADataSet
-##' @examples 
-##' #sampleTable <- data.frame(Sample = c("S1", "S2", "S3"), 
-##'                            File = c("count1.csv", "count2.csv", "count3.csv"))
-##' #sces <- prepareSCRNADataSet(sampleTable)
+#' prepareSCRNADataSet
+
+
+#' @description  prepare statistics information for multiple single-cell RNA-seq datasets represented by gene-count matrices
+#' @param inputfiles; a character vector giving file names of gene-by-cell count matrices; each file should be delimited, either in tsv or csv format
+#' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1, use the full dataset without sampling)
+#' @param nHVGs integer; the number of highly variable genes (default: 1000)
+#' @param sf integer; Scale factor  (default: 10000)
+ 
+#' @return a named list containing each scRNA data sets, 
+#'                                
+#'                                
+
+#' @examples
+#' library(scRNABatchQC)
+#' sces<-prepareSCRNADataSet(inputfile=c("data1.csv","data2.csv"))
+
 #' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl
 #' @importFrom devtools session_info
 #' 
 #' @export
+
 prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapiens","mmusculus"), sampleRatio=1,nHVGs=1000, sf=10000){
     
   organism<-match.arg(organism)
