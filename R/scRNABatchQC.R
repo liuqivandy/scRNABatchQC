@@ -2,7 +2,7 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputfiles; a character vector giving the names of scRNA-seq files containing gene-cell count matrices; each file should be delimited, either in tsv or csv format
+#' @param inputfiles; a character vector giving the file names containing gene-cell count matrices; each file should be delimited, either in tsv or csv format
 #' @param samplenames; the names of experiments, if it is NULL(default), the names are set to S1, S2....
 #' @param organism; a character string giving the organism, either hsapiens or mmusculus; (default: "hsapiens")
 #' @param outputFile; a character string giving the output File name (default: report.html) 
@@ -10,7 +10,7 @@
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPC integer; the number of principle components (default: 10)
 #' @param sf integer; Scale factor  (default: 10000)
-#' @param logFC float; log fold change cutoff to select differentially expressed genes  (default: 1)
+#' @param logFC float; log2 fold change cutoff to select differentially expressed genes  (default: 1)
 #' @param FDR float; FDR cutoff to select differentially expressed genes (default:0.01)
 #' 
 
