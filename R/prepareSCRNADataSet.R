@@ -1,7 +1,7 @@
 #' prepareSCRNADataSet
 
 
-#' @description  prepare statistics information for multiple single-cell RNA-seq datasets represented by gene-count matrices
+#' @description  Generate statistics information for multiple single-cell RNA-seq datasets represented by gene-count matrices
 #' @param inputfiles; a character vector giving file names of gene-by-cell count matrices; each file should be delimited, either in tsv or csv format
 #' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1, use the full dataset without sampling)
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
@@ -13,7 +13,7 @@
 
 #' @examples
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("data1.csv","data2.csv"))
+#' sces<-prepareSCRNADataSet(inputfiles=c("data1.csv","data2.csv"))
 
 #' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl
 #' @importFrom devtools session_info
@@ -55,8 +55,9 @@ prepareSCRNADataSet <- function(inputfiles, samplenames=NULL,organism=c("hsapien
 #' @importFrom Matrix Matrix
 #' @export preparePCATSNEData
 #' @examples 
-#' #sces <- prepareSCRNADataSet(inputfiles=c("data1.csv","data2.csv"))
-#' #sceall <- preparePCATSNEData(sces)
+#' library(scRNABatchQC)
+#' sces <- prepareSCRNADataSet(inputfiles=c("data1.csv","data2.csv"))
+#' sceall <- preparePCATSNEData(sces)
 preparePCATSNEData <- function(sces, nHVGs=1000, nPC= 10) {
 
    pca_tsne_data <- list()
