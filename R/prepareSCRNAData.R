@@ -1,5 +1,5 @@
 #' prepareSCRNAData
-#' @description prepare statistics information from one single cell RNAseq data table
+#' @description Generate statistics information from one single cell RNAseq represented by gene-cell count table
 
 #' @param inputfile; the input file name of gene-by-cell count matrix; each file should be delimited, either in tsv or csv format
 #' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1)
