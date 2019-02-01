@@ -33,7 +33,7 @@ An example to run scRNABatchQC.
         
 	
 	
-	setwd("/scratch/scRNABatchQC/")     # set working directory
-	library(scRNABatchQC)
 	
+	library(scRNABatchQC)
+	# this will generate a report.html in your current working directory
 	scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
