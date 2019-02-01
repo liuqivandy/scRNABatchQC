@@ -195,12 +195,12 @@ print(plotDensity(sces,"pct_counts_Mt", "The proportion of reads mapped to mitoc
 
 <hr>
 
-```{r plotRibosomalRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal RNA"), fig.height=4}
-print(plotDensity(sces,"pct_counts_rRNA", "The proportion of reads mapped to ribosomal RNA", scolors))
+```{r plotRibosomalRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal genes"), fig.height=4}
+print(plotDensity(sces,"pct_counts_rRNA", "The proportion of reads mapped to ribosomal genes", scolors))
 
 ```
 
-`r figRef("plotRibosomalRNA")` shows the distribution of the proportion of reads mapped to ribosomal RNA in each cell in each scRNA-seq experiment, which is denoted by different color. A cell with high proportion of reads mapped to rRNA is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of rRNA reads than others.
+`r figRef("plotRibosomalRNA")` shows the distribution of the proportion of reads mapped to ribosomal genes in each cell in each scRNA-seq experiment, which is denoted by different color. A cell with high proportion of reads mapped to ribosomal genes is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of ribosomal gene reads than others.
 
 <hr>
 
@@ -252,11 +252,11 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_Mt"))
 
 <hr>
 
-```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of rRNA reads"), fig.height=4}
+```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of ribosomal genes reads"), fig.height=4}
 print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
 ```
 
-`r figRef("plotVariancerRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of ribosomal RNA reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+`r figRef("plotVariancerRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of reads mapped to ribosomal genes. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
 
 <hr>
 
