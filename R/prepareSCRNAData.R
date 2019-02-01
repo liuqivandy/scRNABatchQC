@@ -1,7 +1,7 @@
 #' prepareSCRNAData
 #' @description Generate statistics information from one single cell RNAseq represented by gene-cell count table
 
-#' @param inputfile; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfile; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
 #' @param sampleRatio float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1)
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param sf integer; Scale factor  (default: 10000)
