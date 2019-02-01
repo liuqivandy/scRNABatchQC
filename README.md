@@ -36,4 +36,4 @@ An example to run scRNABatchQC.
 	setwd("/scratch/scRNABatchQC/")     # set working directory
 	library(scRNABatchQC)
 	
-	scRNABatchQC(inputfiles=c("count1.csv", "count2.csv", "count3.csv"))
+	scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz", "count3.csv"))
