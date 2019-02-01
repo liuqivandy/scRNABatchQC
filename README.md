@@ -29,7 +29,7 @@ Step 3: Install scRNABatchQC by:
 
 # Usage
 
-Example to run scRNABatchQC.
+# Example to run scRNABatchQC.
         
 	
 	
