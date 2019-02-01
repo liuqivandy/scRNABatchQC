@@ -2,7 +2,7 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputfiles; a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfiles; a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
 #' @param samplenames; the names of experiments, if it is NULL(default), the names are set to S1, S2....
 #' @param organism; a character string giving the organism, either hsapiens or mmusculus; (default: "hsapiens")
 #' @param outputFile; a character string giving the output File name (default: report.html) 
