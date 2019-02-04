@@ -558,13 +558,13 @@
                        "-", summary(sces[[i]]$total_features)[3],
                        "-", summary(sces[[i]]$total_features)[6], "]") # R-Gene
     
-    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt))), digits = 2, nsmall = 1), "%") #mtRNA
+    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1), "%") #mtRNA
     
-    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA))), digits = 2, nsmall = 1), "%") # rRNA
-    pw[i, 9] <- sum(sces[[i]]$libsize.drop) # F-Count
-    pw[i, 10] <- sum(sces[[i]]$feature.drop) # F-Gene
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1), "%") # rRNA
+    pw[i, 9] <- sum(sces[[i]]$libsize.drop,na.rm=T) # F-Count
+    pw[i, 10] <- sum(sces[[i]]$feature.drop,na.rm=T) # F-Gene
     pw[i, 11] <- 0 # F-rRNA
-    pw[i, 12] <- sum(sces[[i]]$mito.drop) # F-mtRNA
+    pw[i, 12] <- sum(sces[[i]]$mito.drop,na.rm=T) # F-mtRNA
     pw[i, 13] <- sum(as.numeric(pw[i, 9:12]))
   }
   
