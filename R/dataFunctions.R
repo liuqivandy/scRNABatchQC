@@ -81,7 +81,8 @@
   }
   
   if(is.null(sdata)){
-    stop(paste0(metaObjectName, " is not exists in object sces"))
+    warning(paste0(metaObjectName, " is not exists in object sces"))
+    return(NULL)
   }
   
   sdata$FDR[sdata$FDR == Inf] <- max(sdata$FDR[sdata$FDR != Inf]) + 1

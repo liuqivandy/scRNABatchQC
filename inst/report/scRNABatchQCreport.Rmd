@@ -118,6 +118,9 @@ heatmapColors<-bluered(75)
 heatmapPathwayColors<-colorpanel(75,low="white",high="red")
 heatmapMargins<-c(10,10)
 
+hasPathway<-!is.null(plotData$hvgPathways)
+displayPathway<-DISPLAY_FIGURE & hasPathway
+
 hasDiffGenes<-!is.null(plotData$diffFC$genes)
 displayDiffGenes<-DISPLAY_FIGURE & hasDiffGenes
 if(hasDiffGenes){
