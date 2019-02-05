@@ -26,7 +26,9 @@ cat(paste0(tabRef("tableDiffPathway"), " shows the enriched pathways based on di
 ```
 
 ```{r showNoDiffPathway, eval=!hasDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-cat("But no enriched pathway detected.")
+if(hasPathway){
+  cat("But no enriched pathway detected.")
+}
 ```
 
 
