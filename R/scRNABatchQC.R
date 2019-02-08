@@ -46,8 +46,8 @@ scRNABatchQC<-function(inputfiles,samplenames=NULL, organism=c("hsapiens","mmusc
   plotData$logFC=logFC
   plotData$FDR=FDR
 
-  #reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
-  reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
+  reportRmd <- "E:/sqh/programs/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
+  #reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   
   outputFile <- getAbsolutePath(outputFile)
   output_dir = dirname(outputFile)

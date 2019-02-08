@@ -14,7 +14,7 @@ prepareSCRNAData(inputfile, organism = c("hsapiens", "mmusculus"),
 
 \item{sf}{integer; Scale factor  (default: 10000)}
 
-\item{inputfile;}{the input file name of gene-by-cell count matrix; each file should be delimited, either in tsv or csv format}
+\item{inputfile;}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 }
 \value{
 a named list containing scRNA data, 

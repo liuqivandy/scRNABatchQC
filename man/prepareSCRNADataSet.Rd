@@ -15,7 +15,7 @@ prepareSCRNADataSet(inputfiles, samplenames = NULL,
 
 \item{sf}{integer; Scale factor  (default: 10000)}
 
-\item{inputfiles;}{a character vector giving file names of gene-by-cell count matrices; each file should be delimited, either in tsv or csv format}
+\item{inputfiles;}{a character vector giving the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 }
 \value{
 a named list containing each scRNA data sets,
