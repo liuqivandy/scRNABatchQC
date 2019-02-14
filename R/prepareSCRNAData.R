@@ -64,6 +64,9 @@ prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampl
   
 
   scdata$data <- counts[gene.keep, !is.drop]
+  ###
+  saveRDS(scdata$data,file=paste0(inputfile,"_filtered.rds"))
+  ##
   scdata$log10_total_counts<-log10(scdata$total_counts)[!is.drop]
   scdata$log10_total_features <- log10(scdata$total_features)[!is.drop]
   scdata$log10_total_counts_rRNA <- log10(scdata$total_counts_rRNA+1)[!is.drop]
