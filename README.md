@@ -35,6 +35,7 @@ After installing scRNABatchQC, use following codes to run examples
 	
 	#check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ) 
 	#a report named "report.html" will be generated in your working directory
+	#rds files containing the gene-cell count matrix after filtering will be generated in your working directory 
 	
 	scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
 
