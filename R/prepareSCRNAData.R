@@ -65,7 +65,7 @@ prepareSCRNAData <- function(inputfile, organism=c("hsapiens","mmusculus"),sampl
 
   scdata$data <- counts[gene.keep, !is.drop]
   ###save the filtered gene-cell count matrix into rds file
-  saveRDS(scdata$data,file=paste0(inputfile,"_filtered.rds"))
+  saveRDS(scdata$data,file=paste0(basename(inputfile),"_filtered.rds"))
   ##
   scdata$log10_total_counts<-log10(scdata$total_counts)[!is.drop]
   scdata$log10_total_features <- log10(scdata$total_features)[!is.drop]
