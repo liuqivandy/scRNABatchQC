@@ -33,7 +33,9 @@ After installing scRNABatchQC, use following codes to run examples
 
 	library(scRNABatchQC)
 	
-	#check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ) 
+	#check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 )
+	#The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol
+	# one of the dataset has more than 14,000 cells and 2,4904 genes, thus big memory (>=32Gb) is required.
 	#a report named "report.html" will be generated in your working directory
 	#rds files containing the gene-cell count matrix after filtering will be generated in your working directory 
 	
