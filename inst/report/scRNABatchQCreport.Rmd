@@ -130,7 +130,12 @@ if(hasDiffGenes){
 }
 
 hasDiffPathway<-!is.null(plotData$diffFC$pathways)
-displayDiffPathway<-DISPLAY_FIGURE & nrow(plotData$diffFC$pathways) > 1
+if(hasDiffPathway){
+  displayDiffPathway<-DISPLAY_FIGURE & nrow(plotData$diffFC$pathways) > 1  
+}else{
+  displayDiffPathway<-FALSE  
+}
+
 
 ```
 
