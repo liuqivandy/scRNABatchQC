@@ -119,7 +119,18 @@ heatmapPathwayColors<-colorpanel(75,low="white",high="red")
 heatmapMargins<-c(10,10)
 
 hasPathway<-!is.null(plotData$hvgPathways)
-displayPathway<-DISPLAY_FIGURE & hasPathway
+if(hasPathway){
+  displayPathway<-DISPLAY_FIGURE & nrow(plotData$hvgPathways) > 1  
+}else{
+  displayPathway<-FALSE  
+}
+
+hasPC1Pathway<-!is.null(plotData$pc1Pathways)
+if(hasPC1Pathway){
+  displayPC1Pathway<-DISPLAY_FIGURE & nrow(plotData$pc1Pathways) > 1  
+}else{
+  displayPC1Pathway<-FALSE  
+}
 
 hasDiffGenes<-!is.null(plotData$diffFC$genes)
 displayDiffGenes<-DISPLAY_FIGURE & hasDiffGenes

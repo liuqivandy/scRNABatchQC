@@ -28,7 +28,7 @@ scRNABatchQC selects the top 50 differentially expressed genes along the first p
 
 <hr>
 
-```{r plotPathwaySimilarityPC1Gene, eval=displayPathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityPC1Gene", "Heatmap of enriched pathways for PC1 genes", trunk.eval=displayPathway), fig.height=getHeatmapHeight(plotData$pc1Pathways), cache=FALSE, fig.width=10}
+```{r plotPathwaySimilarityPC1Gene, eval=displayPC1Pathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityPC1Gene", "Heatmap of enriched pathways for PC1 genes", trunk.eval=displayPC1Pathway), fig.height=getHeatmapHeight(plotData$pc1Pathways), cache=FALSE, fig.width=10}
 heatmap.2(plotData$pc1Pathways, margins = heatmapMargins, cexRow = 0.5, keysize=heatmapKeysize, col=heatmapPathwayColors, main="Pathways in PC1 genes")
 cat("scRNABatchQC performs the functional enrichment analysis for the PC1 genes in each experiment. ", figRef("plotPathwaySimilarityPC1Gene"), " shows the log-pvalue for enriched pathways in each experiment and pathway similarity across experiments.")
 ```
