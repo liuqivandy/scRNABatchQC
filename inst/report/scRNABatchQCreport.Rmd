@@ -95,6 +95,19 @@ getHeatmapHeight<-function(hdata){
   max(10, nrow(hdata) / 10)
 }
 
+plotHeatmap<-function(datam,feature=c("hvg","hvgPath","PCg","PCgPath","diffg","diffgPath")){
+  keytitle<-switch(feature, "hvg"="zval","hvgPath"="-logFDR","PCg"="logFC","PCgPath"="-logFDR","diffg"="logFC","diffgPath"="-logFDR")
+  maintitle<-switch(feature, "hvg"="Highly variable genes","hvgPath"="Pathways enriched in HVGs","PCg"="PC-related genes","PCPath"="Pathways enriched in PC-related genes","diffg"="Differentially expressed genes","diffgPath"="Pathways enriched in DEGs")
+  if (feature== "hvg" | feature== "PCg" | feature=="diffg"){ 
+            colv=heatmapColors
+	} else colv=heatmapPathwayColors
+   if (ncol(datam)>1 & nrow(datam)>1){
+             heatmap.2(datam, margins = heatmapMargins,  keysize=heatmapKeysize, col=colv,main=maintitle,key.title=keytitle,key.xlab="",key.ylab="")} else {
+			 warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
+			 kable(datam,caption=maintitle,col.names=paste0(colnames(datam),"(",keytitle,")"))
+			 }
+ }
+
 options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
 ```
 
@@ -103,6 +116,11 @@ DISPLAY_FIGURE=params$displayFigure
 plotData<-params$data
 sces <- plotData$sces
 
+hvgBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "hvg", valueName = "zval")
+hvgPathways <- .getMultiplePathways(sces, metaObjectName = "hvgPathway")
+pc1geneBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "pc1genes", valueName = "logFC")
+pc1Pathways <- .getMultiplePathways(sces, metaObjectName = "pc1Pathway")
+
 if(length(sces) < 9){
   scolors=brewer.pal(length(sces), "Set1")
 }else{
@@ -110,39 +128,39 @@ if(length(sces) < 9){
 }
 names(scolors)<-names(sces)
 
-hasSimilarity<-length(sces) > 1
-hasDifference<-length(sces) > 2
+hasComparison<-length(sces) > 1
 
-heatmapKeysize<-0.6
+
+heatmapKeysize<-1
 heatmapColors<-bluered(75)
 heatmapPathwayColors<-colorpanel(75,low="white",high="red")
-heatmapMargins<-c(10,10)
+heatmapMargins<-c(5,15)
 
-hasPathway<-!is.null(plotData$hvgPathways)
+hasPathway<-!is.null(hvgPathways)
 if(hasPathway){
-  displayPathway<-DISPLAY_FIGURE & nrow(plotData$hvgPathways) > 1  
+  displayPathway<-DISPLAY_FIGURE 
 }else{
   displayPathway<-FALSE  
 }
 
-hasPC1Pathway<-!is.null(plotData$pc1Pathways)
+hasPC1Pathway<-!is.null(pc1Pathways)
 if(hasPC1Pathway){
-  displayPC1Pathway<-DISPLAY_FIGURE & nrow(plotData$pc1Pathways) > 1  
+  displayPC1Pathway<-DISPLAY_FIGURE 
 }else{
   displayPC1Pathway<-FALSE  
 }
 
-hasDiffGenes<-!is.null(plotData$diffFC$genes)
+hasDiffGenes<-!is.null(plotData$scesMerge@metadata$diffFC$genes)
 displayDiffGenes<-DISPLAY_FIGURE & hasDiffGenes
 if(hasDiffGenes){
-  drawHeatmap<-nrow(plotData$diffFC$genes) > 1
+  drawHeatmap<-DISPLAY_FIGURE 
 }else{
   drawHeatmap<-FALSE
 }
 
-hasDiffPathway<-!is.null(plotData$diffFC$pathways)
+hasDiffPathway<-!is.null(plotData$scesMerge@metadata$diffFC$pathways)
 if(hasDiffPathway){
-  displayDiffPathway<-DISPLAY_FIGURE & nrow(plotData$diffFC$pathways) > 1  
+  displayDiffPathway<-DISPLAY_FIGURE 
 }else{
   displayDiffPathway<-FALSE  
 }
@@ -171,18 +189,20 @@ kable(plotData$tableSummary, caption=tabRef("tableSummary", "Summary of Quality 
 A short description of Table 1 metrics is provided below: 
 
   * _**EID**_ - Unique experiment ID. 
-  * _**Count**_ - The total number of counts 
+  * _**Count**_ - The total number of counts in the experiment 
   * _**Cell**_ - The total number of cells 
   * _**Gene**_ - The total number of genes 
-  * _**R-Count**_ - The range of the number of counts across cells [min-median-max]. 
-  * _**R-Gene**_ - The range of the number of genes identified in cells [min-median-max] 
-  * _**mtRNA**_ - The maximum percentage of mitochondrial RNA reads 
-  * _**rRNA**_ - The maximum percentage of rRNA reads
+  * _**R-Count**_ - The range of the total number of counts in a cell across all cells [min-median-max]. 
+  * _**R-Gene**_ - The range of the total number of genes identified in a cell across all cells [min-median-max] 
+  * _**mtRNA**_ - The maximum percentage of mitochondrial RNA reads in all cells 
+  * _**rRNA**_ - The maximum percentage of rRNA reads in all cells
   * _**F-Count**_ - The number of cells filtered by counts 
+  * _**C-Count**_ - The cutoff to remove the cell if the total counts of the cell is less than C-Count
   * _**F-Gene**_ - The number of cells filtered by genes
-  * _**F-rRNA**_ - The number of cells filtered by rRNA percentage
-  * _**F-mtRNA**_ - The number of cells filtered by mtRNA percentage 
-  * _**F**_ - The total number of cells filtered by low quality
+  * _**C-Gene**_ - The cutoff to remove the cell if the total genes of the cell is less than C-Gene
+  * _**F-mt**_ - The number of cells filtered by mtRNA percentage 
+  * _**C-mt**_ - The cutoff to remove the cell if the percentage of mtRNA is larger than C-mt
+  * _**F**_ - The total number of cells filtered by counts, genes, or mtRNA criteria
 
 # Technical View
 
@@ -248,7 +268,7 @@ The variance of gene expression is driven by both uninteresting technical noise 
 <hr>
 
 ```{r log10_total_counts, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "The percentage of expression variances explained by the library size"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_counts"))
+print(plotVarianceExplained(sces, "genevar_by_counts", scolors))
 ```
 
 `r figRef("log10_total_counts")` shows the percentage of expression variance that is explained by the log-transformed total number of counts for each gene. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the library sizes contribute substantially to the gene expression abundance. If so, this technical factor may need to be modeled into the downstream analysis.  Different contributions of library sizes to expression variances across multiple experiments are indicative of the presence of batch effects.
@@ -256,7 +276,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_counts"
 <hr>
 
 ```{r log10_total_features, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "The percentage of expression variances explained by the total number of expressed genes"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_features"))
+print(plotVarianceExplained(sces, "genevar_by_features",scolors))
 ```
 
 `r figRef("log10_total_features")` shows the percentage of expression variance of each gene that is explained by the log-transformed number of genes detected in each cell. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
@@ -264,7 +284,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_feature
 <hr>
 
 ```{r log10_total_counts_Mt, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "The percentage of expression variances explained by the proportion of mitochondrial reads"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_Mt"))
+print(plotVarianceExplained(sces,  "genevar_by_Mt", scolors))
 ```
 
 `r figRef("log10_total_counts_Mt")` shows the percentage of expression variance of each gene that is explained by the percentage of mitochondrial reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
@@ -272,7 +292,7 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_Mt"))
 <hr>
 
 ```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of ribosomal genes reads"), fig.height=4}
-print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
+print(plotVarianceExplained(sces, "genevar_by_rRNA",scolors))
 ```
 
 `r figRef("plotVariancerRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of reads mapped to ribosomal genes. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
@@ -281,30 +301,30 @@ print(plotMultiSamplesOneExplanatoryVariables(sces, scolors, "genevar_by_rRNA"))
 
 
 
-```{r child="scRNABatchQCreport_biological.Rmd", eval=hasSimilarity, echo=FALSE}
+```{r child="scRNABatchQCreport_biological.Rmd",  eval=DISPLAY_FIGURE, echo=FALSE}
 ```
 
-```{r child="scRNABatchQCreport_similarity.Rmd", eval=hasSimilarity, echo=FALSE}
+```{r child="scRNABatchQCreport_similarity.Rmd",  eval=hasComparison, echo=FALSE}
 ```
 
 ```{r plotPCA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPCA", "PCA plot of expression similarity between cells"), fig.height=4}
-print(plotAllPCA(plotData$scesall, scolors))
+plotAllPCA(plotData$scesMerge, scolors)
 ```
 
 The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the relationships between cells within or across scRNA-seq experiments.
 
 <hr>
 
-```{r plotTSNE, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotTSNE", "tSNE plot of expression similarity between cells"), fig.height=4}
-print(plotAllTSNE(plotData$scesall, scolors))
+```{r plotTSNE, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plottSNE", "tSNE plot of expression similarity between cells"), fig.height=4}
+plotAlltSNE(plotData$scesMerge, scolors)
 ```
 
 The tSNE plot for the first two components (`r figRef("plotTSNE")`) shows the relationships between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
 
 <hr>
 
-```{r child="scRNABatchQCreport_difference.Rmd", eval=hasDifference, echo=FALSE}
+```{r child="scRNABatchQCreport_difference.Rmd", eval=hasComparison, echo=FALSE}
 ```
 
-```{r child="scRNABatchQCreport_difference_pathways.Rmd", eval=hasDifference, echo=FALSE}
+```{r child="scRNABatchQCreport_difference_pathways.Rmd", eval=hasComparison, echo=FALSE}
 ```

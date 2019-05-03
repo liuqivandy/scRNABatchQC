@@ -68,14 +68,14 @@
 }
 
 ###
-.getMultiplePathway <- function(sces, metaObjectName) {
+.getMultiplePathways <- function(sces, metaObjectName) {
   sdata<-NULL
   for (i in 1:length(sces)) {
-    fNo <- which(names(sces[[i]]) == metaObjectName)
+    fNo <- which(names(sces[[i]]@metadata) == metaObjectName)
     if(length(fNo) == 0){
       next
     }
-    spathway <- sces[[i]][fNo][[1]]
+    spathway <- sces[[i]]@metadata[fNo][[1]]
     spathway$Sample <- names(sces)[i]
     sdata <- rbind(sdata, spathway)
   }
@@ -101,23 +101,43 @@
   return(mdata)
 }
 
-.getColData <- function(sces, feature){
+.getRawColData <- function(sces, feature){
   if(missing(feature)){
     stop("Need to specify feature of .getColData")
   }
+  if (is.null(names(sces))) names(sces)<-1:length(sces)
   
-  fNo <- which(names(sces[[1]]) == feature)
+  fNo <- which(names(sces[[1]]@metadata$rawmeta$CellData) == feature)
   if(length(fNo) == 0){
     stop(paste0("Feature ", feature, " is not exists in object sces"))
   }
   
   result<-NULL
   for (i in 1:length(sces)) {
-    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=sces[[i]][fNo]))
+    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=sces[[i]]@metadata$rawmeta$CellData[fNo]))
   }
   colnames(result) <- c("Sample", "Value")
   return(result)
 }
+
+.getGeneData <- function(sces, feature){
+  if(missing(feature)){
+    stop("Need to specify feature of .getColData")
+  }
+  if (is.null(names(sces))) names(sces)<-1:length(sces)
+  fNo <- which(names(sces[[1]]@elementMetadata) == feature)
+  if(length(fNo) == 0){
+    stop(paste0("Feature ", feature, " is not exists in object sces"))
+  }
+  
+  result<-NULL
+  for (i in 1:length(sces)) {
+    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=sces[[i]]@elementMetadata[fNo]))
+  }
+  colnames(result) <- c("Sample", "Value")
+  return(result)
+}
+
 
 .getCbindRowData<-function(sces, feature){
   if(missing(feature)){
@@ -143,7 +163,7 @@
 ##################################
 .getDiffGenes <- function(scesall, organism, logFC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
  
- if(length(unique(scesall$condition)) == 1){
+ if(length(unique(scesall@colData$condition)) == 1){
 
     return(list(genes = NULL, pathways = NULL))
 
@@ -151,9 +171,9 @@
 
   
 
-  design <- model.matrix( ~ 0 + as.factor(scesall$condition))
+  design <- model.matrix( ~ 0 + as.factor(scesall@colData$condition))
 
-  snames <- unique(scesall$condition)
+  snames <- unique(scesall@colData$condition)
 
   colnames(design) <- snames
 
@@ -178,7 +198,7 @@
   }
  
    
- filtereddata<-scesall$logcounts[scesall$hvg$var>0,]
+ filtereddata<-logcounts(scesall)[scesall@elementMetadata$hvg$var>0,]
   
 
   cat("performing differential analysis ...\n")
@@ -324,36 +344,48 @@
 ### .getBiologicalSimilarity(sces, objectName="hvg",valueName="zval")
 ### .getBiologicalSimilarity(sces, objectName="pc1genes",valueName="logFC")
 .getBiologicalSimilarity <- function(sces, objectName="hvg",valueName="zval",topn=50,defaultValue=0) {
-  objIndex <- which(names(sces[[1]]) == objectName)
-  sobj <- sces[[1]][objIndex][[1]]
+  
+  
+  
   #filterIndex  <- which(colnames(sobj) == filterName)
-  valueIndex  <- which(colnames(sobj) == valueName)
+  
   
   genelist <- c()
   for (i in 1:length(sces)) {
-    sobj <- sces[[i]][objIndex][[1]]
+      
+    if (objectName=="pc1genes") sobj=sces[[i]]@metadata$pc1genes
    #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
-    if (objectName=="hvg") {sobj<-sobj[order(sobj[,valueIndex],decreasing=T),]}
-    sgene <- rownames(head(sobj,topn))
-    genelist <- c(genelist, sgene)
-  }
+    if (objectName=="hvg") {
+	sobj=sces[[i]]@elementMetadata$hvg
+	sobj<-sobj[order(sobj[valueName],decreasing=T),]}
+    }
+  sgene <- rownames(head(sobj,topn))
+  genelist <- c(genelist, sgene)
   genelist <- unique(genelist)
   
   sdata <- NULL
   for (i in 1:length(sces)) {
-    sobj <- sces[[i]][objIndex][[1]]
+    
+	
+	if (objectName=="pc1genes") sobj=sces[[i]]@metadata$pc1genes
+   #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
+    if (objectName=="hvg")   sobj=sces[[i]]@elementMetadata$hvg
+	
     matchid <- rownames(sobj) %in% genelist
     filtered <- sobj[matchid, ]
+	Value=filtered[valueName]
+	if (objectName=="pc1genes") Value=abs(Value )
     sdata <- rbind(sdata, data.frame(Sample = names(sces)[i], 
                                      Feature = rownames(filtered), 
-                                     Value = abs(filtered[, valueIndex])))
+                                     Value = Value))
   }
   
-  mdata <- dcast(sdata, Feature ~ Sample, value.var = "Value", fill = defaultValue)
-  rownames(mdata) <- mdata$Feature
-  mdata <- as.matrix(mdata[, c(2:ncol(mdata))])
+  mdata <- dcast(sdata, Feature ~ Sample, value.var = valueName, fill = defaultValue)
   
-  return(mdata)
+  
+  mdatax <- as.matrix(mdata[, c(2:ncol(mdata))])
+  rownames(mdatax) <- mdata$Feature
+  return(mdatax)
 }
 
 .mergeSparseMatrix <- function(mat1, mat2) {
@@ -379,7 +411,14 @@
 }
 
 .findOutlier <- function (dat, nmads = 3, log=FALSE, type = c("lower", "higher"), upper.limit=NA, lower.limit=NA) {
-  if(log){dat<-log10(dat)}
+  
+  if ((!is.na(lower.limit) & lower.limit<0) | (!is.na(upper.limit) & upper.limit<0)) stop("the lower or upper cutoff should be NA or >0")
+  if(log){
+    dat<-log10(dat); 
+	if (!is.na(upper.limit)) upper.limit=log10(upper.limit); 
+	if (!is.na(lower.limit)) lower.limit=log10(lower.limit)
+  }
+  
   med <- median(dat, na.rm = TRUE)
   mad <- mad(dat, center = med, na.rm = TRUE)
   
@@ -393,53 +432,26 @@
   } else if (type == "higher") {
     lower.limit <- -Inf
   }
-  
-  return(dat < lower.limit | upper.limit < dat)
+  result<-dat < lower.limit | upper.limit < dat
+  cutoff<-ifelse (type=="lower",lower.limit,upper.limit)
+  if (log) {cutoff=10^cutoff}
+  return(list(filtered=result,cutoff=cutoff))
 }
 
-.getVarExplainedbyFeature2 <- function(sce, feature, chunk = 1000) {
-  
-  exprs_mat <- sce$data
- 
-  
-  feature.data <- sce[[feature]]
 
-  
-  ngenes <- nrow(sce$data)
-  
-  if (ngenes > chunk) {
-    by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
-  } else {
-    by.chunk <- factor(integer(ngenes))
-  }
-  
-  R_squared <- numeric(ngenes)
-  
-  for (element in levels(by.chunk)) {
-    current <- by.chunk == element
-    cur.exprs <- exprs_mat[current, , drop = FALSE]
-   
-    R_squared[current] <- cor(as.matrix(t(cur.exprs)),feature.data,use="pairwise.complete.obs") ^ 2 
-  }
-  
-  
-  
-  Pct_Var_Explained <- 100 * R_squared
-  return(Pct_Var_Explained)
-}
 
 	       
 .getVarExplainedbyFeature <- function(sce, feature, chunk = 1000) {
   
-  exprs_mat <- sce$data
+  exprs_mat <- logcounts(sce)
  
   
-  feature.data <- sce[[feature]]
+  feature.data <- sce@colData[[feature]]
   expf<-mean(feature.data)
   sdf<-sd(feature.data)
   
-  ngenes <- nrow(sce$data)
-  ncells<-ncol(sce$data)
+  ngenes <- nrow(exprs_mat)
+  ncells<-ncol(exprs_mat)
   
   if (ngenes > chunk) {
     by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
@@ -452,8 +464,8 @@
   for (element in levels(by.chunk)) {
     current <- by.chunk == element
     cur.exprs <- exprs_mat[current, , drop = FALSE]
-    Exy= cur.exprs%*%feature.data/ncells-sce$hvg$mean[current]*expf
-    sdxy=sdf*sqrt(sce$hvg$var[current])
+    Exy= cur.exprs%*%feature.data/ncells-sce@elementMetadata$hvg$mean[current]*expf
+    sdxy=sdf*sqrt(sce@elementMetadata$hvg$var[current])
     R_squared[current] <- (Exy/sdxy) ^ 2 
     }
   
@@ -544,67 +556,40 @@
  }
 
 .prepareTableSummary <- function(sces) {
-  pw <- matrix(nrow = length(sces), ncol = 13)
+  pw <- matrix(nrow = length(sces), ncol = 15)
   
   for (i in 1:length(sces)) {
     pw[i, 1] <- names(sces)[i]
-    pw[i, 2] <- sum(sces[[i]]$total_counts) # Count
-    pw[i, 3] <- sces[[i]]$ncell #Cell
-    pw[i, 4] <- sces[[i]]$ngene #Gene
-    pw[i, 5] <- paste0("[", summary(sces[[i]]$total_counts)[1],
-                       "-", summary(sces[[i]]$total_counts)[3],
-                       "-", summary(sces[[i]]$total_counts)[6], "]") # R-Count
+    pw[i, 2] <- sum(sces[[i]]@metadata$rawmeta$CellData$total_counts) # Count
+    pw[i, 3] <- sces[[i]]@metadata$rawmeta$ncells #Cell
+    pw[i, 4] <- sces[[i]]@metadata$rawmeta$ngenes #Gene
+    pw[i, 5] <- paste0("[", summary(sces[[i]]@metadata$rawmeta$CellData$total_counts)[1],
+                       "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_counts)[3],
+                       "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_counts)[6], "]") # R-Count
     
-    pw[i, 6] <- paste0("[", summary(sces[[i]]$total_features)[1],
-                       "-", summary(sces[[i]]$total_features)[3],
-                       "-", summary(sces[[i]]$total_features)[6], "]") # R-Gene
+    pw[i, 6] <- paste0("[", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[1],
+                       "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[3],
+                       "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[6], "]") # R-Gene
     
-    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1), "%") #mtRNA
+    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1), "%") #mtRNA
     
-    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1), "%") # rRNA
-    pw[i, 9] <- sum(sces[[i]]$libsize.drop,na.rm=T) # F-Count
-    pw[i, 10] <- sum(sces[[i]]$feature.drop,na.rm=T) # F-Gene
-    pw[i, 11] <- 0 # F-rRNA
-    pw[i, 12] <- sum(sces[[i]]$mito.drop,na.rm=T) # F-mtRNA
-    pw[i, 13] <- sum(as.numeric(pw[i, 9:12]))
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1), "%") # rRNA
+    pw[i, 9] <- sum(sces[[i]]@metadata$rawmeta$CellData$libsize.drop,na.rm=T) # F-Count
+	pw[i, 10] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$count) #cutoff by counts
+    pw[i, 11] <- sum(sces[[i]]@metadata$rawmeta$CellData$feature.drop,na.rm=T) # F-Gene
+	pw[i, 12] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$gene)   #cutoff by gene
+    pw[i, 13] <- sum(sces[[i]]@metadata$rawmeta$CellData$mito.drop,na.rm=T) # F-mtRNA
+	pw[i, 14] <- round(sces[[i]]@metadata$rawmeta$Cutoff$mito,2)   #cutoff by mtRNA percentage
+    pw[i, 15] <- sum(as.numeric(pw[i, 9:12]))
   }
   
   colnames(pw) <- c("EID", "Count", "Cell", "Gene", "R-Count", "R-Gene", 
-                    "mtRNA", "rRNA", "F-Count", "F-Gene", "F-rRNA", "F-mtRNA", "F")
+                    "mtRNA", "rRNA", "F-Count", "C-Count","F-Gene","C-Gene", "F-mt","C-mt", "F")
   
   return(as.data.frame(pw))
 }
 
 
 
-.prepareTableSummary2 <- function(sces) {
-  pw <- matrix(nrow = length(sces), ncol = 13)
-  
-  for (i in 1:length(sces)) {
-    pw[i, 1] <- names(sces)[i]
-    pw[i, 2] <- sum(sces[[i]]$rawdata) # Count
-    pw[i, 3] <- dim(sces[[i]]$rawdata)[2] #Cell
-    pw[i, 4] <- dim(sces[[i]]$rawdata)[1] #Gene
-    pw[i, 5] <- paste0("[", summary(Matrix::colSums(sces[[i]]$rawdata))[1],
-                       "-", summary(Matrix::colSums(sces[[i]]$rawdata))[3],
-                       "-", summary(Matrix::colSums(sces[[i]]$rawdata))[6], "]") # R-Count
-    
-    pw[i, 6] <- paste0("[", summary(Matrix::colSums(sces[[i]]$rawdata != 0))[1],
-                       "-", summary(Matrix::colSums(sces[[i]]$rawdata != 0))[3],
-                       "-", summary(Matrix::colSums(sces[[i]]$rawdata != 0))[6], "]") # R-Gene
-    
-    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1), "%") #mtRNA
-    
-    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1), "%") # rRNA
-    pw[i, 9] <- sum(sces[[i]]$libsize.drop,na.rm=T) # F-Count
-    pw[i, 10] <- sum(sces[[i]]$feature.drop,na.rm=T) # F-Gene
-    pw[i, 11] <- 0 # F-rRNA
-    pw[i, 12] <- sum(sces[[i]]$mito.drop,na.rm=T) # F-mtRNA
-    pw[i, 13] <- sum(as.numeric(pw[i, 9:12]))
-  }
-  
-  colnames(pw) <- c("EID", "Count", "Cell", "Gene", "R-Count", "R-Gene", 
-                    "mtRNA", "rRNA", "F-Count", "F-Gene", "F-rRNA", "F-mtRNA", "F")
-  
-  return(as.data.frame(pw))
-}
+
+

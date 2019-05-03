@@ -1,8 +1,8 @@
 
 <hr>
 
-```{r plotDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes", trunk.eval=displayDiffPathway), fig.height=getHeatmapHeight(plotData$diffFC$pathways), fig.width=10}
-heatmap.2(as.matrix(plotData$diffFC$pathways), cexRow = 0.6, margins=heatmapMargins, keysize=heatmapKeysize, col=heatmapPathwayColors)
+```{r plotDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotDiffPathway", "Heatmap of enriched pathways in differentially expressed genes", trunk.eval=displayDiffPathway), fig.height=getHeatmapHeight(plotData$scesMerge@metadata$diffFC$pathways), fig.width=10}
+plotHeatmap(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath")
 ```
 
 scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. 
@@ -12,7 +12,7 @@ cat(paste0(figRef("plotDiffPathway"), " shows the log-pvalue for enriched pathwa
 ```
 
 ```{r tableDiffPathway, eval=hasDiffPathway, echo=FALSE, results="asis"}
-pw<-plotData$diffFC$pathways
+pw<-plotData$scesMerge@metadata$diffFC$pathways
 pw[pw<0]<-0
 pw10<-10 ^ (-pw)
 pw10[pw10>0.9]<-1
