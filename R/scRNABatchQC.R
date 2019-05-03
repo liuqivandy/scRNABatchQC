@@ -289,8 +289,8 @@ generateReport<-function(sces, scesMerge, outputFile="report.html") {
                    tableSummary = pw)
   
   cat("Report data prepared.\n")
- # reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
-  reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
+  reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
+ # reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
 
 
 
