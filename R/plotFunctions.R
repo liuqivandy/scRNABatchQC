@@ -1,7 +1,4 @@
 
-DEFAULT_LINE_SIZE <- 1
-DEFAULT_POINT_SIZE <- 0.8
-
 #' plotDensity 
 #' @description plot the distribution of total_counts, total_features, pct_counts_Mt (percentage of mtRNA counts) or pct_counts_rRNA (percentage of rRNA counts) for multiple single cell RNAseq datasets
 #' @param sces a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
