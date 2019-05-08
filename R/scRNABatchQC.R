@@ -16,7 +16,7 @@
 #' @logFC float: log fold change cutoff to select differentially expressed genes (default: 1)
 #' @FDR float: FDR cutoff to select differentially expressed genes (default: 0.01)
 #' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)#' @return a list of SingleCellExperiment Objects; 
+#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)
 #' @outputFile; the name of the output file (default: report.html)
 #' @return a list of SingleCellExperiment objects;
 #'                 sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset (refer to Process_scRNAseq output)
