@@ -4,38 +4,64 @@
 \alias{scRNABatchQC}
 \title{scRNABatchQC}
 \usage{
-scRNABatchQC(inputfiles, samplenames = NULL, organism = c("hsapiens",
-  "mmusculus"), outputFile = "report.html", sampleRatio = 1,
-  cache = FALSE, nHVGs = 1000, nPC = 10, sf = 10000, logFC = 1,
-  FDR = 0.01)
+scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
+  sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
+  PCind = 1, mtRNA = "^mt-|^MT-",
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio = 1,
+  logFC = 1, FDR = 0.01, organism = "mmusculus",
+  outputFile = "report.html")
 }
 \arguments{
-\item{sampleRatio}{float; the ratio of cells sampled from each experiment to examine the expression similarity(default: 1)}
+\item{inputfiles}{a string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+
+\item{names}{a string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
-\item{nPC}{integer; the number of principle components (default: 10)}
+\item{nPCs}{integer; the number of principal components (default: 10)}
 
-\item{sf}{integer; Scale factor  (default: 10000)}
+\item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
-\item{logFC}{float; log2 fold change cutoff to select differentially expressed genes  (default: 1)}
+\item{mincounts}{integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)}
 
-\item{FDR}{float; FDR cutoff to select differentially expressed genes (default:0.01)}
+\item{mingenes}{integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)}
 
-\item{inputfiles;}{a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+\item{maxmito}{float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2)}
 
-\item{samplenames;}{the names of experiments, if it is NULL(default), the names are set to S1, S2....}
+\item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{organism;}{a character string giving the organism, either hsapiens or mmusculus; (default: "hsapiens")}
+\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
-\item{outputFile;}{a character string giving the output File name (default: report.html)}
+\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+
+\item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)}
+
+\item{logFC}{float; log fold change cutoff to select differentially expressed genes (default: 1)}
+
+\item{FDR}{float; FDR cutoff to select differentially expressed genes (default: 0.01)}
+
+\item{organism}{string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR (defeault: mmusculus)}
+
+\item{outputFile}{string; the name of the output file (default: report.html)}
+}
+\value{
+a list of SingleCellExperiment objects;
+                sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset (refer to Process_scRNAseq output)
+                scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets (refer to Combine_scRNAseq output)
 }
 \description{
 Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features
 }
 \examples{
 library(scRNABatchQC)  
-#Check the quality of two single cell RNA-seq datasets from human
-scRNABatchQC(inputfiles=c("data1.csv","data2.csv"))  
+output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                  "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),
+                     organism="mmusculus")
+output$sces
+output$scesMerge
+plotDensity(output$sces, "total_counts")
+output$sces[[1]]@metadata$hvgPathway
+plotHVGs(output$sces)
+output$scesMerge@metadata$diffFC$genes
 
 }

@@ -2,29 +2,31 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputfiles; a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
-#' @param names; a character vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
+#' @param inputfiles a string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param names a string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
-#' @param nPCs   integer: the number of principal components (default: 10)
+#' @param nPCs integer; the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
-#' @param maxmito  float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
-#' @param PCind  integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA  a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA   a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @logFC float: log fold change cutoff to select differentially expressed genes (default: 1)
-#' @FDR float: FDR cutoff to select differentially expressed genes (default: 0.01)
-#' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)#' @return a list of SingleCellExperiment Objects; 
-#' @outputFile; the name of the output file (default: report.html)
+#' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2) 
+#' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
+#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param logFC float; log fold change cutoff to select differentially expressed genes (default: 1)
+#' @param FDR float; FDR cutoff to select differentially expressed genes (default: 0.01)
+#' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)
+#' @param organism string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR (defeault: mmusculus) 
+#' @param outputFile string; the name of the output file (default: report.html)
 #' @return a list of SingleCellExperiment objects;
 #'                 sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset (refer to Process_scRNAseq output)
 #'                 scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets (refer to Combine_scRNAseq output)
 
 #' @examples
 #' library(scRNABatchQC)  
-#' output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                   "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),
+#'                      organism="mmusculus")
 #' output$sces
 #' output$scesMerge
 #' plotDensity(output$sces, "total_counts")
@@ -37,7 +39,10 @@
 #' 
 #' @export
 scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2, PCind=1, mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio=1, logFC=1,FDR=0.01, organism="mmusculus", outputFile="report.html"){
-   
+  isOrganismValid<-.isOrganismValid(organism)
+  if(! isOrganismValid){
+    organism<-NULL
+  }
   sces<-Process_scRNAseq(inputfiles=inputfiles,names=names,nHVGs=nHVGs, nPCs=nPCs,sf=sf, mincounts=mincounts, mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism)
   scesMerge<-Combine_scRNAseq(sces,nHVGs=nHVGs, nPCs= nPCs, logFC=logFC,FDR=FDR,sampleRatio=sampleRatio,organism=organism)
   generateReport(sces,scesMerge, outputFile=outputFile)
@@ -45,25 +50,22 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
               scesMerge = scesMerge ))
 }
 
-
-
 ###############################
 #' Process_scRNAseq
-
-
 #' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets represented by gene-count matrices;each dataset is processed one by one
-#' @param inputfiles; a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
-#' @param names; a character vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
+#' @param inputfiles string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param names string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
+#' @param nPCs integer; the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the data  (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
-#' @param maxmito  float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
-#' @param PCind  integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA  a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA   a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)
- 
+#' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2)
+#' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
+#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param organism string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR; (defeault: mmusculus) 
+
 #' @return a list of SingleCellExperiment objects , each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)
 #'         each SingleCellExperiment object containing several slots:
 #' 	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
@@ -98,7 +100,9 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 
 #' @examples
 #' library(scRNABatchQC)
-#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),
+#'                        organism="mmusculus")
 #' names(sces)
 #' class(sces[[1]])
 #' head(sces[[1]]@elementMetadata)
@@ -116,21 +120,20 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' @export
 
 Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2,PCind=1,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism="mmusculus"){
-    
-  
- 
+  isOrganismValid<-.isOrganismValid(organism)
+  if(! isOrganismValid){
+    organism<-NULL
+  }
+
   result <- list()
   nfiles<-length(inputfiles)
   
   if (is.null(names)){names=paste0("S",1:nfiles)}
   if (nfiles!=length(names)) {stop("the inputfiles and names should have the same length", call. = FALSE)}
   if (sum(names!=make.names(names))>0) names<-paste0("S",names)
- 
+  
   for (ind in 1:nfiles) {
-   
-    
     cat("Preparing ", names[ind], "\n")
-    
     result[[ind]] <- Process_OnescRNAseq(inputfiles[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism)
   }
   
@@ -138,21 +141,18 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
   return(result)
 }
 
-
-
 ########################################
 #' Combine_scRNAseq
 #'
 #' @description Combine and compare multiple single cell RNAseq datasets; 1) combine into one dataset; 2)find highly variable genes, reduce dimensions using PCA and tSNE for this combined dataset; 3) pairwise comparsion between any two single cell RNAseq datasets to find the top differentially expressed genes 
 #'
 #' @param sces a list of SingleCellExperiment objects; each object corresponds to one single cell RNAseq dataset
-
-#' @param organism; a character giving the organism of single cell RNAseq datasets (default: hsapiens)
 #' @param nHVGs integer; the number of highly variable genes (default:1000)
-#' @param nPCs integer: the number of principal components (default:10)
-#' @logFC float: log fold change cutoff to select differentially expressed genes (default: 1)
-#' @FDR float: FDR cutoff to select differentially expressed genes (default: 0.01)
+#' @param nPCs integer; the number of principal components (default:10)
+#' @param logFC float; log fold change cutoff to select differentially expressed genes (default: 1)
+#' @param FDR float; FDR cutoff to select differentially expressed genes (default: 0.01)
 #' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)
+#' @param organism string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR; (defeault: mmusculus) 
 #' @return a SingleCellExperiment object with several slots:
 #' 	                               assays; ShallowSimpleListAssays object containing one sparse matrix:  logcounts (log-transformed normalized counts)
 #'                                 elementMetadata; A DataFrame containining metadata for each gene, including
@@ -170,169 +170,122 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
 #' @export 
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' sces<-process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scmerge <- Combine_scRNAseq(sces)
 #' logcounts(scmerge)[1:5,1:5]
 #' head(scmerge@elementMetadata$hvg)
 #' summary(scmerge@metadata$reducedDims$PCA)
-#' visualize PCA results
+#' #visualize PCA results
 #' plot(scmerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scmerge@colData$condition),xlab="PCA1",ylab="PCA2")
-#' visualize tSNE results
+#' #visualize tSNE results
 #' plot(scmerge@metadata$reducedDims$tSNE,pch=16,col=as.factor(scmerge@colData$condition),xlab="tSNE1",ylab="tSNE2")
 #' scmerge@metadata$diffFC
 
 
 Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sampleRatio=1,organism="mmusculus") {
-   if (sampleRatio>1) stop("sampleRatio must be <=1")
-    
-    pca_tsne_data <- list()
-   
-
-      
-    nsample=round(dim(sces[[1]])[2]*sampleRatio,0)
-    sampleind<-sample(1:dim(sces[[1]])[2],nsample)
-    pca_tsne_data$logcounts<-logcounts(sces[[1]])[,sampleind]
-	pca_tsne_data$condition <-rep(names(sces)[1],nsample)
-    
-    colnames(pca_tsne_data$logcounts) <- paste0(names(sces)[1], 1:nsample)
-
-    if(length(sces) > 1){
-
-	  for (i in 2:length(sces)) {
-        nsample=round(dim(sces[[i]])[2]*sampleRatio,0)
-        sampleind<-sample(1:dim(sces[[i]])[2],nsample)
-	  	mat<-logcounts(sces[[i]])[,sampleind]
-        colnames(mat)<-paste0(names(sces)[i], 1:nsample)
-	  	pca_tsne_data$logcounts <- .mergeSparseMatrix(pca_tsne_data$logcounts, mat)
-		pca_tsne_data$condition <-c(pca_tsne_data$condition,rep(names(sces)[i],nsample))
-	  }
-
-     }
-
+  if (sampleRatio>1) stop("sampleRatio must be <=1")
   
-
+  pca_tsne_data <- list()
+  nsample=round(dim(sces[[1]])[2]*sampleRatio,0)
+  sampleind<-sample(1:dim(sces[[1]])[2],nsample)
+  pca_tsne_data$logcounts<-logcounts(sces[[1]])[,sampleind]
+  pca_tsne_data$condition <-rep(names(sces)[1],nsample)
   
-
- 
-
-   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
-
+  colnames(pca_tsne_data$logcounts) <- paste0(names(sces)[1], 1:nsample)
   
+  if(length(sces) > 1){
+    for (i in 2:length(sces)) {
+      nsample=round(dim(sces[[i]])[2]*sampleRatio,0)
+      sampleind<-sample(1:dim(sces[[i]])[2],nsample)
+      mat<-logcounts(sces[[i]])[,sampleind]
+      colnames(mat)<-paste0(names(sces)[i], 1:nsample)
+      pca_tsne_data$logcounts <- .mergeSparseMatrix(pca_tsne_data$logcounts, mat)
+      pca_tsne_data$condition <-c(pca_tsne_data$condition,rep(names(sces)[i],nsample))
+    }
+  }
+
+  pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
 
   ##select the top 1000 highly variable genes for the PCA
-
   feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:nHVGs]
-
-  #scevar <- apply(scesdata, 1, var)
-
   
-
+  #scevar <- apply(scesdata, 1, var)
   #feature_set <- head(order(scevar, decreasing = T), n = 500)
-
-   
-
   pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = nPCs)
 
-  
   set.seed(100)
-
   tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = 20, check_duplicates = FALSE)
-  
   pca_tsne_data$tsne <- tsne_out$Y
-  
   scesMerge<-SingleCellExperiment(assay=list(logcounts=pca_tsne_data$logcounts))
   scesMerge@metadata$reducedDims=list(PCA=pca_tsne_data$pca, tSNE=pca_tsne_data$tsne)
   scesMerge@colData$condition<-pca_tsne_data$condition
   scesMerge@elementMetadata$hvg<-pca_tsne_data$hvg
   
- #compare conditions
-    cat("Preparing differential expression analysis data ...\n")
-    scesMerge@metadata$diffFC <- .getDiffGenes(scesMerge, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
-    scesMerge@metadata$logFC<- logFC
-    scesMerge@metadata$FDR<-FDR
-    scesMerge@metadata$sampleRatio<-sampleRatio
-    scesMerge@metadata$nHVGs<-nHVGs
-    scesMerge@metadata$nPCs<-nPCs
-  
+  #compare conditions
+  cat("Preparing differential expression analysis data ...\n")
+  scesMerge@metadata$diffFC <- .getDiffGenes(scesMerge, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
+  scesMerge@metadata$logFC<- logFC
+  scesMerge@metadata$FDR<-FDR
+  scesMerge@metadata$sampleRatio<-sampleRatio
+  scesMerge@metadata$nHVGs<-nHVGs
+  scesMerge@metadata$nPCs<-nPCs
   
   return(scesMerge)
-
 }
 
 #################
 #' generateReport
 #' @description Generate a QC report by comparing technical and biological features across multiple scRNA-seq datasets
-
 #' @param sces a list of SingleCellExperiment Objects; each object containing quality meta data for one single cell RNAseq datasets
 #' @param scesMerge a SingleCellExperiment object generated by combining and comparing multiple single cell RNAseq datasets
-#' @outputFile; the name of the output file (default: report.html)
+#' @param outputFile the name of the output file (default: report.html)
 #' @return a list of SingleCellExperiment
- 
-#' @example
+#' @examples
 #' library(scRNABatchQC)
-#' sces<-process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' sces<-process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scmerge <- Combine_scRNAseq(sces)
 #' generateReport(sces,scmerge)
-
-#' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl SingleCellExperiment
+#' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl SingleCellExperiment knitr
 #' @importFrom devtools session_info
 #' 
 #' @export
-
 generateReport<-function(sces, scesMerge, outputFile="report.html") {
-  
-
   pw <- .prepareTableSummary(sces)
-  
   plotData <- list(sces = sces, 
                    scesMerge = scesMerge, 
                    tableSummary = pw)
   
   cat("Report data prepared.\n")
   reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
- # reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
+  # reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
 
-
-
- outputFile <- getAbsolutePath(outputFile)
-
+  outputFile <- getAbsolutePath(outputFile)
   output_dir = dirname(outputFile)
-
   output_file = basename(outputFile)
 
-  
-
   cat("Output report to:", outputFile, "\n")
-
   rmarkdown::render(reportRmd,
-
                     output_dir = output_dir,
-
                     output_file = output_file,
-
                     params = list(data = plotData))
-  	
-  
 }
-
-
-
 
 ##############################################
 #' Process_OnescRNAseq
 #' @description Generate technical and biological metadata for one single cell RNAseq represented by gene-cell count table
-
-#' @param inputfile; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfile the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
-#' @param nPCs   integer: the number of principal components (default: 10)
+#' @param nPCs integer: the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
-#' @param maxmito  float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
-#' @param PCind  integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA  a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA   a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)
+#' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
+#' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
+#' @param mtRNA a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
+#' @param rRNA a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param organism string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR; (defeault: mmusculus) 
 #' @return a SingleCellExperiment object with several slots:
 #' 	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
 #'                                 elementMetadata; A DataFrame containining metadata for each gene, including
@@ -379,10 +332,14 @@ generateReport<-function(sces, scesMerge, outputFile="report.html") {
 #' @export
 
 Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus") {
+  isOrganismValid<-.isOrganismValid(organism)
+  if(! isOrganismValid){
+    organism<-NULL
+  }
   
- sce<-Tech_OnescRNAseq(inputfile=inputfile,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA)
- sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
- return(sce)
+  sce<-Tech_OnescRNAseq(inputfile=inputfile,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA)
+  sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
+  return(sce)
 }
 
 
@@ -390,14 +347,13 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #####################################
 #' Tech_OnescRNAseq
 #' @description Generate technical metadata for one single cell RNAseq represented by gene-cell count table
-
-#' @param inputfile; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfile the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
 #' @param maxmito  float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
-#' @param mtRNA  a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA   a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)
+#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
 #' @return a SingleCellExperiment object containing metadata for technical features
 #' 	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
 #'                                 elementMetadata; A DataFrame containining metadata for each gene, including
@@ -428,8 +384,6 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' head(sce@colData$log10_total_counts)
 
 Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]" ){
-  
-  
   rawdata<-data.frame(fread(inputfile),row.names=1)
   countmat<-.tosparse(rawdata)
   
@@ -447,11 +401,9 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   total_features=Matrix::colSums(countmat != 0)
   total_counts_Mt = Matrix::colSums(countmat[is.mito, ])
   total_counts_rRNA=Matrix::colSums(countmat[is.rRNA, ])  
- 
+  
   rawmeta$CellData<-data.frame(total_counts=total_counts, total_features=total_features,total_counts_Mt=total_counts_Mt,total_counts_rRNA=total_counts_rRNA,pct_counts_Mt = total_counts_Mt/total_counts,pct_counts_rRNA=total_counts_rRNA/total_counts)
-  
-  
-    
+
   ##filter cells with less than 500 counts or 3 mad lower
   libsize.drop = .findOutlier(rawmeta$CellData$total_counts,  log=TRUE,type = "lower",lower.limit=mincounts)
   rawmeta$CellData<-cbind(rawmeta$CellData,libsize.drop=libsize.drop$filtered)
@@ -467,22 +419,21 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   rawmeta$CellData<- cbind(rawmeta$CellData,is.drop=(rawmeta$CellData$libsize.drop | rawmeta$CellData$feature.drop | rawmeta$CellData$mito.drop))
   
   num.cells <- Matrix::rowSums(countmat != 0)
-
+  
   rawmeta$GeneData$gene.keep <- num.cells > 0
   rawmeta$Cutoff<-list(count=libsize.drop$cutoff,gene=feature.drop$cutoff, mito=mito.drop$cutoff)
   
- ##filtered counts 
+  ##filtered counts 
   newcount <- countmat[rawmeta$GeneData$gene.keep, !rawmeta$CellData$is.drop]
   logcount<-newcount
- ####normalize to scale factor (sf), the default is 10000
+  ####normalize to scale factor (sf), the default is 10000
   lib_size <- sf/rawmeta$CellData$total_counts[!rawmeta$CellData$is.drop]
- 
-###
+  
+  ###
   rowind<-logcount@i+1  
   colind<-findInterval(seq(logcount@x)-1,logcount@p[-1])+1
   logcount@x<-log2(logcount@x*lib_size[colind]+1) 
-  
-  
+
   scdata<- SingleCellExperiment(assay=list(counts=newcount,logcounts=logcount))
   scdata@colData$log10_total_counts<-log10(rawmeta$CellData$total_counts)[!rawmeta$CellData$is.drop]
   scdata@colData$log10_total_features <- log10(rawmeta$CellData$total_features)[!rawmeta$CellData$is.drop]
@@ -495,22 +446,20 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   ##keep the orignial meta data 
   scdata@metadata$rawmeta<-rawmeta
   scdata@metadata$sf<-sf
-  
-  
+
   return(scdata)
- 
- }
+}
 
 
- ###################################################
+###################################################
 #' Bio_OnescRNAseq
 #' @description Generate metadata (HVGs, PC-related genes, variance explained by technical features) for one single cell RNAseq represented by gene-cell count table
 
-#' @param scdata, a SingleCellExperiment object; 
+#' @param scdata a SingleCellExperiment object; 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
-#' @param nPCs   integer: the number of principal components (default: 10)
-#' @param PCind  integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param organism; the organism of single cell RNAseq datasets; (defeault: mmusculus)
+#' @param nPCs integer: the number of principal components (default: 10)
+#' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
+#' @param organism string; the organism of single cell RNAseq datasets, should be same as organism used in WebGestaltR; (defeault: mmusculus) 
 #' @return a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
 #' 	                               
 #'                                 elementMetadata; hvg: a dataframe containing mean, variance and z-score for dispersion 
@@ -537,15 +486,18 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
 #' sce@metadata$hvgPathway
 
 Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus" ){
- 
+  isOrganismValid<-.isOrganismValid(organism)
+  if(! isOrganismValid){
+    organism<-NULL
+  }
+
   scdata@elementMetadata$hvg <- .getMeanVarTrend(logcounts(scdata))
   ##explained by feature###
   scdata@elementMetadata$genevar_by_counts<-.getVarExplainedbyFeature(scdata,"log10_total_counts")
   scdata@elementMetadata$genevar_by_features<-.getVarExplainedbyFeature(scdata,"log10_total_features")
   scdata@elementMetadata$genevar_by_Mt<-.getVarExplainedbyFeature(scdata,"log10_total_counts_Mt")
   scdata@elementMetadata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
-  
-  
+
   ##select the top HVGs highly variable genes for the PCA, default is 1000
   hvggenes <-  rownames(scdata@elementMetadata$hvg)[order(scdata@elementMetadata$hvg$zval,decreasing=T)][1:nHVGs]
   
@@ -556,14 +508,13 @@ Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculu
   fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
   ##select the top 500 pc1 genes
-  scdata@metadata$pc1genes <- topTable(fit, coef = 2, n = 500)
-## enriched pathways in top 1000 hvgs and 500 pc1 genes
-##query the webgestalt to see if the organism exist or not...
+  scdata@metadata$pc1genes <- topTable(fit, coef = 2, number = 500)
+  ## enriched pathways in top 1000 hvgs and 500 pc1 genes
+  ##query the webgestalt to see if the organism exist or not...
   if(!is.null(organism)){
     scdata@metadata$hvgPathway <- .getIndividualPathway(hvggenes,organism=organism)
     scdata@metadata$pc1Pathway <- .getIndividualPathway(rownames(scdata@metadata$pc1genes), organism=organism)
   }
-
+  
   return(scdata)
-
 } 
