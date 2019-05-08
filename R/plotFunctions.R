@@ -32,7 +32,7 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
 
 
 
-#' plotGeneCountDistribution 
+#' plot the gene count distribution
 #' @description plot the gene count distribution of top n (default:500) highly expressed genes 
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @param ngenes integer; the number of highly expressed genes to plot the distribution (default:500)
@@ -118,7 +118,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
   return(p)
 }
 
-#' plotVarianceTrend
+#' plot Mean~variance trend
 #' @description plot the gene mean vs. variance trend  
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @param scolors a vector of integer; the color of each dataset (default: 1:length(sces))
@@ -163,7 +163,7 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 }
 
 
-#' plotVarianceExplained
+#' plot variance explained by one specific feature
 #' @description plot the variances explained by the explanatory variable 
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @param feature a character; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)
@@ -227,7 +227,7 @@ panel.dot <- function(x, y, ...) {
 
 
 
-#' plotSampleSimilarity
+#' plot the Sample Similarity
 #' @description plot the average expression similarity across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @import SingleCellExperiment 
@@ -260,7 +260,7 @@ plotSampleSimilarity <- function(sces, ...) {
 
 
 ##plot the highly variable genes
-#' plotHVGs
+#' plot HVGs
 #' @description plot the highly variable genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @return a matrix containing the z score of dispersion of highly variable genes in each dataset
@@ -283,7 +283,7 @@ plotHVGs<-function(sces,margins=c(5,5),keysize=0.6,col=bluered(75),...){
 
 
 ##plot the pathways enriched in highly variable genes
-#' plotHVGsPathwayss
+#' plot pathways enriched in HVGs
 #' @description plot the pathways enriched in the highly variable genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
@@ -307,7 +307,7 @@ plotHVGsPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low=
 
 
 ##plot  genes highly associated with a certain principle component
-#' plotPCgenes
+#' plot PC-related genes
 #' @description plot the genes highly associated with a certain principle component
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @return a matrix containing the log fold change of genes highly associated with a certain principle component
@@ -331,7 +331,7 @@ plotPCgenes<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
  
  
 ##plot the pathways enriched in PC genes
-#' plotPCPathways
+#' plot PC-related pathways
 #' @description plot the pathways enriched in the PC genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
 #' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
@@ -368,10 +368,10 @@ plotPCPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="w
 ##plot functions on the combined datasets
 ####################### PCA ##############
 
-#' plotAllPCA
+#' plot PCA for the combined dataset
 #' @description  PCA plot for the combined datasets
 #' @param scesall SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
-#' @import SingleCellExperiment ggplots2
+#' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
@@ -404,10 +404,10 @@ plotAllPCA <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
 }
 
 ####################### tSNE ##############
-#' plotAlltSNE
+#' plot tSNE for the combined dataset
 #' @description  tSNE plot for the combined datasets
 #' @param scesall a SingleCellExperiment object; this object contains the combined datasets and reduced dimensions using PCA and tSNE 
-#' @import SingleCellExperiment ggplots2
+#' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
@@ -431,10 +431,10 @@ plotAlltSNE <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
 }
 
 ####pairwise comparison between any two datasets
-#' plotDiffgenes
+#' plot differentially expressed genes between any two datasets
 #' @description  plot the differentially expressed genes in any pairwise comparison
 #' @param scesall a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
-#' @import SingleCellExperiment ggplots2
+#' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
@@ -454,10 +454,10 @@ plotDiffgenes<-function(scesmerge,margins=c(5,5),keysize=1,col=bluered(75), ...)
 
 
 
-#' plotDiffgenes
+#' plot pathways enriched in differentially expressed genes
 #' @description  plot the differentially expressed genes in any pairwise comparison
 #' @param scesall a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
-#' @import SingleCellExperiment ggplots2
+#' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
