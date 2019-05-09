@@ -2,17 +2,24 @@
 #' plotDensity 
 #' @description plot the distribution of total_counts, total_features, pct_counts_Mt (percentage of mtRNA counts) or pct_counts_rRNA (percentage of rRNA counts) for multiple single cell RNAseq datasets
 #' @param sces a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
-#' @param feature a character; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)
+#' @param feature string; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)
+#' @param featureLabel string; label of feature
+#' @param scolors vector of color
+#' @param lineSize integer; size of line
 #' @import ggplot2 SingleCellExperiment
 #' @export
 #' @examples 
 #' library(scRNABatchQC)
-#' sces <- sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#'                 
 #' plotDensity(sces,"total_counts")
+#' # plot the total counts distribution of the first dataset
+#' plotDensity(sces[1],"total_counts")
 
 plotDensity <- function(sces, feature=c("total_counts","total_features","pct_counts_Mt","pct_counts_rRNA"), 
                         featureLabel=NULL, scolors = 1:length(sces), lineSize = 1 ) {
-                        	
+  
   feature<-match.arg(feature)
   featureData <- .getRawColData(sces, feature)
   featureLabel<- ifelse(is.null(featureLabel),feature, featureLabel)
@@ -22,15 +29,11 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
     scale_colour_manual(values = scolors) +
     xlab(featureLabel) + theme_classic()+
     guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
-	ggtitle(feature)+
-	theme(plot.title = element_text(hjust = 0.5))
-   
+    ggtitle(feature)+
+    theme(plot.title = element_text(hjust = 0.5))
 
-  
   return(p)
 }
-
-
 
 #' plot the gene count distribution
 #' @description plot the gene count distribution of top n (default:500) highly expressed genes 
@@ -40,10 +43,11 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
 #' @param lineSize integer; the line size of the plot  (default: 1)
 #' @import ggplot2 SingleCellExperiment
 #' @export
-#'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#'   
 #' #plot the average count distribution for all datasets
 #' plotGeneCountDistribution(sces)
 #' #plot the average count distribution for the first dataset
@@ -77,9 +81,6 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
   return(p)
 }
 
-
-
-
 ####averge count vs. detection rate
 #' plotAveCountVSdetectRate 
 #' @description plot the gene detection rates vs. the average gene expression level in the datasets  
@@ -91,7 +92,9 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),))
+#'   
 #' #plot the gene detection rates for all datasets
 #' plotAveCountVSdetectRate(sces)
 #' #plot the gene detection rates for the first dataset
@@ -129,7 +132,9 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#'   
 #' #plot the mean~variance trend for all datasets
 #' plotVarianceTrend(sces)
 #' #plot the mean~variance trend for the first dataset
@@ -141,10 +146,10 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   for (i in 1:length(sces)) {
     tmpmeanvar <- data.frame(mean = sces[[i]]@elementMetadata$hvg$mean, 
-                              var= sces[[i]]@elementMetadata$hvg$var, 
-                              
-                              Sample = rep(names(sces)[i], length(sces[[i]]@elementMetadata$hvg$mean)))
-        
+                             var= sces[[i]]@elementMetadata$hvg$var, 
+                             
+                             Sample = rep(names(sces)[i], length(sces[[i]]@elementMetadata$hvg$mean)))
+    
     
     meanvar_dat<- rbind(meanvar_dat, tmpmeanvar)
     
@@ -159,9 +164,8 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
     theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle("Mean-Variance trend")+
     theme(plot.title = element_text(hjust = 0.5))
-    return(p)
+  return(p)
 }
-
 
 #' plot variance explained by one specific feature
 #' @description plot the variances explained by the explanatory variable 
@@ -174,14 +178,16 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#'   
 #' #plot the variance explained by the total_counts 
 #' plotVarianceExplained(sces)
 #' #plot the variance explained by the total number of genes
 #' plotVarianceExplained(sces,feature="genevar_by_features")
 
 plotVarianceExplained <- function(sces, feature=c("genevar_by_counts","genevar_by_features","genevar_by_Mt","genevar_by_rRNA"), scolors = 1:length(sces), 
-                                                              lineSize = 1) {
+                                  lineSize = 1) {
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   feature<-match.arg(feature)
   featureData <- .getGeneData(sces, feature)
@@ -196,7 +202,7 @@ plotVarianceExplained <- function(sces, feature=c("genevar_by_counts","genevar_b
     coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle(paste0("Var explained by ",featureLabel))+
     theme(plot.title = element_text(hjust = 0.5))
-    return(p)
+  return(p)
 }
 
 ###########Global similarity#####################################
@@ -220,32 +226,28 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
   text(0.5, 0.5, txt, cex = cex * r, col = "white")
 }
 
-
 panel.dot <- function(x, y, ...) {
   points(x, y, pch = 16, ...)
 }
 
-
-
-#' plot the Sample Similarity
+#' plot the similarity across sample sets
 #' @description plot the average expression similarity across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param ... parameters passing to function pairs
 #' @import SingleCellExperiment 
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#'   
 #' plotSampleSimilarity(sces)
-
-
-
 plotSampleSimilarity <- function(sces, ...) {
   
   if (length(sces)<=1) stop("there should be more than one dataset")
   if (is.null(names(sces))) names(sces)<-1:length(sces)
- 
+  
   aveCount <- sces[[1]]@elementMetadata$ave.counts
   
   for (i in 2:length(sces)) {
@@ -258,135 +260,147 @@ plotSampleSimilarity <- function(sces, ...) {
   pairs(log10(aveCount), xaxt = "n", yaxt = "n", upper.panel = panel.cor, gap = 0, lower.panel = panel.dot, ...)
 }
 
-
 ##plot the highly variable genes
 #' plot HVGs
 #' @description plot the highly variable genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param margins margins for heatmap.2 (default: c(5,5))
+#' @param keysize integer for heatmap.2 (default:1)
+#' @param col color for heatmap.2    (default: bluered(75))
+#' @param ... parameters passing to heatmap.2
 #' @return a matrix containing the z score of dispersion of highly variable genes in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotHVGs(sces)
 
-
-plotHVGs<-function(sces,margins=c(5,5),keysize=0.6,col=bluered(75),...){
-    if (length(sces)<=1) stop ("there should be more than one dataset")
-    hvgBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "hvg", valueName = "zval")
-    heatmap.2(hvgBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="HVGs",key.title="zval",key.xlab="",key.ylab="",...)
-	return(hvgBiologicalSimilarity)
+plotHVGs<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
+  
+  hvgBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "hvg", valueName = "zval")
+  if (nrow(hvgBiologicalSimilarity)<2 | ncol(hvgBiologicalSimilarity)<2 ) {
+      warning("there are less than two HVGs or less than two datasets, no heatmap will be generated")
+    }	else{
+      heatmap.2(hvgBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="HVGs",key.title="zval",key.xlab="",key.ylab="",...)
+    }
+   return(hvgBiologicalSimilarity)
 }
-
 
 ##plot the pathways enriched in highly variable genes
 #' plot pathways enriched in HVGs
 #' @description plot the pathways enriched in the highly variable genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param margins margins for heatmap.2 (default: c(5,10))
+#' @param keysize integer for heatmap.2  (default: 1)
+#' @param col color for heatmap.2  (default: colorpanel(75,low="white",high="red"))
+#' @param ... parameters passing to heatmap.2
 #' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotHVGsPathways(sces)
 
 plotHVGsPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="white",high="red"),...){
-     if (length(sces)<=1) stop ("there should be more than one dataset")
-	 hvgPathways <- .getMultiplePathways(sces, metaObjectName = "hvgPathway")
-	 if (nrow(hvgPathways)<2) warning("there are less than two enriched pathways, no heatmap will be generated") else{
-	       heatmap.2(hvgPathways, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="Pathways enriched in HVGs",key.title="-logFDR",key.xlab="",key.ylab="", ...)
-	 }
-	 return(hvgPathways)
+  
+  hvgPathways <- .getMultiplePathways(sces, metaObjectName = "hvgPathway")
+  if (nrow(hvgPathways)<2 | ncol(hvgPathways)<2 ) {
+    warning("there are less than two enriched pathways or less than two datasets, no heatmap will be generated")
+    }	else{
+    heatmap.2(hvgPathways, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="Pathways enriched in HVGs",key.title="-logFDR",key.xlab="",key.ylab="", ...)
+  }
+  return(hvgPathways)
 }
-
 
 ##plot  genes highly associated with a certain principle component
 #' plot PC-related genes
 #' @description plot the genes highly associated with a certain principle component
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param margins margins for heatmap.2 (default: c(5,5))
+#' @param keysize integer for heatmap.2   (default: 1)
+#' @param col color for heatmap.2    (default: bluered(75))
+#' @param ... parameters passing to heatmap.2
 #' @return a matrix containing the log fold change of genes highly associated with a certain principle component
 #' @import SingleCellExperiment 
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotPCgenes(sces)
 
 plotPCgenes<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
-    if (length(sces)<=1) stop ("there should be more than one dataset")
-    pc1geneBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "pc1genes", valueName = "logFC")
-    if (nrow(pc1geneBiologicalSimilarity)<2) warning("there are less than two genes, no heatmap will be generated") else{
-	            heatmap.2(hvgBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="PCgenes",key.title="logFC",key.xlab="",key.ylab="", ...)
-	}
-	return(pc1geneBiologicalSimilarity)
- }
- 
- 
+
+   pc1geneBiologicalSimilarity <- .getBiologicalSimilarity(sces, objectName = "pc1genes", valueName = "logFC")
+  if (nrow(pc1geneBiologicalSimilarity)<2 | ncol(pc1geneBiologicalSimilarity)<2)  {
+     warning("there are less than two genes or less than two datasets, no heatmap will be generated") 
+	 } else{
+    heatmap.2(pc1geneBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="PCgenes",key.title="logFC",key.xlab="",key.ylab="", ...)
+  }
+  return(pc1geneBiologicalSimilarity)
+}
+
+
 ##plot the pathways enriched in PC genes
-#' plot PC-related pathways
+#' plot pathways enriched in PC-related genes 
 #' @description plot the pathways enriched in the PC genes across single cell RNAseq datasets
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param margins margins for heatmap.2 (default: c(5,10))
+#' @param keysize integer for heatmap.2  (default: 1)
+#' @param col color for heatmap.2  (default: colorpanel(75,low="white",high="red"))
+#' @param ... parameters passing to heatmap.2
 #' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotPCPathways(sces)
- 
+
 plotPCPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="white",high="red"),...){
-  if (length(sces)<=1) stop ("there should be more than one dataset")
+  
   pc1Pathways <- .getMultiplePathways(sces, metaObjectName = "pc1Pathway")
   
-  if (nrow(pc1Pathways)<2) warning("there are less than two enriched pathways, no heatmap will be generated") else{
-
-      heatmap.2(pc1Pathways, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="Pathways enriched in PCgenes",key.title="-logFDR",key.xlab="",key.ylab="", ...)
-   }
-   return(pc1Pathways)
- }
-
-
-
-
-
-
-
-
-
-
+  if (nrow(pc1Pathways)<2 | ncol(pc1Pathways)<2 ) {
+    warning("there are less than two enriched pathways or less than two datasets, no heatmap will be generated")
+    }	else{
+    
+    heatmap.2(pc1Pathways, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="Pathways enriched in PCgenes",key.title="-logFDR",key.xlab="",key.ylab="", ...)
+  }
+  return(pc1Pathways)
+}
 
 ##plot functions on the combined datasets
 ####################### PCA ##############
 
 #' plot PCA for the combined dataset
 #' @description  PCA plot for the combined datasets
-#' @param scesall SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
+#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
+#' @param scolors a vector of color
+#' @param pointSize integer; size of point
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' scesMerge<-preparePCATSNEData(sces,organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' scesMerge <- Combine_scRNAseq(sces)
 #' plotAllPCA(scesMerge)
 
-
-plotAllPCA <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
-  pcadata <- data.frame(Sample = (scesmerge@colData$condition), PC1 = scesmerge@metadata$reducedDims$PCA$x[, 1], PC2 = scesmerge@metadata$reducedDims$PCA$x[, 2],stringsAsFactors=FALSE )
-  nsample<-length(unique(scesmerge@colData$condition))
+plotAllPCA <- function(scesMerge, scolors = NULL, pointSize = 0.8) {
+  pcadata <- data.frame(Sample = (scesMerge@colData$condition), PC1 = scesMerge@metadata$reducedDims$PCA$x[, 1], PC2 = scesMerge@metadata$reducedDims$PCA$x[, 2],stringsAsFactors=FALSE )
+  nsample<-length(unique(scesMerge@colData$condition))
   if (is.null(scolors)) scolors=1:nsample
-  eigs <- scesmerge@metadata$reducedDims$PCA$sdev ^ 2
+  eigs <- scesMerge@metadata$reducedDims$PCA$sdev ^ 2
   pc1pct <- eigs[1] / sum(eigs)
   pc2pct <- eigs[2] / sum(eigs)
   
@@ -406,21 +420,22 @@ plotAllPCA <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
 ####################### tSNE ##############
 #' plot tSNE for the combined dataset
 #' @description  tSNE plot for the combined datasets
-#' @param scesall a SingleCellExperiment object; this object contains the combined datasets and reduced dimensions using PCA and tSNE 
+#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
+#' @param scolors a vector of color
+#' @param pointSize integer; size of point
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' scesMerge<-preparePCATSNEData(sces,organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' scesMerge<-Combine_scRNAseq(sces)
 #' plotAlltSNE(scesMerge)
 
-
-plotAlltSNE <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
-  tsnedata <- data.frame(D1 = scesmerge@metadata$reducedDims$tSNE[, 1], D2 = scesmerge@metadata$reducedDims$tSNE[, 2], Sample = (scesmerge@colData$condition),stringsAsFactors=FALSE)
-  nsample<-length(unique(scesmerge@colData$condition))
+plotAlltSNE <- function(scesMerge, scolors = NULL, pointSize = 0.8) {
+  tsnedata <- data.frame(D1 = scesMerge@metadata$reducedDims$tSNE[, 1], D2 = scesMerge@metadata$reducedDims$tSNE[, 2], Sample = (scesMerge@colData$condition),stringsAsFactors=FALSE)
+  nsample<-length(unique(scesMerge@colData$condition))
   if (is.null(scolors)) scolors=1:nsample
   p_tsne <- ggplot(tsnedata, aes(x = D1, y = D2, label = Sample)) + 
     geom_point(aes(col = Sample), size = pointSize) + labs(title="tSNE",x="t-SNE1",y="t-SNE2")+
@@ -433,48 +448,54 @@ plotAlltSNE <- function(scesmerge, scolors = NULL, pointSize = 0.8) {
 ####pairwise comparison between any two datasets
 #' plot differentially expressed genes between any two datasets
 #' @description  plot the differentially expressed genes in any pairwise comparison
-#' @param scesall a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
+#' @param scesMerge a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
+#' @param margins margins for heatmap.2
+#' @param keysize integer for heatmap.2
+#' @param col color for heatmap.2
+#' @param ... parameters passing to heatmap.2
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' scesMerge<-preparePCATSNEData(sces,organism="mmusculus")
-#' #plot the average count distribution for all datasets
+#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' scesMerge<-Combine_scRNAseq(sces)
 #' plotDiffgenes(scesMerge)
 
-plotDiffgenes<-function(scesmerge,margins=c(5,5),keysize=1,col=bluered(75), ...){
-   if (is.null(scesmerge@metadata$diffFC$genes)) warning("no differentially expressed genes detected in pairwise comparisons")
-   if (nrow(scesmerge@metadata$diffFC$genes)<2) warning("less than two genes detected, no heatmap will be generated") else{
-         heatmap.2(as.matrix(scesmerge@metadata$diffFC$genes), cexRow = 0.6, margins=margins, keysize=keysize, col=col,key.title="logFC",key.xlab="",key.ylab="", ...)
-
-	   }
+plotDiffgenes<-function(scesMerge,margins=c(5,5),keysize=1,col=bluered(75), ...){
+  if (is.null(scesMerge@metadata$diffFC$genes)) stop("no differentially expressed genes detected in pairwise comparisons")
+  if (nrow(scesMerge@metadata$diffFC$genes)<2 |ncol(scesMerge@metadata$diffFC$genes)<2 ) {
+   warning("less than two genes detected or less than two columns, no heatmap will be generated") 
+    } else{
+   heatmap.2(as.matrix(scesMerge@metadata$diffFC$genes), cexRow = 0.6, margins=margins, keysize=keysize, col=col,key.title="logFC",key.xlab="",key.ylab="", ...)
+ }
+  return(scesMerge@metadata$diffFC$genes)
 }
-
-
 
 #' plot pathways enriched in differentially expressed genes
 #' @description  plot the differentially expressed genes in any pairwise comparison
-#' @param scesall a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
+#' @param scesMerge a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
+#' @param margins margins for heatmap.2
+#' @param keysize integer for heatmap.2
+#' @param col color for heatmap.2
+#' @param ... parameters passing to heatmap.2
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#' scesMerge<-preparePCATSNEData(sces,organism="mmusculus")
-#' #plot the average count distribution for all datasets
-#' plotDiffgenes(scesMerge)
+#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+#'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' scesMerge<-Combine_scRNAseq(sces)
+#' plotDiffPathways(scesMerge)
 
-plotDiffPathways <-function(scesmerge,margins=c(5,5),keysize=1,col=colorpanel(75,low="white",high="red"), ...){
-  if (is.null(scesmerge@metadata$diffFC$pathways)) warning("no pathways detected") 
-  if (nrow(scesmerge@metadata$diffFC$pathways)<2) warning("less than two pathways detected, no heatmap will be generated")else{
-  
-     heatmap.2(as.matrix(scesmerge@metadata$diffFC$pathways), cexRow = 0.6, margins=margins, keysize=keysize, col=col,key.title="-logFDR",key.xlab="",key.ylab="", ...)
- 
-	 }
+plotDiffPathways <-function(scesMerge,margins=c(5,5),keysize=1,col=colorpanel(75,low="white",high="red"), ...){
+  if (is.null(scesMerge@metadata$diffFC$pathways)) stop("no pathways detected") 
+  if (nrow(scesMerge@metadata$diffFC$pathways)<2 | ncol(scesMerge@metadata$diffFC$pathways)<2) {
+    warning("less than two pathways detected or less than two columns, no heatmap will be generated")
+	} else{
+    heatmap.2(as.matrix(scesMerge@metadata$diffFC$pathways), cexRow = 0.6, margins=margins, keysize=keysize, col=col,key.title="-logFDR",key.xlab="",key.ylab="", ...)
+  }
+  return(scesMerge@metadata$diffFC$pathways)
 }
-
-
-

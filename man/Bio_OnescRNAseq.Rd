@@ -2,13 +2,13 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{Bio_OnescRNAseq}
 \alias{Bio_OnescRNAseq}
-\title{Process one scRNAseq dataset to generate QC metadata on biological features}
+\title{process one scRNAseq dataset to generate biological metadata}
 \usage{
 Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
   organism = "mmusculus")
 }
 \arguments{
-\item{scdata, }{a SingleCellExperiment object;}
+\item{scdata}{a SingleCellExperiment object;}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -16,7 +16,7 @@ Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{organism;}{the organism of single cell RNAseq datasets; (defeault: mmusculus)}
+\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
 a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:

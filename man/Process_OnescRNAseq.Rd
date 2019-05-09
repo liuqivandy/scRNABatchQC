@@ -2,7 +2,7 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{Process_OnescRNAseq}
 \alias{Process_OnescRNAseq}
-\title{Process one scRNAseq dataset to generate QC metadata}
+\title{process one scRNAseq dataset to generate QC metadata}
 \usage{
 Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
   mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
@@ -10,6 +10,8 @@ Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
   PCind = 1, organism = "mmusculus")
 }
 \arguments{
+\item{inputfile}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+
 \item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
 \item{mincounts}{integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)}
@@ -28,9 +30,7 @@ Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{inputfile;}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
-
-\item{organism;}{the organism of single cell RNAseq datasets; (defeault: mmusculus)}
+\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
 a SingleCellExperiment object with several slots:

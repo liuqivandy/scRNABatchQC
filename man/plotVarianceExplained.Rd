@@ -22,7 +22,9 @@ plot the variances explained by the explanatory variable
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+  
 #plot the variance explained by the total_counts 
 plotVarianceExplained(sces)
 #plot the variance explained by the total number of genes

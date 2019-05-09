@@ -2,13 +2,21 @@
 % Please edit documentation in R/plotFunctions.R
 \name{plotPCPathways}
 \alias{plotPCPathways}
-\title{plot PC-related pathways}
+\title{plot pathways enriched in PC-related genes}
 \usage{
 plotPCPathways(sces, margins = c(5, 10), keysize = 1, col = colorpanel(75,
   low = "white", high = "red"), ...)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+
+\item{margins}{margins for heatmap.2 (default: c(5,10))}
+
+\item{keysize}{integer for heatmap.2  (default: 1)}
+
+\item{col}{color for heatmap.2  (default: colorpanel(75,low="white",high="red"))}
+
+\item{...}{parameters passing to heatmap.2}
 }
 \value{
 a matrix containing the -log10 pvalue of enriched pathways in each dataset
@@ -18,7 +26,7 @@ plot the pathways enriched in the PC genes across single cell RNAseq datasets
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#plot the average count distribution for all datasets
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 plotPCPathways(sces)
 }

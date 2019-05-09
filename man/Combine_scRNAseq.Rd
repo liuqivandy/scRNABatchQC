@@ -2,7 +2,7 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{Combine_scRNAseq}
 \alias{Combine_scRNAseq}
-\title{Combine scRNAseq datasets to one dataset and run the analysis on the combined dataset}
+\title{combine multiple scRNAseq datasets into one and generate QC metadata}
 \usage{
 Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
   sampleRatio = 1, organism = "mmusculus")
@@ -12,7 +12,7 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
 
 \item{nHVGs}{integer; the number of highly variable genes (default:1000)}
 
-\item{nPCs}{integer: the number of principal components (default:10)}
+\item{nPCs}{integer; the number of principal components (default:10)}
 
 \item{logFC}{float; log fold change cutoff to select differentially expressed genes (default: 1)}
 
@@ -20,7 +20,7 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
 
 \item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)}
 
-\item{organism;}{a character giving the organism of single cell RNAseq datasets (default: hsapiens)}
+\item{organism}{a character string; the organism of single cell RNAseq datasets;if supported by WebGestaltR, the functional enrichment will be performed; (defeault: mmusculus)}
 }
 \value{
 a SingleCellExperiment object with several slots:
@@ -39,14 +39,14 @@ Combine and compare multiple single cell RNAseq datasets; 1) combine into one da
 }
 \examples{
 library(scRNABatchQC)
-sces<-process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
-scmerge <- Combine_scRNAseq(sces)
-logcounts(scmerge)[1:5,1:5]
-head(scmerge@elementMetadata$hvg)
-summary(scmerge@metadata$reducedDims$PCA)
-visualize PCA results
-plot(scmerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scmerge@colData$condition),xlab="PCA1",ylab="PCA2")
-visualize tSNE results
-plot(scmerge@metadata$reducedDims$tSNE,pch=16,col=as.factor(scmerge@colData$condition),xlab="tSNE1",ylab="tSNE2")
-scmerge@metadata$diffFC
+sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+scesMerge <- Combine_scRNAseq(sces)
+logcounts(scesMerge)[1:5,1:5]
+head(scesMerge@elementMetadata$hvg)
+summary(scesMerge@metadata$reducedDims$PCA)
+#visualize PCA results
+plot(scesMerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scesMerge@colData$condition),xlab="PCA1",ylab="PCA2")
+#visualize tSNE results
+plot(scesMerge@metadata$reducedDims$tSNE,pch=16,col=as.factor(scesMerge@colData$condition),xlab="tSNE1",ylab="tSNE2")
+scesMerge@metadata$diffFC
 }

@@ -21,7 +21,9 @@ plot the gene mean vs. variance trend
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+  
 #plot the mean~variance trend for all datasets
 plotVarianceTrend(sces)
 #plot the mean~variance trend for the first dataset

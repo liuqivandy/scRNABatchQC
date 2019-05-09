@@ -12,9 +12,13 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   outputFile = "report.html")
 }
 \arguments{
+\item{inputfiles}{a string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+
+\item{names}{a string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
-\item{nPCs}{integer: the number of principal components (default: 10)}
+\item{nPCs}{integer; the number of principal components (default: 10)}
 
 \item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
@@ -22,27 +26,23 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 
 \item{mingenes}{integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)}
 
-\item{maxmito}{float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2);}
+\item{maxmito}{float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2)}
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{mtRNA}{a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
-\item{rRNA}{a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 
-\item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)}
+\item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)}
 
 \item{logFC}{float; log fold change cutoff to select differentially expressed genes (default: 1)}
 
 \item{FDR}{float; FDR cutoff to select differentially expressed genes (default: 0.01)}
 
-\item{outputFile}{character; the name of the output file (default: report.html)}
+\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 
-\item{inputfiles;}{a character vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
-
-\item{names;}{a character vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
-
-\item{organism;}{the organism of single cell RNAseq datasets; (defeault: mmusculus)}
+\item{outputFile}{a character stringstring; the name of the output file (default: report.html)}
 }
 \value{
 a list of SingleCellExperiment objects;
@@ -54,7 +54,7 @@ Compare multiple scRNA-seq datasets simultaneously on numerous technical and bio
 }
 \examples{
 library(scRNABatchQC)  
-output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 output$sces
 output$scesMerge
 plotDensity(output$sces, "total_counts")

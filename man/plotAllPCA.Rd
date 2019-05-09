@@ -4,18 +4,22 @@
 \alias{plotAllPCA}
 \title{plot PCA for the combined dataset}
 \usage{
-plotAllPCA(scesmerge, scolors = NULL, pointSize = 0.8)
+plotAllPCA(scesMerge, scolors = NULL, pointSize = 0.8)
 }
 \arguments{
-\item{scesall}{SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE}
+\item{scesMerge}{SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE}
+
+\item{scolors}{a vector of color}
+
+\item{pointSize}{integer; size of point}
 }
 \description{
 PCA plot for the combined datasets
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-scesMerge<-preparePCATSNEData(sces,organism="mmusculus")
-#plot the average count distribution for all datasets
+sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                   "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+scesMerge <- Combine_scRNAseq(sces)
 plotAllPCA(scesMerge)
 }

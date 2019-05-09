@@ -2,26 +2,26 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{Tech_OnescRNAseq}
 \alias{Tech_OnescRNAseq}
-\title{Process one scRNAseq dataset to generate QC metadata on technical features}
+\title{process one scRNAseq dataset to generate technical metadata}
 \usage{
 Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
   maxmito = 0.2, mtRNA = "^mt-|^MT-",
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]")
 }
 \arguments{
+\item{inputfile}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+
+\item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
+
 \item{mincounts}{integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)}
 
 \item{mingenes}{integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)}
 
 \item{maxmito}{float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2);}
 
-\item{mtRNA}{a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
-\item{rRNA}{a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
-
-\item{inputfile;}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
-
-\item{organism;}{the organism of single cell RNAseq datasets; (defeault: mmusculus)}
+\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 }
 \value{
 a SingleCellExperiment object containing metadata for technical features

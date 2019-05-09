@@ -11,13 +11,23 @@ plotDensity(sces, feature = c("total_counts", "total_features",
 \arguments{
 \item{sces}{a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
 
-\item{feature}{a character; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)}
+\item{feature}{string; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)}
+
+\item{featureLabel}{string; label of feature}
+
+\item{scolors}{vector of color}
+
+\item{lineSize}{integer; size of line}
 }
 \description{
 plot the distribution of total_counts, total_features, pct_counts_Mt (percentage of mtRNA counts) or pct_counts_rRNA (percentage of rRNA counts) for multiple single cell RNAseq datasets
 }
 \examples{
 library(scRNABatchQC)
-sces <- sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+                
 plotDensity(sces,"total_counts")
+# plot the total counts distribution of the first dataset
+plotDensity(sces[1],"total_counts")
 }

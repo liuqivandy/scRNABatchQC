@@ -8,6 +8,14 @@ plotPCgenes(sces, margins = c(5, 5), keysize = 1, col = bluered(75), ...)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+
+\item{margins}{margins for heatmap.2 (default: c(5,5))}
+
+\item{keysize}{integer for heatmap.2   (default: 1)}
+
+\item{col}{color for heatmap.2    (default: bluered(75))}
+
+\item{...}{parameters passing to heatmap.2}
 }
 \value{
 a matrix containing the log fold change of genes highly associated with a certain principle component
@@ -17,7 +25,6 @@ plot the genes highly associated with a certain principle component
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#plot the average count distribution for all datasets
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 plotPCgenes(sces)
 }

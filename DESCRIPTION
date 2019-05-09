@@ -1,13 +1,20 @@
+Encoding: UTF-8
 Package: scRNABatchQC
-Version: 0.9.8
-Date: 2019-05-03
+Type: Package
 Title: a package for quality control of multiple single cell RNAseq data
-Author: Quanhu Sheng, Jie Ping, Yu Shyr, Qi Liu
-Maintainer: "Quanhu SHENG" <shengqh@gmail.com>
-Depends: R.utils,  ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, limma, Matrix, statmod, DT, RCurl,SingleCellExperiment
-biocViews:
+Version: 0.9.9
+Date: 2019-05-08
+Authors@R: c(person("Quanhu", "Sheng", email = "quanhu.sheng.1@vumc.org", role = c("aut", "ctr")),
+             person("Jie", "Ping", email = "jie.ping.1@vumc.org", role = c("aut", "ctr")),
+             person("Yu", "Shyr", email = "yu.shyr@vumc.org", role = c("aut")),
+             person("Qi", "Liu", email = "qi.liu@vumc.org", role = c("aut", "cre"))
+		        )
 Description: 
   Multiple single cell data quality control
-License: GPL (>= 2)
+License: LGPL
+URL: https://github.com/liuqivandy/scRNABatchQC
+Depends: R (>= 3.3), devtools, R.utils, ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, 
+         limma, Matrix, statmod, DT, RCurl, SingleCellExperiment, knitr
+biocViews:
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

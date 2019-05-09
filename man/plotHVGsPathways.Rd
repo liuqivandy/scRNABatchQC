@@ -9,6 +9,14 @@ plotHVGsPathways(sces, margins = c(5, 10), keysize = 1,
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+
+\item{margins}{margins for heatmap.2 (default: c(5,10))}
+
+\item{keysize}{integer for heatmap.2  (default: 1)}
+
+\item{col}{color for heatmap.2  (default: colorpanel(75,low="white",high="red"))}
+
+\item{...}{parameters passing to heatmap.2}
 }
 \value{
 a matrix containing the -log10 pvalue of enriched pathways in each dataset
@@ -18,7 +26,7 @@ plot the pathways enriched in the highly variable genes across single cell RNAse
 }
 \examples{
 library(scRNABatchQC)
-sces<-prepareSCRNADataSet(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
-#plot the average count distribution for all datasets
+sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
+                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 plotHVGsPathways(sces)
 }
