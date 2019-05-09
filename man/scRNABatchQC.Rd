@@ -40,9 +40,9 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 
 \item{FDR}{float; FDR cutoff to select differentially expressed genes (default: 0.01)}
 
-\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+\item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 
-\item{outputFile}{a character stringstring; the name of the output file (default: report.html)}
+\item{outputFile}{string; the name of the output file (default: report.html)}
 }
 \value{
 a list of SingleCellExperiment objects;

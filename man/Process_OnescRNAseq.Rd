@@ -20,9 +20,9 @@ Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
 
 \item{maxmito}{float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2);}
 
-\item{mtRNA}{a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
-\item{rRNA}{a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -30,7 +30,7 @@ Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+\item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
 a SingleCellExperiment object with several slots:

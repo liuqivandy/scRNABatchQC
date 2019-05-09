@@ -170,8 +170,8 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 #' plot variance explained by one specific feature
 #' @description plot the variances explained by the explanatory variable 
 #' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
-#' @param feature a character; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)
-#' @param scolors a vector of integer; the color of each dataset (default: 1:length(sces))
+#' @param feature string; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)
+#' @param scolors a vector of color; the color of each dataset (default: 1:length(sces))
 #' @param lineSize integer; the line size of the fitted mean-variance trend curve  (default: 1)
 #' @import ggplot2 SingleCellExperiment
 #' @export

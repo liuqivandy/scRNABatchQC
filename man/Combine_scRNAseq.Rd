@@ -20,7 +20,7 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
 
 \item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)}
 
-\item{organism}{a character string; the organism of single cell RNAseq datasets;if supported by WebGestaltR, the functional enrichment will be performed; (defeault: mmusculus)}
+\item{organism}{string; the organism of single cell RNAseq datasets;if supported by WebGestaltR, the functional enrichment will be performed; (defeault: mmusculus)}
 }
 \value{
 a SingleCellExperiment object with several slots:

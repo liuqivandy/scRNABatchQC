@@ -11,9 +11,9 @@ plotVarianceExplained(sces, feature = c("genevar_by_counts",
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
 
-\item{feature}{a character; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)}
+\item{feature}{string; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)}
 
-\item{scolors}{a vector of integer; the color of each dataset (default: 1:length(sces))}
+\item{scolors}{a vector of color; the color of each dataset (default: 1:length(sces))}
 
 \item{lineSize}{integer; the line size of the fitted mean-variance trend curve  (default: 1)}
 }

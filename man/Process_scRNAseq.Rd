@@ -32,7 +32,7 @@ Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 
 \item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 
-\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+\item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
 a list of SingleCellExperiment objects , each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)

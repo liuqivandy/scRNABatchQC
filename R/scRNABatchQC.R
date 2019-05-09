@@ -62,7 +62,7 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
 #' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
 #' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @param organism a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 
 #' @return a list of SingleCellExperiment objects , each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)
 #'         each SingleCellExperiment object containing several slots:
@@ -148,7 +148,7 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
 #' @param logFC float; log fold change cutoff to select differentially expressed genes (default: 1)
 #' @param FDR float; FDR cutoff to select differentially expressed genes (default: 0.01)
 #' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity(default: 1)
-#' @param organism a character string; the organism of single cell RNAseq datasets;if supported by WebGestaltR, the functional enrichment will be performed; (defeault: mmusculus) 
+#' @param organism string; the organism of single cell RNAseq datasets;if supported by WebGestaltR, the functional enrichment will be performed; (defeault: mmusculus) 
 #' @return a SingleCellExperiment object with several slots:
 #' 	                               assays; ShallowSimpleListAssays object containing one sparse matrix:  logcounts (log-transformed normalized counts)
 #'                                 elementMetadata; A DataFrame containining metadata for each gene, including
@@ -281,9 +281,9 @@ generateReport<-function(sces, scesMerge, outputFile="report.html") {
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
 #' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
 #' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA a character; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA a character; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
-#' @param organism a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 #' @return a SingleCellExperiment object with several slots:
 #' 	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
 #'                                 elementMetadata; A DataFrame containining metadata for each gene, including
@@ -457,7 +457,7 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer: the number of principal components (default: 10)
 #' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param organism a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 #' @return a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
 #' 	                               
 #'                                 elementMetadata; hvg: a dataframe containing mean, variance and z-score for dispersion 

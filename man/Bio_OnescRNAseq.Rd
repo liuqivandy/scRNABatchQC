@@ -16,7 +16,7 @@ Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{organism}{a character string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+\item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
 a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
