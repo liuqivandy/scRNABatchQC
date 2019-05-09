@@ -19,9 +19,10 @@
 #' @param organism  string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 #' @param outputFile  string; the name of the output file (default: report.html)
 #' @return a list of SingleCellExperiment objects;
-#'                 sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset (refer to Process_scRNAseq output)
-#'                 scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets (refer to Combine_scRNAseq output)
-
+#'  \itemize{
+#'  \item  {       sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset; see the output of  \code{\link{Process_scRNAseq} }}
+#'  \item {        scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets; see the output of \code{\link{Combine_scRNAseq} }}
+#' }
 #' @examples
 #' library(scRNABatchQC)  
 #' output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
@@ -64,36 +65,47 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
 #' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 
-#' @return a list of SingleCellExperiment objects , each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)
+#' @return a list of SingleCellExperiment objects, \n each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)
 #'         each SingleCellExperiment object containing several slots:
-#' 	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
-#'                                 elementMetadata; A DataFrame containining metadata for each gene, including
-#'                                                  ave.counts: the average counts
-#'                                                  num.cells: the number of cells with the gene detected 
-#'                                                  hvg: a dataframe containing mean, variance and z-score for dispersion 
-#'                                                  genevar_by_tounts:  variance explained by the log-transformed counts 
-#'                                                  genevar_by_features: variance explained by the log-transformed features 
-#'                                                  genevar_by_Mt: variance explained by the log-transformed mitochondrial counts
-#'                                                  genevar_by_rRNA: variance explained by the log-transformed rRNA counts
-#'                                 colData; A DataFrame containing metadata for each cell, including
-#'                                                  log10_total_counts: the number of counts in each cell in log10 transformed
-#'                                                  log10_total_features: the number of genes detected in each cell in log10 transformed 
-#'                                                  log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed
-#'                                                  log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed
-#'                                 metadata: A list containing other metadata, including
-#'                                                  rawmeta: a list of metadata for genes and cells of raw data before filtering, including
-#'                                                           sf: normalization factor
-#'                                                           ngenes: the number of genes
-#'                                                           ncells: the number of cells
-#'                                                           CellData: a dataframe containing metadata for each cell before filtering, includingtotal_counts,total_features,total_counts_Mt,total_counts_rRNA, pct_counts_rRNA (perentage of rRNA counts), pct_counts_Mt (percentage of mtRNA counts), libsize.drop(cell is filtered by library size), feature.drop (cell is filtered by the number of detected genes), mito.drop (cell is filtered by the mtRNA counts), is.drop (cell is filtered by either of library size, the number of genes or the mtRNA reads)
-#'                                                           GeneData: a list containing the gene filter information (gene.keep, gene is filtered since none of the cells detect theg gene)   
-#'	                                                         Cutoff: a list containing the cutoff values (count, gene, mito) for filtering cells                                                   
-#'                                                  pc1genes: a dataframe containing the genes highly correlated with the 1st (default) or the PCind principal component 
-#'                                                  pc1Pathway: a dataframe containing the pathways enriched in pc1 (default) or the PCind genes
-#'                                                  hvgPathway: a dataframe containing the pathways enriched in top n (default:1000) highly variable genes
-#'                                                                    
-#'
-#'                                
+#' \itemize{
+#' \item  {                        assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
+#' \item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+#'            \itemize{  
+#'                         \item {                ave.counts: the average counts  }
+#'                         \item {                num.cells: the number of cells with the gene detected }
+#'                         \item {              hvg: a dataframe containing mean, variance and z-score for dispersion }
+#'                         \item {                              genevar_by_tounts:  variance explained by the log-transformed counts }
+#'                         \item {                             genevar_by_features: variance explained by the log-transformed features }
+#'                         \item {                            genevar_by_Mt: variance explained by the log-transformed mitochondrial counts }
+#'                         \item {                           genevar_by_rRNA: variance explained by the log-transformed rRNA counts }
+#'              }
+#'         }
+#'  \item {                               colData; A DataFrame containing metadata for each cell, including
+#'               \itemize {
+#'                           \item{                log10_total_counts: the number of counts in each cell in log10 transformed }
+#'                            \item {                      log10_total_features: the number of genes detected in each cell in log10 transformed }
+#'                             \item {                     log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed }
+#'                              \item {                    log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed  }
+#'                }
+#' }
+#'  \item {                               metadata: A list containing other metadata, including
+#'             \itemize {
+#'                          \item {         rawmeta: a list of metadata for genes and cells of raw data before filtering, including
+#'                                   \itemize{ 
+#'                                          \item {        sf: normalization factor }
+#'                                          \item {        ngenes: the number of genes }
+#'                                          \item {        ncells: the number of cells }
+#'                                          \item {        CellData: a dataframe containing metadata for each cell before filtering, includingtotal_counts,total_features,total_counts_Mt,total_counts_rRNA, pct_counts_rRNA (perentage of rRNA counts), pct_counts_Mt (percentage of mtRNA counts), libsize.drop(cell is filtered by library size), feature.drop (cell is filtered by the number of detected genes), mito.drop (cell is filtered by the mtRNA counts), is.drop (cell is filtered by either of library size, the number of genes or the mtRNA reads) }
+#'                                          \item {        GeneData: a list containing the gene filter information (gene.keep, gene is filtered since none of the cells detect theg gene)    }
+#'	                                        \item {        Cutoff: a list containing the cutoff values (count, gene, mito) for filtering cells                                                }   
+#'                                         }
+#'                                  }
+#'                         \item {           pc1genes: a dataframe containing the genes highly correlated with the 1st (default) or the PCind principal component }
+#'                         \item {           pc1Pathway: a dataframe containing the pathways enriched in pc1 (default) or the PCind genes  }
+#'                         \item {           hvgPathway: a dataframe containing the pathways enriched in top n (default:1000) highly variable genes }
+#'                        }                                            
+#'     }
+#'  }                              
 #'                                
 
 #' @examples

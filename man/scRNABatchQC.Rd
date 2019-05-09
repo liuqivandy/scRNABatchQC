@@ -46,8 +46,10 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 }
 \value{
 a list of SingleCellExperiment objects;
-                sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset (refer to Process_scRNAseq output)
-                scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets (refer to Combine_scRNAseq output)
+ \itemize{
+ \item  {       sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset; see the output of  \code{\link{Process_scRNAseq} }}
+ \item {        scesMerge: a SingleCellExperiment object containing bilogical metadata for the combined dataset and the pairwise difference across datasets; see the output of \code{\link{Combine_scRNAseq} }}
+}
 }
 \description{
 Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features
