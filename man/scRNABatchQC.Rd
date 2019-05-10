@@ -9,12 +9,12 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   PCind = 1, mtRNA = "^mt-|^MT-",
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio = 1,
   logFC = 1, FDR = 0.01, organism = "mmusculus",
-  outputFile = "report.html")
+  outputFile = "report.html", lineSize = 1, pointSize = 0.8)
 }
 \arguments{
 \item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 
-\item{names}{string vector; names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+\item{names}{string vector; giving names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -43,6 +43,10 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 \item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 
 \item{outputFile}{string; the name of the output file (default: report.html)}
+
+\item{lineSize}{float; the line size of figures in the report (default: 1)}
+
+\item{pointSize}{float; the point size of figures in the report  (default: 0.8)}
 }
 \value{
 a list of SingleCellExperiment objects;
