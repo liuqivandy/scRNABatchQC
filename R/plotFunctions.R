@@ -1,7 +1,7 @@
 
 #' plotDensity 
 #' @description plot the distribution of total_counts, total_features, pct_counts_Mt (percentage of mtRNA counts) or pct_counts_rRNA (percentage of rRNA counts) for multiple single cell RNAseq datasets
-#' @param sces a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param feature string; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)
 #' @param featureLabel string; label of feature
 #' @param scolors vector of color
@@ -16,7 +16,7 @@
 #' plotDensity(sces,"total_counts")
 #' # plot the total counts distribution of the first dataset
 #' plotDensity(sces[1],"total_counts")
-
+#' @seealso \code{\link{Process_scRNAseq}} 
 plotDensity <- function(sces, feature=c("total_counts","total_features","pct_counts_Mt","pct_counts_rRNA"), 
                         featureLabel=NULL, scolors = 1:length(sces), lineSize = 1 ) {
   
@@ -37,7 +37,7 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
 
 #' plot the gene count distribution
 #' @description plot the gene count distribution of top n (default:500) highly expressed genes 
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param ngenes integer; the number of highly expressed genes to plot the distribution (default:500)
 #' @param scolors a vector of integer; the color of each dataset (default: 1:length(sces))
 #' @param lineSize integer; the line size of the plot  (default: 1)
@@ -52,7 +52,7 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
 #' plotGeneCountDistribution(sces)
 #' #plot the average count distribution for the first dataset
 #' plotGeneCountDistribution(sces[1])
-
+#' @seealso \code{\link{Process_scRNAseq}} 
 plotGeneCountDistribution <- function(sces, scolors = 1:length(sces), 
                                       ngenes = 500, lineSize = 1) {
   prop_mat <- c()
@@ -84,7 +84,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
 ####averge count vs. detection rate
 #' plotAveCountVSdetectRate 
 #' @description plot the gene detection rates vs. the average gene expression level in the datasets  
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param scolors a vector of integer; the color of each dataset (default: 1:length(sces))
 #' @param lineSize integer; the line size of the plot  (default: 1)
 #' @import ggplot2 SingleCellExperiment
@@ -99,7 +99,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
 #' plotAveCountVSdetectRate(sces)
 #' #plot the gene detection rates for the first dataset
 #' plotAveCountVSdetectRate(sces[1])
-
+#' @seealso \code{\link{Process_scRNAseq}} 
 plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 1) {
   avedetect <- data.frame()
   if (is.null(names(sces))) names(sces)<-1:length(sces)
@@ -123,7 +123,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
 
 #' plot Mean~variance trend
 #' @description plot the gene mean vs. variance trend  
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param scolors a vector of integer; the color of each dataset (default: 1:length(sces))
 #' @param pointSize; the point size of each dot representing each gene
 #' @param lineSize integer; the line size of the fitted mean-variance trend curve  (default: 1)
@@ -139,7 +139,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
 #' plotVarianceTrend(sces)
 #' #plot the mean~variance trend for the first dataset
 #' plotVarianceTrend(sces[1])
-
+#' @seealso \code{\link{Process_scRNAseq}} 
 plotVarianceTrend <- function(sces, scolors = 1:length(sces), 
                               pointSize=0.8, lineSize=1) {
   meanvar_dat <- data.frame()
@@ -169,7 +169,7 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 
 #' plot variance explained by one specific feature
 #' @description plot the variances explained by the explanatory variable 
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param feature string; the explanatory variable to plot; feature should be genevar_by_counts, genevar_by_features, genevar_by_Mt, or genevar_by_rRNA; (default: genevar_by_counts)
 #' @param scolors a vector of color; the color of each dataset (default: 1:length(sces))
 #' @param lineSize integer; the line size of the fitted mean-variance trend curve  (default: 1)
@@ -185,7 +185,7 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
 #' plotVarianceExplained(sces)
 #' #plot the variance explained by the total number of genes
 #' plotVarianceExplained(sces,feature="genevar_by_features")
-
+#' @seealso \code{\link{Process_scRNAseq}} 
 plotVarianceExplained <- function(sces, feature=c("genevar_by_counts","genevar_by_features","genevar_by_Mt","genevar_by_rRNA"), scolors = 1:length(sces), 
                                   lineSize = 1) {
   if (is.null(names(sces))) names(sces)<-1:length(sces)
@@ -232,7 +232,7 @@ panel.dot <- function(x, y, ...) {
 
 #' plot the similarity across sample sets
 #' @description plot the average expression similarity across single cell RNAseq datasets
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param ... parameters passing to function pairs
 #' @import SingleCellExperiment 
 #' @export
@@ -243,6 +243,9 @@ panel.dot <- function(x, y, ...) {
 #'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #'   
 #' plotSampleSimilarity(sces)
+
+#' @seealso \code{\link{Process_scRNAseq}} 
+
 plotSampleSimilarity <- function(sces, ...) {
   
   if (length(sces)<=1) stop("there should be more than one dataset")
@@ -263,12 +266,12 @@ plotSampleSimilarity <- function(sces, ...) {
 ##plot the highly variable genes
 #' plot HVGs
 #' @description plot the highly variable genes across single cell RNAseq datasets
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param margins margins for heatmap.2 (default: c(5,5))
 #' @param keysize integer for heatmap.2 (default:1)
 #' @param col color for heatmap.2    (default: bluered(75))
 #' @param ... parameters passing to heatmap.2
-#' @return a matrix containing the z score of dispersion of highly variable genes in each dataset
+#' @return a matrix containing the z-score of dispersion of highly variable genes in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
@@ -277,6 +280,7 @@ plotSampleSimilarity <- function(sces, ...) {
 #' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
 #'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotHVGs(sces)
+#' @seealso \code{\link{Process_scRNAseq}} 
 
 plotHVGs<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
   
@@ -292,12 +296,12 @@ plotHVGs<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
 ##plot the pathways enriched in highly variable genes
 #' plot pathways enriched in HVGs
 #' @description plot the pathways enriched in the highly variable genes across single cell RNAseq datasets
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param margins margins for heatmap.2 (default: c(5,10))
 #' @param keysize integer for heatmap.2  (default: 1)
 #' @param col color for heatmap.2  (default: colorpanel(75,low="white",high="red"))
 #' @param ... parameters passing to heatmap.2
-#' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
+#' @return a matrix containing the -log10 FDR of enriched pathways in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
@@ -306,6 +310,7 @@ plotHVGs<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
 #' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
 #'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotHVGsPathways(sces)
+#' @seealso \code{\link{Process_scRNAseq}} 
 
 plotHVGsPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="white",high="red"),...){
   
@@ -321,12 +326,12 @@ plotHVGsPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low=
 ##plot  genes highly associated with a certain principle component
 #' plot PC-related genes
 #' @description plot the genes highly associated with a certain principle component
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset;(results from \code{\link{Process_scRNAseq}} )
 #' @param margins margins for heatmap.2 (default: c(5,5))
 #' @param keysize integer for heatmap.2   (default: 1)
 #' @param col color for heatmap.2    (default: bluered(75))
 #' @param ... parameters passing to heatmap.2
-#' @return a matrix containing the log fold change of genes highly associated with a certain principle component
+#' @return a matrix containing the log2 fold change of genes highly associated with a certain principle component
 #' @import SingleCellExperiment 
 #' @export
 #'
@@ -334,6 +339,7 @@ plotHVGsPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low=
 #' library(scRNABatchQC)
 #' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotPCgenes(sces)
+#' @seealso \code{\link{Process_scRNAseq}}  
 
 plotPCgenes<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
 
@@ -350,12 +356,12 @@ plotPCgenes<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
 ##plot the pathways enriched in PC genes
 #' plot pathways enriched in PC-related genes 
 #' @description plot the pathways enriched in the PC genes across single cell RNAseq datasets
-#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset
+#' @param sces list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )
 #' @param margins margins for heatmap.2 (default: c(5,10))
 #' @param keysize integer for heatmap.2  (default: 1)
 #' @param col color for heatmap.2  (default: colorpanel(75,low="white",high="red"))
 #' @param ... parameters passing to heatmap.2
-#' @return a matrix containing the -log10 pvalue of enriched pathways in each dataset
+#' @return a matrix containing the -log10 FDR of enriched pathways in each dataset
 #' @import SingleCellExperiment 
 #' @export
 #'
@@ -364,6 +370,7 @@ plotPCgenes<-function(sces,margins=c(5,5),keysize=1,col=bluered(75),...){
 #' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
 #'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' plotPCPathways(sces)
+#' @seealso \code{\link{Process_scRNAseq}} 
 
 plotPCPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="white",high="red"),...){
   
@@ -382,8 +389,8 @@ plotPCPathways<-function(sces,margins=c(5,10),keysize=1,col=colorpanel(75,low="w
 ####################### PCA ##############
 
 #' plot PCA for the combined dataset
-#' @description  PCA plot for the combined datasets
-#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
+#' @description  PCA plot for the combined dataset
+#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE; (results from \code{\link{Combine_scRNAseq}})
 #' @param scolors a vector of color
 #' @param pointSize integer; size of point
 #' @import SingleCellExperiment ggplot2
@@ -419,8 +426,8 @@ plotAllPCA <- function(scesMerge, scolors = NULL, pointSize = 0.8) {
 
 ####################### tSNE ##############
 #' plot tSNE for the combined dataset
-#' @description  tSNE plot for the combined datasets
-#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE 
+#' @description  tSNE plot for the combined dataset
+#' @param scesMerge SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE;(results from \code{\link{Combine_scRNAseq}}) 
 #' @param scolors a vector of color
 #' @param pointSize integer; size of point
 #' @import SingleCellExperiment ggplot2
@@ -453,6 +460,7 @@ plotAlltSNE <- function(scesMerge, scolors = NULL, pointSize = 0.8) {
 #' @param keysize integer for heatmap.2
 #' @param col color for heatmap.2
 #' @param ... parameters passing to heatmap.2
+#' @return a matrix containing the log2 fold change of differnetially expressed genes in each comparison
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
@@ -462,6 +470,7 @@ plotAlltSNE <- function(scesMerge, scolors = NULL, pointSize = 0.8) {
 #'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scesMerge<-Combine_scRNAseq(sces)
 #' plotDiffgenes(scesMerge)
+#' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}} 
 
 plotDiffgenes<-function(scesMerge,margins=c(5,5),keysize=1,col=bluered(75), ...){
   if (is.null(scesMerge@metadata$diffFC$genes)) stop("no differentially expressed genes detected in pairwise comparisons")
@@ -475,11 +484,12 @@ plotDiffgenes<-function(scesMerge,margins=c(5,5),keysize=1,col=bluered(75), ...)
 
 #' plot pathways enriched in differentially expressed genes
 #' @description  plot the differentially expressed genes in any pairwise comparison
-#' @param scesMerge a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE 
+#' @param scesMerge a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE; (results from \code{\link{Combine_scRNAseq}}) 
 #' @param margins margins for heatmap.2
 #' @param keysize integer for heatmap.2
 #' @param col color for heatmap.2
 #' @param ... parameters passing to heatmap.2
+#' @return a matrix containing the -log10 FDR of enriched pathways 
 #' @import SingleCellExperiment ggplot2
 #' @export
 #'
@@ -489,6 +499,8 @@ plotDiffgenes<-function(scesMerge,margins=c(5,5),keysize=1,col=bluered(75), ...)
 #'                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scesMerge<-Combine_scRNAseq(sces)
 #' plotDiffPathways(scesMerge)
+#' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}}
+
 
 plotDiffPathways <-function(scesMerge,margins=c(5,5),keysize=1,col=colorpanel(75,low="white",high="red"), ...){
   if (is.null(scesMerge@metadata$diffFC$pathways)) stop("no pathways detected") 

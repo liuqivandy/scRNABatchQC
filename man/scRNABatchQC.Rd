@@ -12,9 +12,9 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   outputFile = "report.html")
 }
 \arguments{
-\item{inputfiles}{a string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+\item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 
-\item{names}{a string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+\item{names}{string vector; names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -64,4 +64,7 @@ output$sces[[1]]@metadata$hvgPathway
 plotHVGs(output$sces)
 output$scesMerge@metadata$diffFC$genes
 
+}
+\seealso{
+\code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
 }

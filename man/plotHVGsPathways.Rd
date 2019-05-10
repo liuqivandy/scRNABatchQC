@@ -8,7 +8,7 @@ plotHVGsPathways(sces, margins = c(5, 10), keysize = 1,
   col = colorpanel(75, low = "white", high = "red"), ...)
 }
 \arguments{
-\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{margins}{margins for heatmap.2 (default: c(5,10))}
 
@@ -19,7 +19,7 @@ plotHVGsPathways(sces, margins = c(5, 10), keysize = 1,
 \item{...}{parameters passing to heatmap.2}
 }
 \value{
-a matrix containing the -log10 pvalue of enriched pathways in each dataset
+a matrix containing the -log10 FDR of enriched pathways in each dataset
 }
 \description{
 plot the pathways enriched in the highly variable genes across single cell RNAseq datasets
@@ -29,4 +29,7 @@ library(scRNABatchQC)
 sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 plotHVGsPathways(sces)
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

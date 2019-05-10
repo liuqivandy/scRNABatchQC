@@ -9,7 +9,7 @@ Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]")
 }
 \arguments{
-\item{inputfile}{the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+\item{inputfile}{string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 
 \item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
@@ -25,23 +25,37 @@ Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
 }
 \value{
 a SingleCellExperiment object containing metadata for technical features
-	                               assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts
-                                elementMetadata; A DataFrame containining metadata for each gene, including
-                                                 ave.counts: the average counts
-                                                 num.cells: the number of cells with the gene detected 
-                                colData; A DataFrame containing metadata for each cell, including
-                                                 log10_total_counts: the number of counts in each cell in log10 transformed
-                                                 log10_total_features: the number of genes detected in each cell in log10 transformed 
-                                                 log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed
-                                                 log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed
-                                metadata: A list containing other metadata, including
-                                                 rawmeta: a list of metadata for genes and cells of raw data before filtering, including
-                                                          sf: normalization factor
-                                                          ngenes: the number of genes
-                                                          ncells: the number of cells
-                                                          CellData: a dataframe containing metadata for each cell before filtering, includingtotal_counts,total_features,total_counts_Mt,total_counts_rRNA, pct_counts_rRNA (perentage of rRNA counts), pct_counts_Mt (percentage of mtRNA counts), libsize.drop(cell is filtered by library size), feature.drop (cell is filtered by the number of detected genes), mito.drop (cell is filtered by the mtRNA counts), is.drop (cell is filtered by either of library size, the number of genes or the mtRNA reads)
-                                                          GeneData: a list containing the gene filter information (gene.keep, gene is filtered since none of the cells detect theg gene)   
-                                                         Cutoff: a list containing the cutoff values (count, gene, mito) for filtering cells
+\itemize{
+ \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
+ \item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+           \itemize{  
+                        \item {               ave.counts: the average counts  }
+                        \item {               num.cells: the number of cells with the gene detected }
+             }
+        }
+ \item {                             colData; A DataFrame containing metadata for each cell, including
+              \itemize{
+                          \item{                log10_total_counts: the number of counts in each cell in log10 transformed }
+                          \item {               log10_total_features: the number of genes detected in each cell in log10 transformed }
+                          \item {               log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed }
+                          \item {               log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed  }
+               }
+      }
+ \item {                               metadata: A list containing other metadata, including
+               \itemize{
+                             \item {         rawmeta: a list of metadata for genes and cells of raw data before filtering, including
+                                   \itemize{ 
+                                         \item {        sf: normalization factor }
+                                         \item {        ngenes: the number of genes }
+                                         \item {        ncells: the number of cells }
+                                         \item {        CellData: a dataframe containing metadata for each cell before filtering, includingtotal_counts,total_features,total_counts_Mt,total_counts_rRNA, pct_counts_rRNA (perentage of rRNA counts), pct_counts_Mt (percentage of mtRNA counts), libsize.drop(cell is filtered by library size), feature.drop (cell is filtered by the number of detected genes), mito.drop (cell is filtered by the mtRNA counts), is.drop (cell is filtered by either of library size, the number of genes or the mtRNA reads) }
+                                         \item {        GeneData: a list containing the gene filter information (gene.keep, gene is filtered since none of the cells detect theg gene)    }
+                                        \item {        Cutoff: a list containing the cutoff values (count, gene, mito) for filtering cells                                                }   
+                                        }
+                                 }
+                          }
+   }
+}
 }
 \description{
 Generate technical metadata for one single cell RNAseq represented by gene-cell count table
@@ -52,4 +66,7 @@ sce<-Tech_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/
 plotDensity(list(sce=sce))
 names(sce@metadata)
 head(sce@colData$log10_total_counts)
+}
+\seealso{
+\code{\link{Process_onescRNAseq}} , \code{\link{Bio_OnescRNAseq}}
 }

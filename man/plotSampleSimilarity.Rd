@@ -7,7 +7,7 @@
 plotSampleSimilarity(sces, ...)
 }
 \arguments{
-\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{...}{parameters passing to function pairs}
 }
@@ -20,4 +20,7 @@ sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/
                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
   
 plotSampleSimilarity(sces)
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

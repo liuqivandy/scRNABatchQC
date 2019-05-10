@@ -8,7 +8,7 @@ plotGeneCountDistribution(sces, scolors = 1:length(sces), ngenes = 500,
   lineSize = 1)
 }
 \arguments{
-\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{scolors}{a vector of integer; the color of each dataset (default: 1:length(sces))}
 
@@ -28,4 +28,7 @@ sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/
 plotGeneCountDistribution(sces)
 #plot the average count distribution for the first dataset
 plotGeneCountDistribution(sces[1])
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

@@ -10,9 +10,9 @@ Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism = "mmusculus")
 }
 \arguments{
-\item{inputfiles}{string vector giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+\item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
 
-\item{names}{string vector giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+\item{names}{string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -28,38 +28,39 @@ Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
-\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+\item{rRNA}{string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 
 \item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 }
 \value{
-a list of SingleCellExperiment objects, \n each SingleCellExperiment object containing metadata for one single cell RNAseq dataset (detail information refer to prepareSCRNAData)
+a list of SingleCellExperiment objects ;  \cr
+ each SingleCellExperiment object containing metadata for one single cell RNAseq dataset;  \cr
         each SingleCellExperiment object containing several slots:
 \itemize{
 \item  {                        assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-\item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+\item  {                        elementMetadata; A DataFrame containining metadata for each gene, including 
            \itemize{  
-                        \item {                ave.counts: the average counts  }
-                        \item {                num.cells: the number of cells with the gene detected }
+                        \item {              ave.counts: the average counts  }
+                        \item {              num.cells: the number of cells with the gene detected }
                         \item {              hvg: a dataframe containing mean, variance and z-score for dispersion }
-                        \item {                              genevar_by_tounts:  variance explained by the log-transformed counts }
-                        \item {                             genevar_by_features: variance explained by the log-transformed features }
-                        \item {                            genevar_by_Mt: variance explained by the log-transformed mitochondrial counts }
-                        \item {                           genevar_by_rRNA: variance explained by the log-transformed rRNA counts }
+                        \item {              genevar_by_tounts:  variance explained by the log-transformed counts }
+                        \item {              genevar_by_features: variance explained by the log-transformed features }
+                        \item {              genevar_by_Mt: variance explained by the log-transformed mitochondrial counts }
+                        \item {              genevar_by_rRNA: variance explained by the log-transformed rRNA counts }
              }
         }
- \item {                               colData; A DataFrame containing metadata for each cell, including
-              \itemize {
-                          \item{                log10_total_counts: the number of counts in each cell in log10 transformed }
-                           \item {                      log10_total_features: the number of genes detected in each cell in log10 transformed }
-                            \item {                     log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed }
-                             \item {                    log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed  }
+ \item {                        colData; A DataFrame containing metadata for each cell, including
+              \itemize{
+                          \item {                log10_total_counts: the number of counts in each cell in log10 transformed }
+                          \item {               log10_total_features: the number of genes detected in each cell in log10 transformed }
+                          \item {               log10_total_counts_Mt: the number of mitochondrial counts in each cell in log10 transformed }
+                          \item {               log10_total_counts_rRNA: the number of rRNA counts in each cell in log10 transformed  }
                }
-}
+       }
  \item {                               metadata: A list containing other metadata, including
-            \itemize {
+            \itemize{
                          \item {         rawmeta: a list of metadata for genes and cells of raw data before filtering, including
                                   \itemize{ 
                                          \item {        sf: normalization factor }
@@ -94,4 +95,7 @@ head(sces[[1]]@metadata$pc1Pathway)
 plotDensity(sces,"total_counts")
 plotVarianceTrend(sces)
 plotPCPathways(sces)
+}
+\seealso{
+\code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
 }

@@ -8,7 +8,7 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
   sampleRatio = 1, organism = "mmusculus")
 }
 \arguments{
-\item{sces}{a list of SingleCellExperiment objects; each object corresponds to one single cell RNAseq dataset}
+\item{sces}{a list of SingleCellExperiment objects (results from \code{\link{Process_scRNAseq}}); each object corresponds to one single cell RNAseq dataset}
 
 \item{nHVGs}{integer; the number of highly variable genes (default:1000)}
 
@@ -24,18 +24,24 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
 }
 \value{
 a SingleCellExperiment object with several slots:
-	                               assays; ShallowSimpleListAssays object containing one sparse matrix:  logcounts (log-transformed normalized counts)
-                                elementMetadata; A DataFrame containining metadata for each gene, including
-                                                 hvg: a dataframe containing mean, variance and z-score for dispersion 
-                                colData; A DataFrame containing metadata for each cell, including
-                                                 condition: names where the cell come from
-                                metadata: A list containing other metadata, including
-                                                  reducedDims: a list containing two types of reduced dimensions: PCA and tSNE
-	                                                 diffFC: differential expressed genes and pathways from pairwise comparison between any two datasets
-                                                  other metadata including nHVGs,nPC, logFC, FDR, sampleRatio
+\itemize{
+	               \item {         assays; ShallowSimpleListAssays object containing one sparse matrix  logcounts (log-transformed normalized counts) }
+                \item {         elementMetadata; A Dataframe hvg containining mean, variance and z-score for each gene  }
+                \item {         colData; A Dataframe containing conidtion for each cell   }
+                \item {         metadata: A list containing other metadata, including 
+                                \itemize{
+                                           \item {    reducedDims: a list containing two types of reduced dimensions: PCA and tSNE  }
+	                                          \item {    diffFC: differential expressed genes and pathways from pairwise comparison between any two datasets }
+                                           \item {    other metadata including nHVGs,nPC, logFC, FDR, sampleRatio  }
+                                        }
+                         }
+         }
 }
 \description{
-Combine and compare multiple single cell RNAseq datasets; 1) combine into one dataset; 2)find highly variable genes, reduce dimensions using PCA and tSNE for this combined dataset; 3) pairwise comparsion between any two single cell RNAseq datasets to find the top differentially expressed genes
+Combine and compare multiple single cell RNAseq datasets, including \cr
+ 1)combine into one dataset; \cr
+ 2)find highly variable genes, reduce dimensions using PCA and tSNE for the combined dataset;  \cr
+ 3)pairwise comparsion between any two datasets to find the top differentially expressed genes; \cr
 }
 \examples{
 library(scRNABatchQC)
@@ -49,4 +55,7 @@ plot(scesMerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scesMerge@c
 #visualize tSNE results
 plot(scesMerge@metadata$reducedDims$tSNE,pch=16,col=as.factor(scesMerge@colData$condition),xlab="tSNE1",ylab="tSNE2")
 scesMerge@metadata$diffFC
+}
+\seealso{
+\code{\link{Process_scRNAseq}} , \code{\link{generateReport}}
 }

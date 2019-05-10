@@ -8,7 +8,7 @@ Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
   organism = "mmusculus")
 }
 \arguments{
-\item{scdata}{a SingleCellExperiment object;}
+\item{scdata}{a SingleCellExperiment object; (results from \code{\link{Tech_OnescRNAseq}}}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -21,18 +21,27 @@ Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
 \value{
 a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
 	                               
-                                elementMetadata; hvg: a dataframe containing mean, variance and z-score for dispersion 
-                                                 genevar_by_tounts:  variance explained by the log-transformed counts 
-                                                 genevar_by_features: variance explained by the log-transformed features 
-                                                 genevar_by_Mt: variance explained by the log-transformed mitochondrial counts
-                                                 genevar_by_rRNA: variance explained by the log-transformed rRNA counts
-                                metadata: A list containing other metadata, including
-                                                 pc1genes: a dataframe containing the genes highly correlated with the 1st (default) or the PCind principal component 
-                                                 pc1Pathway: a dataframe containing the pathways enriched in pc1 (default) or the PCind genes
-                                                 hvgPathway: a dataframe containing the pathways enriched in top n (default:1000) highly variable genes
+ \itemize{
+              \item {         elementMetadata; 
+                           \itemize{          
+                                     \item {   hvg: a dataframe containing mean, variance and z-score for dispersion  }
+                                     \item {   genevar_by_tounts:  variance explained by the log-transformed counts  }
+                                     \item {   genevar_by_features: variance explained by the log-transformed features  } 
+                                     \item {   genevar_by_Mt: variance explained by the log-transformed mitochondrial counts  }
+                                     \item {   genevar_by_rRNA: variance explained by the log-transformed rRNA counts  }
+                                  }
+                     }
+               \item {         metadata: A list containing other metadata, including
+                               \itemize{
+                                     \item {            pc1genes: a dataframe containing the genes highly correlated with the 1st (default) or the PCind principal component  }
+                                     \item {            pc1Pathway: a dataframe containing the pathways enriched in pc1 (default) or the PCind genes  }
+                                     \item {            hvgPathway: a dataframe containing the pathways enriched in top n (default:1000) highly variable genes  }
+                                     }                              
+                      }
+ }
 }
 \description{
-Generate metadata (HVGs, PC-related genes, variance explained by technical features) for one single cell RNAseq represented by gene-cell count table
+Generate metadata (HVGs, PC-related genes, pathways) for one single cell RNAseq represented by gene-cell count table
 }
 \examples{
 library(scRNABatchQC)
@@ -40,4 +49,7 @@ sce<-Tech_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/
 sce<-Bio_OnescRNAseq(sce)
 head(sce@elementMetadata)
 sce@metadata$hvgPathway
+}
+\seealso{
+\code{\link{Process_OnescRNAseq}} , \code{\link{Tech_OnescRNAseq}}
 }

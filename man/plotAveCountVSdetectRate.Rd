@@ -7,7 +7,7 @@
 plotAveCountVSdetectRate(sces, scolors = 1:length(sces), lineSize = 1)
 }
 \arguments{
-\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{scolors}{a vector of integer; the color of each dataset (default: 1:length(sces))}
 
@@ -25,4 +25,7 @@ sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/
 plotAveCountVSdetectRate(sces)
 #plot the gene detection rates for the first dataset
 plotAveCountVSdetectRate(sces[1])
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

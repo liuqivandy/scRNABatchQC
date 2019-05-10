@@ -7,14 +7,14 @@
 plotAllPCA(scesMerge, scolors = NULL, pointSize = 0.8)
 }
 \arguments{
-\item{scesMerge}{SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE}
+\item{scesMerge}{SingleCellExperiment object; this object contains the combined data and reduced dimensions using PCA and tSNE; (results from \code{\link{Combine_scRNAseq}})}
 
 \item{scolors}{a vector of color}
 
 \item{pointSize}{integer; size of point}
 }
 \description{
-PCA plot for the combined datasets
+PCA plot for the combined dataset
 }
 \examples{
 library(scRNABatchQC)

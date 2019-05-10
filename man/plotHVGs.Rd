@@ -7,7 +7,7 @@
 plotHVGs(sces, margins = c(5, 5), keysize = 1, col = bluered(75), ...)
 }
 \arguments{
-\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{margins}{margins for heatmap.2 (default: c(5,5))}
 
@@ -18,7 +18,7 @@ plotHVGs(sces, margins = c(5, 5), keysize = 1, col = bluered(75), ...)
 \item{...}{parameters passing to heatmap.2}
 }
 \value{
-a matrix containing the z score of dispersion of highly variable genes in each dataset
+a matrix containing the z-score of dispersion of highly variable genes in each dataset
 }
 \description{
 plot the highly variable genes across single cell RNAseq datasets
@@ -28,4 +28,7 @@ library(scRNABatchQC)
 sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 plotHVGs(sces)
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

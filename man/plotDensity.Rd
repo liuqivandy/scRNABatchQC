@@ -9,7 +9,7 @@ plotDensity(sces, feature = c("total_counts", "total_features",
   scolors = 1:length(sces), lineSize = 1)
 }
 \arguments{
-\item{sces}{a list of SingleCellExperiment objects; each object containing QC metadata for each dataset}
+\item{sces}{a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}
 
 \item{feature}{string; which features to plot; features can be total_counts, total_features, pct_counts_Mt, pct_counts_rRNA; (default: total_counts)}
 
@@ -30,4 +30,7 @@ sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/
 plotDensity(sces,"total_counts")
 # plot the total counts distribution of the first dataset
 plotDensity(sces[1],"total_counts")
+}
+\seealso{
+\code{\link{Process_scRNAseq}}
 }

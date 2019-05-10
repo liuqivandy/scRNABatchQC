@@ -18,6 +18,9 @@ plotDiffgenes(scesMerge, margins = c(5, 5), keysize = 1,
 
 \item{...}{parameters passing to heatmap.2}
 }
+\value{
+a matrix containing the log2 fold change of differnetially expressed genes in each comparison
+}
 \description{
 plot the differentially expressed genes in any pairwise comparison
 }
@@ -27,4 +30,7 @@ sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/r
                                    "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 scesMerge<-Combine_scRNAseq(sces)
 plotDiffgenes(scesMerge)
+}
+\seealso{
+\code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}}
 }
