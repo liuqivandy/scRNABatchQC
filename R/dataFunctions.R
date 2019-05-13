@@ -450,9 +450,9 @@
                        "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[3],
                        "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[6], "]") # R-Gene
     
-    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1)*100, "%") #mtRNA
+    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_Mt,na.rm=T)*100)), digits = 2, nsmall = 1), "%") #mtRNA
     
-    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1)*100, "%") # rRNA
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_rRNA,na.rm=T)*100)), digits = 2, nsmall = 1), "%") # rRNA
     pw[i, 9] <- sum(sces[[i]]@metadata$rawmeta$CellData$libsize.drop,na.rm=T) # F-Count
     pw[i, 10] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$count) #cutoff by counts
     pw[i, 11] <- sum(sces[[i]]@metadata$rawmeta$CellData$feature.drop,na.rm=T) # F-Gene
