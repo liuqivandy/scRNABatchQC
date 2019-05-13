@@ -134,7 +134,7 @@ hasComparison<-length(sces) > 1
 heatmapKeysize<-1
 heatmapColors<-bluered(75)
 heatmapPathwayColors<-colorpanel(75,low="white",high="red")
-heatmapMargins<-c(5,15)
+heatmapMargins<-c(10,15)
 
 hasPathway<-!is.null(hvgPathways)
 if(hasPathway){
