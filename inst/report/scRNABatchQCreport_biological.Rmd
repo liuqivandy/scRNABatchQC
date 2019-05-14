@@ -15,8 +15,8 @@ scRNABatchQC first selects the top 50 genes with highest and significant biologi
 
 ```{r plotPathwaySimilarityHVG, eval=displayPathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityHVG", "Heatmap of enriched pathways for highly variable genes", trunk.eval=displayPathway), fig.height=getHeatmapHeight(hvgPathways), cache=FALSE, fig.width=10}
 plotHeatmap(hvgPathways,"hvgPath")
+cat(paste0(figRef("plotPathwaySimilarityHVG"), "shows the -log10 FDR for enriched pathways in each experiment and pathway similarity across experiments."))
 ```
-`r figRef("plotPathwaySimilarityHVG")` shows the -log10 FDR for enriched pathways in each experiment and pathway similarity across experiments.
 
 <hr>
 
