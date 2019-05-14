@@ -102,7 +102,7 @@ plotHeatmap<-function(datam,feature=c("hvg","hvgPath","PCg","PCgPath","diffg","d
             colv=heatmapColors
 	} else colv=heatmapPathwayColors
    if (ncol(datam)>1 & nrow(datam)>1){
-             heatmap.2(datam, margins = heatmapMargins,  keysize=heatmapKeysize, col=colv,main=maintitle,key.title=keytitle,key.xlab="",key.ylab="")} else {
+             heatmap.2(datam, margins = heatmapMargins,  keysize=heatmapKeysize, col=colv,main=maintitle,key.title=keytitle,key.xlab="",key.ylab="",cexCol=1)} else {
 			 warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
 			 kable(datam,caption=maintitle,col.names=paste0(colnames(datam),"(",keytitle,")"))
 			 }
@@ -134,7 +134,7 @@ hasComparison<-length(sces) > 1
 heatmapKeysize<-1
 heatmapColors<-bluered(75)
 heatmapPathwayColors<-colorpanel(75,low="white",high="red")
-heatmapMargins<-c(5,15)
+heatmapMargins<-c(10,15)
 
 hasPathway<-!is.null(hvgPathways)
 if(hasPathway){
