@@ -47,6 +47,20 @@
 
 ####
 .getWebGestaltPathway <- function(genes, organism) {
+  enrichDatabase="pathway_KEGG"
+  geneType="genesymbol"
+
+  enrichD <- loadGeneSet(organism=organism, enrichDatabase=enrichDatabase)
+  geneSet <- enrichD$geneSet
+
+  idmapped<-idMapping(organism=organism, inputGene=genes, sourceIdType=geneType)
+  overlapGenes<-idmapped$mapped$userId[idmapped$mapped$entrezgene %in% geneSet$gene]
+
+  if(length(overlapGenes) < 2){
+    warning(paste0("Only ", length(overlapGenes), " gene(s) in the interesting list can be annotated to any functional category. Pathway annotation ignored."))
+    return(NULL)
+  }
+  
   spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
                           enrichDatabase = "pathway_KEGG", interestGene = genes,
                           interestGeneType = "genesymbol", referenceSet = "genome",
