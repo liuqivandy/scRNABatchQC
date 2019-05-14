@@ -57,14 +57,14 @@
   overlapGenes<-idmapped$mapped$userId[idmapped$mapped$entrezgene %in% geneSet$gene]
 
   if(length(overlapGenes) < 2){
-    warning(paste0("Only ", length(overlapGenes), " gene(s) in the interesting list can be annotated to any functional category. Pathway annotation ignored."))
+    warning(paste0("WARNING: Only ", length(overlapGenes), " gene(s) in the interesting list can be annotated to any functional category. Pathway annotation ignored."))
     return(NULL)
   }
   
   spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
                           enrichDatabase = "pathway_KEGG", interestGene = genes,
                           interestGeneType = "genesymbol", referenceSet = "genome",
-                          is.output = FALSE)
+                          isOutput = FALSE)
   if (is.null(spathway) | typeof(spathway) == "character") {
     return(NULL)
   } else {
@@ -171,8 +171,6 @@
   return(result)
 }
 ###############
-
-
 
 ##################################
 .getDiffGenes <- function(scesall, organism, logFC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
@@ -464,15 +462,15 @@
                        "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[3],
                        "-", summary(sces[[i]]@metadata$rawmeta$CellData$total_features)[6], "]") # R-Gene
     
-    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_Mt,na.rm=T)*100)), digits = 2, nsmall = 1), "%") #mtRNA
+    pw[i, 7] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_Mt,na.rm=T))), digits = 2, nsmall = 1), "%") #mtRNA
     
-    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_rRNA,na.rm=T)*100)), digits = 2, nsmall = 1), "%") # rRNA
+    pw[i, 8] <- paste0(format(as.numeric(as.character(max(sces[[i]]@metadata$rawmeta$CellData$pct_counts_rRNA,na.rm=T))), digits = 2, nsmall = 1), "%") # rRNA
     pw[i, 9] <- sum(sces[[i]]@metadata$rawmeta$CellData$libsize.drop,na.rm=T) # F-Count
     pw[i, 10] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$count) #cutoff by counts
     pw[i, 11] <- sum(sces[[i]]@metadata$rawmeta$CellData$feature.drop,na.rm=T) # F-Gene
     pw[i, 12] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$gene)   #cutoff by gene
     pw[i, 13] <- sum(sces[[i]]@metadata$rawmeta$CellData$mito.drop,na.rm=T) # F-mtRNA
-    pw[i, 14] <- paste0(round(sces[[i]]@metadata$rawmeta$Cutoff$mito,2)*100,"%")   #cutoff by mtRNA percentage
+    pw[i, 14] <- round(sces[[i]]@metadata$rawmeta$Cutoff$mito,2)   #cutoff by mtRNA percentage
     pw[i, 15] <- sum(as.numeric(pw[i, 9:12]))
   }
   
