@@ -47,13 +47,22 @@
 
 ####
 .getWebGestaltPathway <- function(genes, organism) {
-  enrichDatabase="pathway_KEGG"
   geneType="genesymbol"
+  tryCatch({
+    idmapped<-idMapping(organism=organism, inputGene=genes, sourceIdType=geneType)
+  }, error = function(e) {
+    if(grepl("ERROR: No IDs are mapped.", e$message)){
+      return(NULL)
+    }else{
+      stop(e)
+    }
+  })
+  
+  enrichDatabase="pathway_KEGG"
 
   enrichD <- loadGeneSet(organism=organism, enrichDatabase=enrichDatabase)
   geneSet <- enrichD$geneSet
 
-  idmapped<-idMapping(organism=organism, inputGene=genes, sourceIdType=geneType)
   overlapGenes<-idmapped$mapped$userId[idmapped$mapped$entrezgene %in% geneSet$gene]
 
   if(length(overlapGenes) < 2){
