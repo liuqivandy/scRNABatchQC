@@ -40,7 +40,7 @@ After installing scRNABatchQC, use following codes to run examples
 	
 	#One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
 	
-	#It took about 2.5 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory, and about 3 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 	
+	#It took ~2.5 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory, and ~3 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 	
 	
 	result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
 	
@@ -54,12 +54,12 @@ After installing scRNABatchQC, use following codes to run examples
 	
 	#a report named "report.html" will be generated in your working directory
 	
-	#It took about 3.6 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and about 5 min on  a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory.
+	#It took ~3.6 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~5 min on  a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory.
 	
        scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069439/suppl/GSM3069439_ST1_DGE.txt.gz", "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069440/suppl/GSM3069440_ST2_DGE.txt.gz", "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069441/suppl/GSM3069441_ST3_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069442/suppl/GSM3069442_ST4_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069443/suppl/GSM3069443_ST5_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069444/suppl/GSM3069444_ST6_DGE.txt.gz"),organism="mmusculus")
 
 	#check the quality of three scRNA-seq datasets from embryonic development of the thymus
-	# It took about 41 sec on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and about 1 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
+	# It took ~41 sec on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~1 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
 	
 	scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),organism="mmusculus")
 
