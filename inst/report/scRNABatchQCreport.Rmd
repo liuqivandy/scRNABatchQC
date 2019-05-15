@@ -188,7 +188,7 @@ kable(plotData$tableSummary, caption=tabRef("tableSummary", "Summary of Quality 
 
 A short description of Table 1 metrics is provided below: 
 
-  * _**EID**_ - Unique Name of the experiment
+  * _**EID**_ - Unique name of the experiment
   * _**Count**_ - The total number of counts in the experiment 
   * _**Cell**_ - The total number of cells in the experiment
   * _**Gene**_ - The total number of genes in the experiment
