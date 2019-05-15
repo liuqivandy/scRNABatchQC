@@ -47,40 +47,22 @@
 
 ####
 .getWebGestaltPathway <- function(genes, organism) {
-  geneType="genesymbol"
   tryCatch({
-    idmapped<-idMapping(organism=organism, inputGene=genes, sourceIdType=geneType)
+    spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
+                            enrichDatabase = "pathway_KEGG", interestGene = genes,
+                            interestGeneType = "genesymbol", referenceSet = "genome",
+                            isOutput = FALSE)
   }, error = function(e) {
-    if(grepl("ERROR: No IDs are mapped.", e$message) | grepl("ERROR: All IDs in the uploaded list can only annotate to one category", e$message)){
-      return(NULL)
-    }else{
-      stop(e)
-    }
-  })
-  
-  enrichDatabase="pathway_KEGG"
-
-  enrichD <- loadGeneSet(organism=organism, enrichDatabase=enrichDatabase)
-  geneSet <- enrichD$geneSet
-
-  overlapGenes<-idmapped$mapped$userId[idmapped$mapped$entrezgene %in% geneSet$gene]
-
-  if(length(overlapGenes) < 2){
-    warning(paste0("WARNING: Only ", length(overlapGenes), " gene(s) in the interesting list can be annotated to any functional category. Pathway annotation ignored."))
     return(NULL)
-  }
-  
-  spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
-                          enrichDatabase = "pathway_KEGG", interestGene = genes,
-                          interestGeneType = "genesymbol", referenceSet = "genome",
-                          isOutput = FALSE)
+  })
+
   if (is.null(spathway) | typeof(spathway) == "character") {
     return(NULL)
-  } else {
-    sdata <- data.frame(Pathway = gsub(" - .*", "", spathway$description),
-                        FDR = -log10(spathway$FDR), stringsAsFactors = F)
-    return(sdata)
-  }
+  } 
+  
+  sdata <- data.frame(Pathway = gsub(" - .*", "", spathway$description),
+                      FDR = -log10(spathway$FDR), stringsAsFactors = F)
+  return(sdata)
 }
 
 

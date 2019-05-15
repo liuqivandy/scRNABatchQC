@@ -4,7 +4,8 @@
 \alias{plotHVGs}
 \title{plot HVGs}
 \usage{
-plotHVGs(sces, margins = c(5, 5), keysize = 1, col = bluered(75), ...)
+plotHVGs(sces, margins = c(5, 5), keysize = 1, col = bluered(75),
+  ...)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

@@ -4,8 +4,8 @@
 \alias{Tech_OnescRNAseq}
 \title{process one scRNAseq dataset to generate technical metadata}
 \usage{
-Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
-  maxmito = 0.2, mtRNA = "^mt-|^MT-",
+Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
+  mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]")
 }
 \arguments{

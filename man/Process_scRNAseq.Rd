@@ -7,7 +7,8 @@
 Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
   PCind = 1, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism = "mmusculus")
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  organism = "mmusculus")
 }
 \arguments{
 \item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}

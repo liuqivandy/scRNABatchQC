@@ -6,8 +6,8 @@
 \usage{
 Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
   mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000, nPCs = 10,
-  PCind = 1, organism = "mmusculus")
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000,
+  nPCs = 10, PCind = 1, organism = "mmusculus")
 }
 \arguments{
 \item{inputfile}{string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
