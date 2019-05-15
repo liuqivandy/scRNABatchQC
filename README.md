@@ -35,7 +35,7 @@ After installing scRNABatchQC, use following codes to run examples
 	
 	#check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 )
 	#The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol
-	# Since one dataset has more than 14,000 cells and 2,4904 genes, big memory (>=16Gb) is required.
+	# Since one dataset has more than 14,000 cells and 2,4904 genes,  memory >=8Gb is required.
 	#a report named "report.html" will be generated in your working directory
 	
 	#One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
