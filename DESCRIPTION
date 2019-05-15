@@ -14,7 +14,7 @@ Description:
 License: LGPL
 URL: https://github.com/liuqivandy/scRNABatchQC
 Depends: R (>= 3.3), devtools, R.utils, ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, 
-         limma, Matrix, statmod, DT, RCurl, SingleCellExperiment, knitr
+         limma, Matrix, statmod, DT, RCurl, SingleCellExperiment, knitr, GenomeInfodb 
 biocViews:
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
