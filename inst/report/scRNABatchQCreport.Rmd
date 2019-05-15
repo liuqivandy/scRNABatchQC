@@ -175,8 +175,8 @@ if(hasDiffPathway){
   * _**QC Summary**_ - Overview of Quality Control in each scRNA-seq experiment. 
   * _**Technical View**_ - Technical features across multiple scRNA-seq experiments. 
   * _**Biological View**_ - Biological features across multiple scRNA-seq experiments.
-  * _**Expression Similarity**_ - Expression Similarity between all cells across multiple scRNA-seq experiments. 
-  * _**Pairwise Difference**_ - Genes and pathways that cause the pairwise difference among scRNA-seq experiments.
+  * _**Expression Similarity**_ - Expression Similarity across multiple scRNA-seq experiments. 
+  * _**Pairwise Difference**_ - Genes and pathways that drive the pairwise difference across multiple scRNA-seq experiments.
 
 # QC Summary
 
@@ -188,25 +188,25 @@ kable(plotData$tableSummary, caption=tabRef("tableSummary", "Summary of Quality 
 
 A short description of Table 1 metrics is provided below: 
 
-  * _**EID**_ - Unique experiment ID. 
+  * _**EID**_ - Unique Name of the experiment
   * _**Count**_ - The total number of counts in the experiment 
-  * _**Cell**_ - The total number of cells 
-  * _**Gene**_ - The total number of genes 
+  * _**Cell**_ - The total number of cells in the experiment
+  * _**Gene**_ - The total number of genes in the experiment
   * _**R-Count**_ - The range of the total number of counts in a cell across all cells [min-median-max]. 
   * _**R-Gene**_ - The range of the total number of genes identified in a cell across all cells [min-median-max] 
-  * _**mtRNA**_ - The maximum percentage of mitochondrial RNA reads in all cells 
-  * _**rRNA**_ - The maximum percentage of rRNA reads in all cells
-  * _**F-Count**_ - The number of cells filtered by counts 
+  * _**mtRNA**_ - The maximum percentage of reads mapped to mitochondria-encoded genes in all cells 
+  * _**rRNA**_ - The maximum percentage of reads mapped to genes encoded for ribosomal proteins in all cells
+  * _**F-Count**_ - The number of cells filtered by the total number of counts 
   * _**C-Count**_ - The cutoff to remove the cell if the total counts of the cell is less than C-Count
-  * _**F-Gene**_ - The number of cells filtered by genes
+  * _**F-Gene**_ - The number of cells filtered by the total number of detected genes
   * _**C-Gene**_ - The cutoff to remove the cell if the total genes of the cell is less than C-Gene
-  * _**F-mt**_ - The number of cells filtered by mtRNA percentage 
+  * _**F-mt**_ - The number of cells filtered by the mtRNA percentage 
   * _**C-mt**_ - The cutoff to remove the cell if the percentage of mtRNA is larger than C-mt
-  * _**F**_ - The total number of cells filtered by counts, genes, or mtRNA criteria
+  * _**F**_ - The total number of cells filtered by either counts, genes, or mtRNA criteria
 
 # Technical View
 
-**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondrial RNA and ribosomal RNA, the expression cumulative plot, the detection rate, the mean-variance trend, the variance explained by various technical features.**
+**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondria-encoded genes and ribosomal proteins, the expression cumulative plot, the detection rate, the mean-variance trend, the variance explained by various technical features.**
 
 <hr>
 
@@ -214,7 +214,7 @@ A short description of Table 1 metrics is provided below:
 print(plotDensity(sces,feature="total_counts", featureLabel="The total number of counts", scolors=scolors, lineSize=plotData$lineSize))
 ```
 
-`r figRef("density_total_counts")` shows the distribution of the total number of counts in each cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very low number of read counts, suggesting RNAs are not efficiently captured, are considered as low quality and removed from the downstream analysis. Different count distributions across experiments are indicative of the presence of batch effects.
+`r figRef("density_total_counts")` shows the distribution of the total number of counts in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very low number of read counts, suggesting RNAs are not efficiently captured, are considered as low quality and removed from the downstream analysis. Different count distributions across experiments are indicative of the presence of batch effects.
 
 <hr>
 
@@ -222,24 +222,24 @@ print(plotDensity(sces,feature="total_counts", featureLabel="The total number of
 print(plotDensity(sces,feature="total_features", featureLabel="The number of expressed genes", scolors=scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("density_total_features")` shows the distribution of the number of expressed genes in each cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very few expressed genes are considered as low quality and removed from the downstream analysis. Different distributions on gene numbers across experiments are indicative of the presence of batch effects.
+`r figRef("density_total_features")` shows the distribution of the number of expressed genes in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very few expressed genes are considered as low quality and removed from the downstream analysis. Different distributions on gene numbers across experiments are indicative of the presence of batch effects.
 
 <hr>
 
 ```{r density_pct_counts_Mt, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution"), fig.height=4}
-print(plotDensity(sces,feature="pct_counts_Mt", featureLabel="The proportion of reads mapped to mitochondrial RNA", scolors=scolors,lineSize=plotData$lineSize))
+print(plotDensity(sces,feature="pct_counts_Mt", featureLabel="The proportion of reads mapped to mitochondria-encoded genes", scolors=scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("density_pct_counts_Mt")` shows the distribution of the proportion of reads mapped to mitochondrial RNA in each cell in each scRNA-seq experiment. Different experiments are denoted by different colors. A cell with high proportion of reads mapped to mitochondrial RNA is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of mitochondrial reads than others.
+`r figRef("density_pct_counts_Mt")` shows the distribution of the proportion of reads mapped to mitochondria-encoded genes in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. A cell with high proportion of reads mapped to mitochondria-encoded genes is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of mitochondrial reads than others.
 
 <hr>
 
-```{r plotRibosomalRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal genes"), fig.height=4}
-print(plotDensity(sces,feature="pct_counts_rRNA", featureLabel="The proportion of reads mapped to ribosomal genes", scolors=scolors,lineSize=plotData$lineSize))
+```{r plotRibosomalRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal-proteins-encoded genes"), fig.height=4}
+print(plotDensity(sces,feature="pct_counts_rRNA", featureLabel="The proportion of reads mapped to genes encoded for ribosomal proteins", scolors=scolors,lineSize=plotData$lineSize))
 
 ```
 
-`r figRef("plotRibosomalRNA")` shows the distribution of the proportion of reads mapped to ribosomal genes in each cell in each scRNA-seq experiment, which is denoted by different color. A cell with high proportion of reads mapped to ribosomal genes is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of ribosomal gene reads than others.
+`r figRef("plotRibosomalRNA")` shows the distribution of the proportion of reads mapped to genes encoded for ribosomal proteins in a cell in each scRNA-seq experiment, which is denoted by different color. Caution should be paid when one experiment has higher proportion of ribosomal gene reads than others.
 
 <hr>
 
@@ -247,7 +247,7 @@ print(plotDensity(sces,feature="pct_counts_rRNA", featureLabel="The proportion o
 print(plotGeneCountDistribution(sces, scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("genesCountdistribution")` shows the cumulative expression plot shows the percentage of counts for the top 500 highly expressed genes. The plot is generated based on the average count of each gene, that is, the top 500 highly expressed genes are those with the highest average count. This plot describes how reads are distributed across genes in each scRNA-seq experiment. A cumulative graph with rapid increase at the beginning suggests a library with low complexity where very few genes consume most reads. In contrast, a cumulative graph with slow increase at the beginning indicates that reads are more evenly distributed across genes. Different cumulative expression plots across multiple scRNA-seq experiments are indicative of the presence of batch effects. 
+`r figRef("genesCountdistribution")` shows the cumulative expression plot for the top 500 highly expressed genes. The plot is generated based on the average count of each gene, that is, the top 500 highly expressed genes are those with the highest average count. This plot describes how reads are distributed across genes in each scRNA-seq experiment. A cumulative graph with rapid increase at the beginning suggests a library with low complexity where very few genes consume most reads. In contrast, a cumulative graph with slow increase at the beginning indicates that reads are more evenly distributed across genes. Different cumulative expression plots across multiple scRNA-seq experiments are indicative of the presence of batch effects. 
 
 <hr>
 
@@ -255,7 +255,7 @@ print(plotGeneCountDistribution(sces, scolors,lineSize=plotData$lineSize))
 print(plotAveCountVSdetectRate(sces, scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("aveCountVSdetectRate")` shows the percentage of cells expressing each gene plotted against its log-average count. Generally the detection rate for a gene depends on the expression. Different detection rates across scRNA-seq experiments are indicative of the presence of batch effects. 
+`r figRef("aveCountVSdetectRate")` shows the percentage of cells expressing each gene plotted against its log-average count. Generally the detection rate for a gene depends on its expression. Different detection rates across scRNA-seq experiments are indicative of the presence of batch effects. 
 
 <hr>
 
@@ -263,7 +263,7 @@ print(plotAveCountVSdetectRate(sces, scolors,lineSize=plotData$lineSize))
 print(plotVarianceTrend(sces, scolors,lineSize=plotData$lineSize), fig.height=4)
 ```
 
-The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values using trendVar function, which fits a trend between mean expression abundance and technical variance. The biological variance is then calculated by subtracting the technical component from the total variance of each gene. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
+The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
 
 <hr>
 
@@ -271,7 +271,7 @@ The variance of gene expression is driven by both uninteresting technical noise 
 print(plotVarianceExplained(sces, "genevar_by_counts", scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("log10_total_counts")` shows the percentage of expression variance that is explained by the log-transformed total number of counts for each gene. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the library sizes contribute substantially to the gene expression abundance. If so, this technical factor may need to be modeled into the downstream analysis.  Different contributions of library sizes to expression variances across multiple experiments are indicative of the presence of batch effects.
+`r figRef("log10_total_counts")` shows the percentage of gene expression variance explained by the log-transformed total number of counts. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the library sizes contribute substantially to the gene expression variance. If so, this technical factor may need to be modeled into the downstream analysis.  Different contributions of library sizes to expression variances across multiple experiments are indicative of the presence of batch effects.
 
 <hr>
 
@@ -279,7 +279,7 @@ print(plotVarianceExplained(sces, "genevar_by_counts", scolors,lineSize=plotData
 print(plotVarianceExplained(sces, "genevar_by_features",scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("log10_total_features")` shows the percentage of expression variance of each gene that is explained by the log-transformed number of genes detected in each cell. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+`r figRef("log10_total_features")` shows the percentage of gene expression variance explained by the log-transformed number of genes detected in each cell. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression variance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
 
 <hr>
 
@@ -291,11 +291,11 @@ print(plotVarianceExplained(sces,  "genevar_by_Mt", scolors,lineSize=plotData$li
 
 <hr>
 
-```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of ribosomal genes reads"), fig.height=4}
+```{r plotVariancerRNA, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of ribosomal proteins reads"), fig.height=4}
 print(plotVarianceExplained(sces, "genevar_by_rRNA",scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("plotVariancerRNA")` shows the percentage of expression variance of each gene that is explained by the percentage of reads mapped to ribosomal genes. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+`r figRef("plotVariancerRNA")` shows the percentage of gene expression variance  explained by the percentage of reads mapped to ribosomal proteins. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression variance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
 
 <hr>
 
@@ -311,7 +311,7 @@ print(plotVarianceExplained(sces, "genevar_by_rRNA",scolors,lineSize=plotData$li
 plotAllPCA(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
 ```
 
-The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the relationships between cells within or across scRNA-seq experiments.
+The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the similarities between cells within or across scRNA-seq experiments.
 
 <hr>
 
@@ -319,7 +319,7 @@ The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the rela
 plotAlltSNE(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
 ```
 
-The tSNE plot for the first two components (`r figRef("plottSNE")`) shows the relationships between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
+The tSNE plot for the first two components (`r figRef("plottSNE")`) shows the similarities between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
 
 <hr>
 

@@ -8,27 +8,7 @@ plotHeatmap(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath")
 scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. 
 
 ```{r showDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-cat(paste0(figRef("plotDiffPathway"), " shows the log-pvalue for enriched pathways in each pairwise comparison. <hr>"))
-```
-
-```{r tableDiffPathway, eval=hasDiffPathway, echo=FALSE, results="asis"}
-pw<-plotData$scesMerge@metadata$diffFC$pathways
-pw[pw<0]<-0
-pw10<-10 ^ (-pw)
-pw10[pw10>0.9]<-1
-pw10<-format(pw10, digits = 3)
-pw10[pw10 == "1.00e+00"] <- ""
-kable(pw10, caption=tabRef("tableDiffPathway", "Enriched pathways in differentially expressed genes"))
-```
-
-```{r showDiffPathwayTable, eval=hasDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-cat(paste0(tabRef("tableDiffPathway"), " shows the enriched pathways based on differentially expressed genes between experiments."))
-```
-
-```{r showNoDiffPathway, eval=!hasDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
-if(hasPathway){
-  cat("But no enriched pathway detected.")
-}
+cat(paste0(figRef("plotDiffPathway"), " shows the -log10 FDR for enriched pathways in each pairwise comparison. <hr>"))
 ```
 
 
