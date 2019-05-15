@@ -51,7 +51,7 @@
   tryCatch({
     idmapped<-idMapping(organism=organism, inputGene=genes, sourceIdType=geneType)
   }, error = function(e) {
-    if(grepl("ERROR: No IDs are mapped.", e$message)){
+    if(grepl("ERROR: No IDs are mapped.", e$message) | grepl("ERROR: All IDs in the uploaded list can only annotate to one category", e$message)){
       return(NULL)
     }else{
       stop(e)
