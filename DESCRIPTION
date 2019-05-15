@@ -13,7 +13,7 @@ Description:
   Multiple single cell data quality control
 License: LGPL
 URL: https://github.com/liuqivandy/scRNABatchQC
-Depends: R (>= 3.3), devtools, R.utils, GenomeInfodb, ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, 
+Depends: R (>= 3.3), devtools, R.utils, ggplot2, irlba, data.table, gplots, Rtsne, WebGestaltR, rmdformats, 
          limma, Matrix, statmod, DT, RCurl, SingleCellExperiment, knitr
 biocViews:
 VignetteBuilder: knitr
