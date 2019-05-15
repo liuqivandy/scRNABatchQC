@@ -93,6 +93,10 @@
   
   sdata$FDR[sdata$FDR == Inf] <- max(sdata$FDR[sdata$FDR != Inf]) + 1
   
+  if(!("Pathway" %in% colnames(sdata))){
+    sdata$Pathway<-sdata$description
+  }
+  
   mdata <- reshape2::dcast(sdata, Pathway ~ Sample, value.var = "FDR", fill = 0)
   
   for(sample in names(sces)){
