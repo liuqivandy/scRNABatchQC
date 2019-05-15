@@ -47,11 +47,12 @@
 
 ####
 .getWebGestaltPathway <- function(genes, organism) {
-  tryCatch({
-    spathway <- WebGestaltR(enrichMethod = "ORA", organism = organism,
+  spathway = tryCatch({
+    res<-WebGestaltR(enrichMethod = "ORA", organism = organism,
                             enrichDatabase = "pathway_KEGG", interestGene = genes,
                             interestGeneType = "genesymbol", referenceSet = "genome",
                             isOutput = FALSE)
+    return(res)
   }, error = function(e) {
     return(NULL)
   })
