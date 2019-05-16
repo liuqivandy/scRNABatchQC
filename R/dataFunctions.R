@@ -54,11 +54,11 @@
                             isOutput = FALSE)
     return(res)
   }, error = function(e) {
-   
+    
     return(NULL)
     
   }, warning=function(w){
-    
+    warning(w)
     return(res)
         } )
 
