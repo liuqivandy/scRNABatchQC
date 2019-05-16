@@ -54,11 +54,15 @@
                             isOutput = FALSE)
     return(res)
   }, error = function(e) {
-    
+     print(e)
     return(NULL)
     
   }, warning=function(w){
-     return(res)
+     res<-WebGestaltR(enrichMethod = "ORA", organism = organism,
+                            enrichDatabase = "pathway_KEGG", interestGene = genes,
+                            interestGeneType = "genesymbol", referenceSet = "genome",
+                            isOutput = FALSE)
+	  
         } )
 
   if (is.null(spathway) | typeof(spathway) == "character") {
