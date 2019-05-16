@@ -47,24 +47,15 @@
 
 ####
 .getWebGestaltPathway <- function(genes, organism) {
-  spathway = tryCatch({
-    res<-WebGestaltR(enrichMethod = "ORA", organism = organism,
-                            enrichDatabase = "pathway_KEGG", interestGene = genes,
-                            interestGeneType = "genesymbol", referenceSet = "genome",
-                            isOutput = FALSE)
-    return(res)
-  }, error = function(e) {
-     print(e)
+  tryres=try(spathway<-WebGestaltR(enrichMethod = "ORA", organism = organism,
+                                   enrichDatabase = "pathway_KEGG", interestGene = genes,
+                                   interestGeneType = "genesymbol", referenceSet = "genome",
+                                   isOutput = FALSE))
+  
+  if(class(tryres) == "try-error"){
     return(NULL)
-    
-  }, warning=function(w){
-     res<-WebGestaltR(enrichMethod = "ORA", organism = organism,
-                            enrichDatabase = "pathway_KEGG", interestGene = genes,
-                            interestGeneType = "genesymbol", referenceSet = "genome",
-                            isOutput = FALSE)
-	  
-        } )
-
+  }
+  
   if (is.null(spathway) | typeof(spathway) == "character") {
     return(NULL)
   } 
@@ -179,8 +170,8 @@
 ##################################
 .getDiffGenes <- function(scesall, organism, logFC=1,FDR = 0.01, geneNo = 50,chunk=1000) {
   
- 
-
+  
+  
   if(length(unique(scesall@colData$condition)) == 1){
     return(list(genes = NULL, pathways = NULL))
   }
@@ -189,16 +180,16 @@
   colnames(design) <- snames
   cont <- c()
   compareNames <- c()
-
+  
   for (i in 1 : (length(snames)-1)) {
     for (j in (i + 1) : length(snames)) {
       cont <- c(cont, paste0(snames[i], " - ", snames[j]))
       compareNames <- c(compareNames, paste0(snames[i], "_VS_", snames[j]))
     }
   }
-
+  
   filtereddata<-logcounts(scesall)[scesall@elementMetadata$hvg$var>0,]
-
+  
   cat("performing differential analysis ...\n")
   ngenes <- nrow(filtereddata)
   if (ngenes > chunk) {
@@ -384,7 +375,7 @@
 
 .getVarExplainedbyFeature <- function(sce, feature, chunk = 1000) {
   exprs_mat <- logcounts(sce)
-
+  
   feature.data <- sce@colData[[feature]]
   expf<-mean(feature.data)
   sdf<-sd(feature.data)
@@ -419,13 +410,13 @@
 .getMeanVarTrend<-function(data,chunk=1000){
   ngenes <- nrow(data)
   ncol<-ncol(data)
-
+  
   if (ngenes > chunk) {
     by.chunk <- cut(seq_len(ngenes), ceiling(ngenes/chunk))
   } else {
     by.chunk <- factor(integer(ngenes))
   }
-
+  
   gene_mean <- gene_var<- numeric(ngenes)
   for (element in levels(by.chunk)) {
     current <- by.chunk == element
@@ -433,7 +424,7 @@
     gene_mean[current]<-tmpMean <- Matrix::rowMeans(cur.exprs)
     gene_var[current]<- Matrix::rowSums((cur.exprs-tmpMean)^2)/(ncol-1)
   }
-
+  
   data_x_bin<-cut(x=gene_mean,breaks=150)
   mean_x<-tapply(X=gene_mean,INDEX=data_x_bin,FUN=mean)
   mean_y <- tapply(X = gene_var, INDEX = data_x_bin, FUN=mean)
