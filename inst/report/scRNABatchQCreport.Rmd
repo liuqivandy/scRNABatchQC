@@ -90,6 +90,7 @@ tabRef <- local({
     }
   }
 })
+options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
 
 getHeatmapHeight<-function(hdata){
   max(10, nrow(hdata) / 10)
@@ -99,16 +100,20 @@ plotHeatmap<-function(datam,feature=c("hvg","hvgPath","PCg","PCgPath","diffg","d
   keytitle<-switch(feature, "hvg"="zval","hvgPath"="-logFDR","PCg"="logFC","PCgPath"="-logFDR","diffg"="logFC","diffgPath"="-logFDR")
   maintitle<-switch(feature, "hvg"="Highly variable genes","hvgPath"="Pathways enriched in HVGs","PCg"="PC-related genes","PCPath"="Pathways enriched in PC-related genes","diffg"="Differentially expressed genes","diffgPath"="Pathways enriched in DEGs")
   if (feature== "hvg" | feature== "PCg" | feature=="diffg"){ 
-            colv=heatmapColors
-	} else colv=heatmapPathwayColors
-   if (ncol(datam)>1 & nrow(datam)>1){
-             heatmap.2(datam, margins = heatmapMargins,  keysize=heatmapKeysize, col=colv,main=maintitle,key.title=keytitle,key.xlab="",key.ylab="",cexCol=1)} else {
-			 warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
-			 kable(datam,caption=maintitle,col.names=paste0(colnames(datam),"(",keytitle,")"))
-			 }
- }
+    colv=heatmapColors
+	} 
+  else {
+    colv=heatmapPathwayColors
+  }
+  if (ncol(datam)>1 & nrow(datam)>1){
+    heatmap.2(datam, margins = heatmapMargins,  keysize=heatmapKeysize, col=colv,main=maintitle,key.title=keytitle,key.xlab="",key.ylab="",cexCol=1)
+  } 
+  else {
+    warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
+	  kable(datam,caption=tabRef(feature, maintitle),col.names=paste0(colnames(datam),"(",keytitle,")"))
+	}
+}
 
-options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
 ```
 
 ```{r data, include=FALSE, cache=FALSE}
@@ -153,18 +158,21 @@ if(hasPC1Pathway){
 hasDiffGenes<-!is.null(plotData$scesMerge@metadata$diffFC$genes)
 displayDiffGenes<-DISPLAY_FIGURE & hasDiffGenes
 if(hasDiffGenes){
-  drawHeatmap<-DISPLAY_FIGURE 
+  drawDiffGenesHeatmap<-DISPLAY_FIGURE & ncol(plotData$scesMerge@metadata$diffFC$genes)>1 & nrow(plotData$scesMerge@metadata$diffFC$genes)>1
+  drawDiffGenesTable<-!drawDiffGenesHeatmap
 }else{
-  drawHeatmap<-FALSE
+  drawDiffGenesHeatmap<-FALSE
+  drawDiffGenesTable<-FALSE
 }
 
 hasDiffPathway<-!is.null(plotData$scesMerge@metadata$diffFC$pathways)
 if(hasDiffPathway){
-  displayDiffPathway<-DISPLAY_FIGURE 
+  drawDiffPathwayHeatmap<-DISPLAY_FIGURE & ncol(plotData$scesMerge@metadata$diffFC$pathways)>1 & nrow(plotData$scesMerge@metadata$diffFC$pathways)>1
+  drawDiffPathwayTable<-!drawDiffPathwayHeatmap
 }else{
-  displayDiffPathway<-FALSE  
+  drawDiffPathwayHeatmap<-FALSE 
+  drawDiffPathwayTable<-FALSE
 }
-
 
 ```
 
