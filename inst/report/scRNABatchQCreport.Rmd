@@ -337,4 +337,4 @@ The tSNE plot for the first two components (`r figRef("plottSNE")`) shows the si
 ```{r child="scRNABatchQCreport_difference_pathways.Rmd", eval=hasComparison, echo=FALSE}
 ```
 
-**Note: If no pathways results are included for HVGs, PC-related genes or differentially expressed genes. There are two possible reasons. One is that pathways are not enriched. The other reason is that gene name is not gene symbol or organism is not supported by WebGestalt. WebGestalt supports 12 organisms, which includes athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, scerevisiae.
+**Note**: If no pathways results are reported for HVGs, PC-related genes or differentially expressed genes, there are two possible reasons. One is that pathways are not enriched. The other reason is that gene name is not gene symbol or organism is not supported by WebGestalt. WebGestalt supports 12 organisms, including athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae.
