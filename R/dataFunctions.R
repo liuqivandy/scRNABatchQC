@@ -466,7 +466,7 @@
     pw[i, 12] <- as.integer(sces[[i]]@metadata$rawmeta$Cutoff$gene)   #cutoff by gene
     pw[i, 13] <- sum(sces[[i]]@metadata$rawmeta$CellData$mito.drop,na.rm=T) # F-mtRNA
     pw[i, 14] <- paste0(round(sces[[i]]@metadata$rawmeta$Cutoff$mito,2)*100,"%")   #cutoff by mtRNA percentage
-    pw[i, 15] <- sum(as.numeric(pw[i, 9:12]))
+    pw[i, 15] <- sum(sces[[i]]@metadata$rawmeta$CellData$is.drop,na.rm=T)  #F-total
   }
   
   colnames(pw) <- c("EID", "Count", "Cell", "Gene", "R-Count", "R-Gene", 
