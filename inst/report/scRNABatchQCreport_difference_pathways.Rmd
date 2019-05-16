@@ -5,9 +5,11 @@
 plotHeatmap(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath")
 ```
 
-scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. 
 
 ```{r showDiffPathway, eval=displayDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+
+cat("scRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. <hr>") 
+
 cat(paste0(figRef("plotDiffPathway"), " shows the -log10 FDR for enriched pathways in each pairwise comparison. <hr>"))
 ```
 
