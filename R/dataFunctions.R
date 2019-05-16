@@ -58,8 +58,7 @@
     return(NULL)
     
   }, warning=function(w){
-    warning(w)
-    return(res)
+     return(res)
         } )
 
   if (is.null(spathway) | typeof(spathway) == "character") {
