@@ -54,8 +54,11 @@
                             isOutput = FALSE)
     return(res)
   }, error = function(e) {
-    return(NULL)
-  })
+    return(NULL);
+    warning(e)
+  }, warning=function(w){
+    return(res)
+        } )
 
   if (is.null(spathway) | typeof(spathway) == "character") {
     return(NULL)
