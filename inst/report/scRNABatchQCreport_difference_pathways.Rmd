@@ -3,7 +3,7 @@
 
 ```{r drawDiffPathwayHeatmap, eval=hasDiffPathway, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("diffgPath", "Heatmap of enriched pathways in differentially expressed genes", trunk.eval=hasDiffPathway & isHeatmapFigure(as.matrix(plotData$scesMerge@metadata$diffFC$pathways))), fig.height=getHeatmapHeight(plotData$scesMerge@metadata$diffFC$pathways), fig.width=10}
 plotHeatmap(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath")
-cat("\nscRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. ", getHeatmapCaption(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath"), " shows the -log10 FDR for enriched pathways in each pairwise comparison. <hr>")
+cat(getHeatmapCaption(as.matrix(plotData$scesMerge@metadata$diffFC$pathways),"diffgPath"), " shows the -log10 FDR for enriched pathways in each pairwise comparison. "\nscRNABatchQC performs the functional enrichment analysis for differentially expressed genes in each pairwise comparison. ",<hr>")
 ```
 
 

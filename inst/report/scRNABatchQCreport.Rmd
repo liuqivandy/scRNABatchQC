@@ -203,7 +203,7 @@ A short description of Table 1 metrics is provided below:
 
 <hr>
 
-```{r density_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "The total number of counts"), fig.height=4}
+```{r density_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "The distribution of the total number of counts in a cell"), fig.height=4}
 print(plotDensity(sces,feature="total_counts", featureLabel="The total number of counts", scolors=scolors, lineSize=plotData$lineSize))
 ```
 
@@ -211,7 +211,7 @@ print(plotDensity(sces,feature="total_counts", featureLabel="The total number of
 
 <hr>
 
-```{r density_total_features, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "Total feature distribution"), fig.height=4}
+```{r density_total_features, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "The distribution of the total number of genes in a cell"), fig.height=4}
 print(plotDensity(sces,feature="total_features", featureLabel="The number of expressed genes", scolors=scolors,lineSize=plotData$lineSize))
 ```
 
@@ -219,7 +219,7 @@ print(plotDensity(sces,feature="total_features", featureLabel="The number of exp
 
 <hr>
 
-```{r density_pct_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "Mitochondrial count distribution"), fig.height=4}
+```{r density_pct_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "The distribution of percentage of mitochondrial counts in a cell"), fig.height=4}
 print(plotDensity(sces,feature="pct_counts_Mt", featureLabel="The proportion of reads mapped to mitochondria-encoded genes", scolors=scolors,lineSize=plotData$lineSize))
 ```
 
@@ -227,7 +227,7 @@ print(plotDensity(sces,feature="pct_counts_Mt", featureLabel="The proportion of 
 
 <hr>
 
-```{r plotRibosomalRNA, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The proportion of reads mapped to ribosomal-proteins-encoded genes"), fig.height=4}
+```{r plotRibosomalRNA, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The distribution of percentage of ribosomal counts in a cell"), fig.height=4}
 print(plotDensity(sces,feature="pct_counts_rRNA", featureLabel="The proportion of reads mapped to genes encoded for ribosomal proteins", scolors=scolors,lineSize=plotData$lineSize))
 
 ```
@@ -256,7 +256,7 @@ print(plotAveCountVSdetectRate(sces, scolors,lineSize=plotData$lineSize))
 print(plotVarianceTrend(sces, scolors,lineSize=plotData$lineSize), fig.height=4)
 ```
 
-The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
+`r figRef("varianceTrend")` shows mean and variance of gene expession. The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
 
 <hr>
 
@@ -304,7 +304,7 @@ print(plotVarianceExplained(sces, "genevar_by_rRNA",scolors,lineSize=plotData$li
 plotAllPCA(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
 ```
 
-The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the similarities between cells within or across scRNA-seq experiments.
+`r figRef("plotPCA")` PCA Plot for the first two components, which shows the similarities between cells within or across scRNA-seq experiments.
 
 <hr>
 
@@ -312,7 +312,7 @@ The PCA Plot for the first two components (`r figRef("plotPCA")`) shows the simi
 plotAlltSNE(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
 ```
 
-The tSNE plot for the first two components (`r figRef("plottSNE")`) shows the similarities between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
+`r figRef("plottSNE")` tSNE plot for the first two components, which shows the similarities between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
 
 <hr>
 
