@@ -4,42 +4,33 @@
 
 <hr>
 
-```{r echo=FALSE, eval=DISPLAY_FIGURE, warning=FALSE, message=FALSE}
-if(isHeatmapFigure(hvgBiologicalSimilarity)){
-  caption = figRef("hvg")
-}else{
-  caption = tabRef("hvg")
-}
-```
-
-```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE & isHeatmapFigure(hvgBiologicalSimilarity), echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=caption, fig.height=getHeatmapHeight(hvgBiologicalSimilarity), fig.width=10}
+```{r plotBiologicalSimilarityHVGenes, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("hvg", "Heatmap of top50 highly variable genes", trunk.eval= isHeatmapFigure(hvgBiologicalSimilarity)), fig.height=getHeatmapHeight(hvgBiologicalSimilarity), fig.width=10}
 plotHeatmap(hvgBiologicalSimilarity,"hvg")
 ```
 
-scRNABatchQC first selects the top 50 genes with highest and significant biological variance in each experiment (FDR<0.01) and then clusters experiments based on the similarity on highly variable genes. `r figRef("plotBiologicalSimilarityHVGenes")` shows the biological variance of top 50 genes in each experiment and their similarity across experiments.
+scRNABatchQC first selects the top 50 genes with highest and significant biological variance in each experiment (FDR<0.01) and then clusters experiments based on the similarity on highly variable genes. `r getHeatmapCaption(hvgBiologicalSimilarity,"hvg")` shows the biological variance of top 50 genes in each experiment and their similarity across experiments.
 
 <hr>
 
 
-```{r plotPathwaySimilarityHVG, eval=displayPathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityHVG", "Heatmap of enriched pathways for highly variable genes", trunk.eval=displayPathway), fig.height=getHeatmapHeight(hvgPathways), cache=FALSE, fig.width=10}
+```{r plotPathwaySimilarityHVG, eval=hasPathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("hvgPath", "Heatmap of enriched pathways for highly variable genes", trunk.eval=hasPathway & isHeatmapFigure(hvgPathways)), fig.height=getHeatmapHeight(hvgPathways), cache=FALSE, fig.width=10}
 plotHeatmap(hvgPathways,"hvgPath")
-cat(paste0(figRef("plotPathwaySimilarityHVG"), " shows the -log10 FDR for enriched pathways in HVGs in each experiment and pathway similarity across experiments."))
+cat("\n", getHeatmapCaption(hvgPathways,"hvgPath"), " shows the -log10 FDR for enriched pathways in HVGs in each experiment and pathway similarity across experiments.")
 ```
 
 <hr>
 
-```{r plotBiologicalSimilarityPC1Genes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityPC1Genes", "Heatmap of top50 PC-related genes"), fig.height=10, fig.width=10}
+```{r plotBiologicalSimilarityPC1Genes, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("PCg", "Heatmap of top50 PC-related genes", trunk.eval=isHeatmapFigure(pc1geneBiologicalSimilarity)), fig.height=10, fig.width=10}
 plotHeatmap(pc1geneBiologicalSimilarity,"PCg")
 ```
 
-scRNABatchQC selects the top 50 differentially expressed genes along the specific principle component (PCind, default: the first PC) in each experiment (FDR<0.01). `r figRef("plotBiologicalSimilarityPC1Genes")` shows differential expression of top 50 PC-related genes in each experiment and genes similarity across experiments.
+scRNABatchQC selects the top 50 differentially expressed genes along the specific principle component (PCind, default: the first PC) in each experiment (FDR<0.01). `r getHeatmapCaption(pc1geneBiologicalSimilarity,"PCg")` shows differential expression of top 50 PC-related genes in each experiment and genes similarity across experiments.
 
 <hr>
 
-```{r plotPathwaySimilarityPC1Gene, eval=displayPC1Pathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotPathwaySimilarityPC1Gene", "Heatmap of enriched pathways for PC-related genes", trunk.eval=displayPC1Pathway), fig.height=8, cache=FALSE, fig.width=10}
+```{r plotPathwaySimilarityPC1Gene, eval=hasPC1Pathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("PCgPath", "Heatmap of enriched pathways for PC-related genes", trunk.eval=hasPC1Pathway & isHeatmapFigure(pc1Pathways)), fig.height=8, cache=FALSE, fig.width=10}
 plotHeatmap(pc1Pathways,"PCgPath")
-cat("scRNABatchQC performs the functional enrichment analysis for the PC-related genes in each experiment. ", figRef("plotPathwaySimilarityPC1Gene"), " shows the -log10 FDR for enriched pathways in PC-related genes in each experiment and pathway similarity across experiments.")
+cat("\nscRNABatchQC performs the functional enrichment analysis for the PC-related genes in each experiment. ", getHeatmapCaption(pc1Pathways,"PCgPath"), " shows the -log10 FDR for enriched pathways in PC-related genes in each experiment and pathway similarity across experiments.")
 ```
-
 
 <hr>
