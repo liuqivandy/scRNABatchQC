@@ -15,8 +15,10 @@ plotHeatmap(hvgBiologicalSimilarity,"hvg")
 
 ```{r plotPathwaySimilarityHVG, eval=hasPathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("hvgPath", "Heatmap of enriched pathways for highly variable genes", trunk.eval=hasPathway & isHeatmapFigure(hvgPathways)), fig.height=getHeatmapHeight(hvgPathways), cache=FALSE, fig.width=10}
 plotHeatmap(hvgPathways,"hvgPath")
+cat(getHeatmapCaption(hvgPathways,"hvgPath")," shows the -log10 FDR for enriched pathways for HVGs in each experiment and pathway similarity across experiments if there are multiple samples.")
+
 ```
-`r getHeatmapCaption(hvgPathways,"hvgPath")` shows the -log10 FDR for enriched pathways in each experiment and pathway similarity across experiments if there are multiple samples.
+`r getHeatmapCaption(hvgPathways,"hvgPath")` shows the -log10 FDR for enriched pathways for HVGs in each experiment and pathway similarity across experiments if there are multiple samples.
 
 
 <hr>
@@ -31,7 +33,8 @@ plotHeatmap(pc1geneBiologicalSimilarity,"PCg")
 
 ```{r plotPathwaySimilarityPC1Gene, eval=hasPC1Pathway, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, results='asis', fig.align="center", fig.cap=figRef("PCgPath", "Heatmap of enriched pathways for PC-related genes", trunk.eval=hasPC1Pathway & isHeatmapFigure(pc1Pathways)), fig.height=8, cache=FALSE, fig.width=10}
 plotHeatmap(pc1Pathways,"PCgPath")
+cat(getHeatmapCaption(pc1Pathways,"PCgPath"), "shows the -log10 FDR for enriched pathways for PC-related genes in each experiment and pathway similarity across experiments if there are multiple samples.")
+
 ```
-`r getHeatmapCaption(pc1Pathways,"PCgPath")` shows the -log10 FDR for enriched pathways in each experiment and pathway similarity across experiments if there are multiple samples.
 
 <hr>
