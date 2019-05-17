@@ -27,7 +27,7 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
   p <- ggplot(featureData, aes(x = Value)) + 
     stat_density(aes(color = Sample), size = lineSize,geom="line",position="identity") + 
     scale_colour_manual(values = scolors) +
-    xlab(featureLabel) + theme_classic()+
+    xlab(featureLabel) + theme_classic()+ ylab("Density")
     guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle(feature)+
     theme(plot.title = element_text(hjust = 0.5))
@@ -112,7 +112,7 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
   
   p <- ggplot(avedetect, aes_string(x = "avecount", y = "detectrate", 
                                     group = "Sample", colour = "Sample")) + 
-    geom_smooth(size=lineSize) + xlab("Average count of genes") + ylab("Detection rate") +
+    geom_smooth(size=lineSize) + xlab("Average count of genes (log10)") + ylab("Detection rate") +
     scale_color_manual(values = scolors) +
     theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle("Detection rate")+

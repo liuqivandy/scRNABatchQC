@@ -165,7 +165,7 @@ hasDiffPathway<-!is.null(plotData$scesMerge@metadata$diffFC$pathways)
 
 **scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report include five sections:**
 
-  * _**QC Summary**_ - Overview of Quality Control in each scRNA-seq experiment. 
+  * _**QC Summary**_ - Overview of quality control in each scRNA-seq experiment. 
   * _**Technical View**_ - Technical features across multiple scRNA-seq experiments. 
   * _**Biological View**_ - Biological features across multiple scRNA-seq experiments.
   * _**Expression Similarity**_ - Expression Similarity across multiple scRNA-seq experiments. 
@@ -240,7 +240,7 @@ print(plotDensity(sces,feature="pct_counts_rRNA", featureLabel="The proportion o
 print(plotGeneCountDistribution(sces, scolors,lineSize=plotData$lineSize))
 ```
 
-`r figRef("genesCountdistribution")` shows the cumulative expression plot for the top 500 highly expressed genes. The plot is generated based on the average count of each gene, that is, the top 500 highly expressed genes are those with the highest average count. This plot describes how reads are distributed across genes in each scRNA-seq experiment. A cumulative graph with rapid increase at the beginning suggests a library with low complexity where very few genes consume most reads. In contrast, a cumulative graph with slow increase at the beginning indicates that reads are more evenly distributed across genes. Different cumulative expression plots across multiple scRNA-seq experiments are indicative of the presence of batch effects. 
+`r figRef("genesCountdistribution")` shows the cumulative expression for the top 500 highly expressed genes. The plot is generated based on the average count of each gene, that is, the top 500 highly expressed genes are those with the highest average count. This plot describes how reads are distributed across genes in each scRNA-seq experiment. A cumulative graph with rapid increase at the beginning suggests a library with low complexity where very few genes consume most reads. In contrast, a cumulative graph with slow increase at the beginning indicates that reads are more evenly distributed across genes. Different cumulative expression plots across multiple scRNA-seq experiments are indicative of the presence of batch effects. 
 
 <hr>
 
@@ -322,4 +322,4 @@ The tSNE plot for the first two components (`r figRef("plottSNE")`) shows the si
 ```{r child="scRNABatchQCreport_difference_pathways.Rmd", eval=hasComparison, echo=FALSE}
 ```
 
-**Note**: If no pathways results are reported for HVGs, PC-related genes or differentially expressed genes, there are two possible reasons. One is that pathways are not enriched. The other reason is that gene name is not gene symbol or organism is not supported by WebGestalt. WebGestalt supports 12 organisms, including athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae.
+**Note**: If no pathways results are reported for HVGs, PC-related genes or differentially expressed genes, there are two possible reasons. One is that pathways are not enriched. The other reason is that gene name is not gene symbol or organism is not supported by WebGestalt (https://github.com/bzhanglab/WebGestaltR). WebGestalt supports 12 organisms, including athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae.
