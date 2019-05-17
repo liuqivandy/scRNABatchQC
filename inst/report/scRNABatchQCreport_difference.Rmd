@@ -13,9 +13,9 @@ plotHeatmap(as.matrix(plotData$scesMerge@metadata$diffFC$genes),"diffg")
 
 ```{r diffgenes, echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
 if(hasDiffGenes){
-  cat(getHeatmapCaption(as.matrix(plotData$scesMerge@metadata$diffFC$genes),"diffg"), " shows the log2 fold change of differentially expressed genes in each pairwise comparison.")
+  cat(getHeatmapCaption(as.matrix(plotData$scesMerge@metadata$diffFC$genes),"diffg"), " shows the log2 fold change of differentially expressed genes in each pairwise comparison ")
 }else{
   cat("But no differentially expressed gene detected.")
 }
 ```
-scRNABatchQC detects differentially expressed genes between two experiments (logFC>`r plotData$scesMerge@metadata$logFC` & FDR<`r plotData$scesMerge@metadata$FDR`). 
+(logFC>`r plotData$scesMerge@metadata$logFC` & FDR<`r plotData$scesMerge@metadata$FDR`). 

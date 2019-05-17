@@ -252,11 +252,11 @@ print(plotAveCountVSdetectRate(sces, scolors,lineSize=plotData$lineSize))
 
 <hr>
 
-```{r varianceTrend, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "The mean-variance trend")}
+```{r VarianceTrend, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "The mean-variance trend")}
 print(plotVarianceTrend(sces, scolors,lineSize=plotData$lineSize), fig.height=4)
 ```
 
-`r figRef("varianceTrend")` shows mean and variance of gene expession. The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
+`r figRef("VarianceTrend")` shows mean vs. variance of gene expession. The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
 
 <hr>
 
