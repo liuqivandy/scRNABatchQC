@@ -27,13 +27,14 @@ plotDensity <- function(sces, feature=c("total_counts","total_features","pct_cou
   p <- ggplot(featureData, aes(x = Value)) + 
     stat_density(aes(color = Sample), size = lineSize,geom="line",position="identity") + 
     scale_colour_manual(values = scolors) +
-    xlab(featureLabel) + theme_classic()+ ylab("Density")
+    xlab(featureLabel) + ylab("Density")+ theme_classic()+ 
     guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
     ggtitle(feature)+
     theme(plot.title = element_text(hjust = 0.5))
 
   return(p)
 }
+
 
 #' plot the gene count distribution
 #' @description plot the gene count distribution of top n (default:500) highly expressed genes 
