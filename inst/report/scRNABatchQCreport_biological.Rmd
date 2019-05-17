@@ -4,7 +4,15 @@
 
 <hr>
 
-```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotBiologicalSimilarityHVGenes", "Heatmap of top50 highly variable genes"), fig.height=getHeatmapHeight(hvgBiologicalSimilarity), fig.width=10}
+```{r echo=FALSE, eval=DISPLAY_FIGURE, warning=FALSE, message=FALSE}
+if(isHeatmapFigure(hvgBiologicalSimilarity)){
+  caption = figRef("hvg")
+}else{
+  caption = tabRef("hvg")
+}
+```
+
+```{r plotBiologicalSimilarityHVGenes, eval=DISPLAY_FIGURE & isHeatmapFigure(hvgBiologicalSimilarity), echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=caption, fig.height=getHeatmapHeight(hvgBiologicalSimilarity), fig.width=10}
 plotHeatmap(hvgBiologicalSimilarity,"hvg")
 ```
 
