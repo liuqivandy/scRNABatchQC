@@ -163,12 +163,12 @@ hasDiffPathway<-!is.null(plotData$scesMerge@metadata$diffFC$pathways)
 
 # Overview
 
-**scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report include five sections:**
+**scRNABatchQC provides both metrics and diagnostic graphics to assess the similarity/difference on technical factors, expression profiles, and biological features across multiple scRNA-seq experiments, which helps identify potential batch effects. scRNABatchQC report includes five sections:**
 
   * _**QC Summary**_ - Overview of quality control in each scRNA-seq experiment. 
   * _**Technical View**_ - Technical features across multiple scRNA-seq experiments. 
   * _**Biological View**_ - Biological features across multiple scRNA-seq experiments.
-  * _**Expression Similarity**_ - Expression Similarity across multiple scRNA-seq experiments. 
+  * _**Expression Similarity**_ - Expression similarity across multiple scRNA-seq experiments. 
   * _**Pairwise Difference**_ - Genes and pathways that drive the pairwise difference across multiple scRNA-seq experiments.
 
 # QC Summary
@@ -199,7 +199,7 @@ A short description of Table 1 metrics is provided below:
 
 # Technical View
 
-**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondria-encoded genes and ribosomal proteins, the expression cumulative plot, the detection rate, the mean-variance trend, the variance explained by various technical features.**
+**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondria-encoded genes and ribosomal proteins, the expression cumulative plot, the detection rate, the mean-variance trend, and the variance explained by technical features.**
 
 <hr>
 
