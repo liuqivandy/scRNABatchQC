@@ -1,6 +1,6 @@
 # Biological View
 
-**This section presents the similarity/difference on the high-variable genes and genes differentially expressed along a specific principal component (PCind, default: the first PC) between scRNA-seq experiments. scRNABatchQC calculates the pairwise similarity of highly variable genes and PC-related genes and their enriched pathways across experiments. Two experiments with similar highly variable genes or PC-related gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise.**
+**This section presents the similarity/difference on the highly variable genes and genes differentially expressed along a specific principal component (PCind, default: the first PC) between scRNA-seq experiments. scRNABatchQC calculates the pairwise similarity of highly variable genes and PC-related genes and their enriched pathways across experiments. Two experiments with similar highly variable genes or PC-related gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise.**
 
 <hr>
 
