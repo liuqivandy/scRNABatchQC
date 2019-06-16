@@ -16,7 +16,7 @@
 #' @param logFC float; log fold change cutoff to select differentially expressed genes (default: 1)
 #' @param FDR float; FDR cutoff to select differentially expressed genes (default: 0.01)
 #' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)
-#' @param organism  string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param organism  string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (default: mmusculus);WebGestaltR supports 12 organisms, including athaliana, btaurus,celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae.
 #' @param outputFile  string; the name of the output file (default: report.html)
 #' @param lineSize float; the line size of figures in the report (default: 1)
 #' @param pointSize float; the point size of figures in the report  (default: 0.8)
