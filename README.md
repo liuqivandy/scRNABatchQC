@@ -33,7 +33,7 @@ After installing scRNABatchQC, use following codes to run examples:
 
 ## Example 1:
 
-Check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ). The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol.Since one dataset has more than 14,000 cells and 2,4904 genes,  memory >=8Gb is required. A report named "report.html" will be generated in your working directory.
+Check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ). The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol.Since one dataset has more than 14,000 cells and 2,4904 genes,  memory >=4Gb is required. A report named "report.html" will be generated in your working directory.
 	
 One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
 
@@ -102,4 +102,4 @@ end_time - start_time
 |Windows Desktop|2 GHz Intel(R) Xeon(R) E5-2620|32 Gb|Window 10|3 min|5 min| 1 min|
 |Lenovo Laptop|1.8 GHz Intel(R) i7 8565U|16 Gb|Window 10|3.4 min|5.1 min| 1.1 min|
 |MacBook Pro Laptop|2.7 GHz Intel Core i5|8 Gb|MacOS|6.5 min|12.5 min|1.1 min|
-|MacBook Pro Laptop|1.7 GHz Intel Core i5|4 Gb|MacOS|42.2 min |65.3 min|5 min|
+|MacBook Pro Laptop|1.7 GHz Intel Core i5|4 Gb|MacOS|42.2 min |65.3 min|3 min|
