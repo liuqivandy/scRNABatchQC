@@ -103,3 +103,5 @@ end_time - start_time
 |Lenovo Laptop|1.8 GHz Intel(R) i7 8565U|16 Gb|Windows 10|3.4 min|5.1 min| 1.1 min|
 |MacBook Pro Laptop|2.7 GHz Intel Core i5|8 Gb|MacOS|6.5 min|12.5 min|1.1 min|
 |MacBook Pro Laptop|1.7 GHz Intel Core i5|4 Gb|MacOS|39 min |13 min|3 min|
+|Windows Desktop|2.6 GHz Intel(R) Xeon(R) E5-2640|64 Gb|Windows 10|4.1 min|6 min| 1.3 min|
+
