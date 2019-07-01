@@ -36,8 +36,6 @@ After installing scRNABatchQC, use following codes to run examples:
 Check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ). The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol.Since one dataset has more than 14,000 cells and 2,4904 genes,  memory >=8Gb is required. A report named "report.html" will be generated in your working directory.
 	
 One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
-	
-It took ~2.5 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory, and ~3 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
 
 ```
 library(scRNABatchQC)
@@ -62,9 +60,7 @@ dim(result$sces[[1]])
 Check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells
 	
 A report named "report.html" will be generated in your working directory
-	
-It took ~3.6 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~5 min on  a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory.
-	
+
 ```
 library(scRNABatchQC)
 	
@@ -83,8 +79,6 @@ end_time - start_time
 ## Example 3:
 	
 Check the quality of three scRNA-seq datasets from embryonic development of the thymus. 
-
-It took ~41 sec on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~1 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
 	
 ```
 library(scRNABatchQC)
@@ -103,6 +97,6 @@ end_time - start_time
 |Computer|CPU|Memory|System|Example1|Example2|Example3|
 |---|---|---|---|---|---|---|
 |MacBook Pro laptop|3.1 GHz Intel Core i5|16 Gb|MacOS|2.5 min|3.6 min|41 sec|
-|Windows Desktop|2 GHz Intel(R) Xeon(R) CPU E5-2620|32 Gb|Window 10|3 min|5 min| 1min|
-|Lenovo Laptop|1.8 GHz Intel(R) i& 8565U|16 Gb|Window 10|3.4 min|5.1 min| 1.1 min|
+|Windows Desktop|2 GHz Intel(R) Xeon(R) E5-2620|32 Gb|Window 10|3 min|5 min| 1 min|
+|Lenovo Laptop|1.8 GHz Intel(R) i7 8565U|16 Gb|Window 10|3.4 min|5.1 min| 1.1 min|
 
