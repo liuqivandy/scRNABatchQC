@@ -38,11 +38,15 @@ After installing scRNABatchQC, use following codes to run examples
 	# Since one dataset has more than 14,000 cells and 2,4904 genes,  memory >=8Gb is required.
 	#a report named "report.html" will be generated in your working directory
 	
-	#One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
+	#One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects 
+	#(sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
 	
-	#It took ~2.5 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory, and ~3 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 	
+	#It took ~2.5 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory, and ~3 min on a Windows desktop 
+	#with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 	
 	
-	result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),organism="mmusculus")
+	result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+	                                  "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),
+			     organism="mmusculus")
 	
 	#the number of genes and the number of cells in the combined dataset
 	dim(result$scesMerge)
@@ -50,16 +54,28 @@ After installing scRNABatchQC, use following codes to run examples
 	#the number of genes and the number of cells in the first dataset after filtering
 	dim(result$sces[[1]])
 
-	#check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells
+	#check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset 
+	#has 25,000 genes and 2,600~5,500 cells
 	
 	#a report named "report.html" will be generated in your working directory
 	
-	#It took ~3.6 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~5 min on  a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory.
+	#It took ~3.6 min on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~5 min on  a Windows desktop 
+	#with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory.
 	
-       scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069439/suppl/GSM3069439_ST1_DGE.txt.gz", "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069440/suppl/GSM3069440_ST2_DGE.txt.gz", "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069441/suppl/GSM3069441_ST3_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069442/suppl/GSM3069442_ST4_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069443/suppl/GSM3069443_ST5_DGE.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069444/suppl/GSM3069444_ST6_DGE.txt.gz"),organism="mmusculus")
+       scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069439/suppl/GSM3069439_ST1_DGE.txt.gz", 
+                                 "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069440/suppl/GSM3069440_ST2_DGE.txt.gz", 
+				 "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069441/suppl/GSM3069441_ST3_DGE.txt.gz",
+				 "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069442/suppl/GSM3069442_ST4_DGE.txt.gz",
+				 "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069443/suppl/GSM3069443_ST5_DGE.txt.gz",
+				 "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069444/suppl/GSM3069444_ST6_DGE.txt.gz"),
+		     organism="mmusculus")
 
 	#check the quality of three scRNA-seq datasets from embryonic development of the thymus
-	# It took ~41 sec on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~1 min on a Windows desktop with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
+	#It took ~41 sec on a MacBook Pro laptop with 3.1 GHz Intel Core i5 and 16 Gb memory and ~1 min on a Windows desktop 
+	#with an Intel(R) Xeon(R) CPU E5-2620 0 at 2 GHz and 32 GB memory. 
 	
-	scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),organism="mmusculus")
+	scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+	                          "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+				  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+	             organism="mmusculus")
 
