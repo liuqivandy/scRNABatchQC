@@ -3,7 +3,7 @@ scRNABatchQC
 * [Introduction](#introduction)
 * [Installation](#installation)
 * [Usage](#example)
-
+* [Speed test](#speed)
 <a name="introduction"/>
 
 # Introduction
@@ -91,6 +91,8 @@ scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM
 end_time <- Sys.time()
 end_time - start_time
 ```
+
+<a name="speed"/>
 
 # Speed test
 
