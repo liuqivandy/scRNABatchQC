@@ -104,5 +104,5 @@ end_time - start_time
 |MacBook Pro Laptop|2.7 GHz Intel Core i5|8 Gb|MacOS||6.5 min|12.5 min|1.1 min|
 |MacBook Pro Laptop|1.7 GHz Intel Core i5|4 Gb|MacOS||39 min |13 min|3 min|
 |Windows Desktop|2.6 GHz Intel(R) Xeon(R) E5-2640|64 Gb|Windows 10|3.6.0|4.1 min|6 min| 1.3 min|
-|ACCRE Cluster|||CentOs 7|3.5.1|3.1 min|5.2 min| 28.6 sec|
+|ACCRE Cluster Gateway|Intel(R) Xeon(R) Gold 6154 CPU @ 3.00GHz|1000 Gb|CentOs 7|3.5.1|3.1 min|5.2 min| 28.6 sec|
 
