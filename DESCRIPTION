@@ -18,3 +18,5 @@ Depends: R (>= 3.3), devtools, R.utils, ggplot2, irlba, data.table, gplots, Rtsn
 biocViews:
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+Suggests: 
+    rmarkdown

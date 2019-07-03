@@ -38,3 +38,4 @@ vignettes/*.pdf
 /R/scRNABatchQCreport.html
 /*.rdata
 /*.table
+inst/doc
