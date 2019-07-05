@@ -1,3 +1,28 @@
+fread_bychunk<-function(inputfile,chunk.size=2000) {
+  
+  done=FALSE
+  chunk = 1
+  tmp = fread(inputfile,skip=(chunk-1)*chunk.size,nrow=chunk.size,data.table=F)
+  data_sparse<-.tosparse(tmp[,-1])
+  rownames(data_sparse)<-tmp[,1]
+  if (nrow(tmp)<chunk.size) done=TRUE
+  chunk=chunk+1
+  while(!done)
+  {
+    tmp = fread(inputfile,skip=(chunk-1)*chunk.size+1,nrow=chunk.size,data.table=F)
+    ind<-nrow(data_sparse)
+    data_sparse<-rbind(data_sparse,.tosparse(tmp[,-1]))
+    rownames(data_sparse)[(ind+1):nrow(data_sparse)]<-tmp[,1]
+    chunk = chunk + 1
+    if(nrow(tmp)<chunk.size) done = TRUE
+    rm(tmp)
+    gc()
+  }
+ 
+  return(data_sparse)
+  
+}
+
 .detach_package <- function(pkg, character.only = FALSE)
 {
   if(!character.only)

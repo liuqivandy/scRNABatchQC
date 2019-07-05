@@ -6,8 +6,8 @@
 \usage{
 Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
   mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000, nPCs = 10,
-  PCind = 1, organism = "mmusculus")
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000,
+  nPCs = 10, PCind = 1, organism = "mmusculus", chunk.size = NULL)
 }
 \arguments{
 \item{inputfile}{string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
@@ -31,6 +31,8 @@ Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
 \item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+
+\item{chunk.size}{NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size}
 }
 \value{
 a SingleCellExperiment object with several slots:

@@ -7,7 +7,8 @@
 Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
   PCind = 1, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism = "mmusculus")
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  organism = "mmusculus", chunk.size = NULL)
 }
 \arguments{
 \item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
@@ -33,6 +34,8 @@ Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 \item{rRNA}{string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
 
 \item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
+
+\item{chunk.size}{NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size}
 }
 \value{
 a list of SingleCellExperiment objects ;  \cr

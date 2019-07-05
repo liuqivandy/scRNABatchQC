@@ -4,9 +4,9 @@
 \alias{Tech_OnescRNAseq}
 \title{process one scRNAseq dataset to generate technical metadata}
 \usage{
-Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
-  maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]")
+Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
+  mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size = NULL)
 }
 \arguments{
 \item{inputfile}{string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
@@ -22,6 +22,8 @@ Tech_OnescRNAseq(inputfile, sf = 10000, mincounts = 500, mingenes = 200,
 \item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
 
 \item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+
+\item{chunk.size}{NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size}
 }
 \value{
 a SingleCellExperiment object containing metadata for technical features

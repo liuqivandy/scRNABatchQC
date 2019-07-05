@@ -20,6 +20,7 @@
 #' @param outputFile  string; the name of the output file (default: report.html)
 #' @param lineSize float; the line size of figures in the report (default: 1)
 #' @param pointSize float; the point size of figures in the report  (default: 0.8)
+#' @param chunk.size NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size
 #' @return a list of SingleCellExperiment objects;
 #'  \itemize{
 #'  \item  {       sces: a list of SingleCellExperiment objects; each object contains technical and biological metadata for one scRNAseq dataset; see the output of  \code{\link{Process_scRNAseq} }}
@@ -40,12 +41,12 @@
 #' 
 #' @export
 #' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
-scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2, PCind=1, mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio=1, logFC=1,FDR=0.01, organism="mmusculus", outputFile="report.html", lineSize=1, pointSize=0.8){
+scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2, PCind=1, mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio=1, logFC=1,FDR=0.01, organism="mmusculus", outputFile="report.html", lineSize=1, pointSize=0.8,chunk.size=NULL){
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
-  sces<-Process_scRNAseq(inputfiles=inputfiles,names=names,nHVGs=nHVGs, nPCs=nPCs,sf=sf, mincounts=mincounts, mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism)
+  sces<-Process_scRNAseq(inputfiles=inputfiles,names=names,nHVGs=nHVGs, nPCs=nPCs,sf=sf, mincounts=mincounts, mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
   scesMerge<-Combine_scRNAseq(sces,nHVGs=nHVGs, nPCs= nPCs, logFC=logFC,FDR=FDR,sampleRatio=sampleRatio,organism=organism)
   generateReport(sces,scesMerge, outputFile=outputFile, lineSize=lineSize, pointSize=pointSize)
   return(list(sces = sces, 
@@ -67,6 +68,7 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' @param mtRNA string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
 #' @param rRNA string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
 #' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param chunk.size NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size
 
 #' @return a list of SingleCellExperiment objects ;  \cr
 #'  each SingleCellExperiment object containing metadata for one single cell RNAseq dataset;  \cr
@@ -131,7 +133,7 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' 
 #' @export
 #' @seealso \code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
-Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2,PCind=1,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism="mmusculus"){
+Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2,PCind=1,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism="mmusculus",chunk.size=NULL){
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
@@ -145,8 +147,8 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
   if (sum(names!=make.names(names))>0) names<-paste0("S",names)
   
   for (ind in 1:nfiles) {
-    cat("Preparing ", names[ind], "\n")
-    result[[ind]] <- Process_OnescRNAseq(inputfiles[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism)
+    cat("Processing ", names[ind], "\n")
+    result[[ind]] <- Process_OnescRNAseq(inputfiles[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
   }
   
   names(result) <- names
@@ -206,6 +208,7 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
   if(! isOrganismValid){
     organism<-NULL
   }
+  cat("Merging data.\n")
   pca_tsne_data <- list()
   nsample=round(dim(sces[[1]])[2]*sampleRatio,0)
   sampleind<-sample(1:dim(sces[[1]])[2],nsample)
@@ -243,7 +246,7 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
   scesMerge@elementMetadata$hvg<-pca_tsne_data$hvg
   
   #compare conditions
-  cat("Preparing differential expression analysis data ...\n")
+  cat("Performing differential expression analysis data ...\n")
   scesMerge@metadata$diffFC <- .getDiffGenes(scesMerge, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
   scesMerge@metadata$logFC<- logFC
   scesMerge@metadata$FDR<-FDR
@@ -281,7 +284,7 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 				   lineSize=lineSize,
 				   pointSize=pointSize)
   
-  cat("Report data prepared.\n")
+  cat("Report html generated.\n")
   reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   # reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
 
@@ -310,6 +313,8 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
 #' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
 #' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
+#' @param chunk.size NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size
+
 #' @return a SingleCellExperiment object with several slots:
 #' \itemize{
 #' \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
@@ -368,13 +373,13 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #' 
 #' @export
 #' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}}
-Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus") {
+Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus",chunk.size=NULL) {
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
   
-  sce<-Tech_OnescRNAseq(inputfile=inputfile,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA)
+  sce<-Tech_OnescRNAseq(inputfile=inputfile,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA, chunk.size=chunk.size)
   sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
   return(sce)
 }
@@ -391,6 +396,8 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' @param maxmito  float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito; (default: 0.2); 
 #' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
 #' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param chunk.size NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size
+
 #' @return a SingleCellExperiment object containing metadata for technical features
 #' \itemize{
 #'  \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
@@ -434,9 +441,15 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' names(sce@metadata)
 #' head(sce@colData$log10_total_counts)
 #' @seealso \code{\link{Process_onescRNAseq}} , \code{\link{Bio_OnescRNAseq}} 
-Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]" ){
-  rawdata<-data.frame(fread(inputfile),row.names=1)
-  countmat<-.tosparse(rawdata)
+Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size=NULL ){
+  if(is.null(chunk.size)) {
+   rawdata<-fread(inputfile,data.table=F)
+   countmat<-.tosparse(rawdata[,-1])
+   rownames(countmat)<-rawdata[,1]
+   rm(rawdata)
+   gc()
+  } else { countmat<-fread_bychunk(inputfile,chunk.size=chunk.size)}
+  
   
   #if (!is.integer(PCind) | !is.integer(nPCs) | ! is.integer(nHVGs)) stop("nPCs, PCind and nHVGs should be integer")
   
