@@ -20,9 +20,10 @@ Understanding the existence and the sources of experimental noise is very import
 
 # Quick start
 To easiest way to generate a summary QC report for scRNAseq datasets is to run scRNABatchQC.  The only required input is the list of file names (or a URL starting http://, file://, etc) with each file containing gene-cell count matrix for one single cell RNA-seq dataset.   
-```{r setup, message=FALSE,warning = FALSE}
-#library(scRNABatchQC)
-#output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
+```{r, eval=F, echo=T}
+library(scRNABatchQC)
+output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
 ```
 
 # Input data
@@ -57,7 +58,14 @@ This section provides three plots to compare the expression similarity across sa
 The section identifies genes differentially expressed (DEGs) across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
 
 ## Output: SingleCellExperiment objects
-scRNABatchQC not only generates a QC summary report in a HTML file, but only return SingleCellExperiment objects with raw count, normalized data, and QC metadata for downstream analysis. 
+scRNABatchQC not only generates a QC summary report in a HTML file, but only return SingleCellExperiment object with raw count, normalized data, and QC metadata for downstream analysis. You can also use following code to generating the object without creating report file:
+
+```{r, eval=T, echo=T}
+library(scRNABatchQC)
+output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"),
+                     createReport=F)
+```
 
 ```{r}
 # a list of SingleCellExperiment objects, each of which contains raw and normalized count, technical and biological metadata from one scRNAseq dataset

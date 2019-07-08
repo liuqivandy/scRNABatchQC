@@ -39,3 +39,4 @@ vignettes/*.pdf
 /*.rdata
 /*.table
 inst/doc
+/vignettes/.webgestalt_cache
