@@ -9,12 +9,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<style>
-.figure p.caption {
-  font-size: 1.5em;
-}
-</style>
-
 <style type="text/css">
 .main-container {
   max-width: 1800px;
@@ -43,10 +37,15 @@ if(!file.exists(rdsFile)){
 }
 ```
 
-```{r test, fig.margin = FALSE}
+```{r test}
 library(pheatmap)
 hvgBiologicalSimilarity <- scRNABatchQC:::.getBiologicalSimilarity(output$sces, objectName = "hvg", valueName = "zval")
 keysize=1
 col=bluered(75)
+par(oma=c(1,1,0,0), mar=c(1,1,1,0))
 heatmap.2(hvgBiologicalSimilarity)
+```
+
+```{r test2}
+plotHVGs(output$sces)
 ```
