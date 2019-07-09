@@ -1,19 +1,30 @@
 ---
-title: "scRNABatchQC: Quality check for multiple single cell RNA-seq datasets"
-author: "Qi Liu, Quanhu Sheng, Jie Ping"
+title: "Introduction to scRNABatchQC"
+author: "Quanhu Sheng, Jie Ping, Shyr Yu, Qi Liu"
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Introduction to scRNABatchQC}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1280px !important;
+  width: 1280px !important;
+}
+body {
+  max-width: 1280px !important;
+}
+```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(fig.width=7, fig.height=7) 
 ```
 # Introduction
 Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets . scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detect possible outliers and batch effects.vcRNABatchQC can be also applied to other single cell experiments containing gene-cell count matrices. 
@@ -23,7 +34,10 @@ To easiest way to generate a summary QC report for scRNAseq datasets is to run s
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+			                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+                     logFC=0.585,
+                     organism="mmusculus")
 ```
 
 # Input data
@@ -65,7 +79,10 @@ library(scRNABatchQC)
 rdsFile<-"output.rds"
 if(!file.exists(rdsFile)){
   output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"),
+                                    "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+                       logFC=0.585,
+                       organism="mmusculus",
                        createReport=F)
   saveRDS(output, rdsFile)
 }else{
@@ -73,32 +90,24 @@ if(!file.exists(rdsFile)){
 }
 ```
 
-```{r test, fig.width=20}
-library(heatmap3)
-  hvgBiologicalSimilarity <- scRNABatchQC:::.getBiologicalSimilarity(output$sces, objectName = "hvg", valueName = "zval")
-margins=c(1,1)
-keysize=1
-col=bluered(75)
-heatmap3(hvgBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="HVGs",key.title="zval",key.xlab="",key.ylab="")
-```
 
-```{r}
+```{r results='hide'}
 # a list of SingleCellExperiment objects, each of which contains raw and normalized count, technical and biological metadata from one scRNAseq dataset
-#output$sces
+output$sces
 # the first SingleCellExperiment object for the first dataset (here bioplar1.csv.gz)
-#output$sces[[1]]
+output$sces[[1]]
 # the metadata of the first dataset
-#names(output$sces[[1]]@metadata)
+names(output$sces[[1]]@metadata)
 #raw counts of the first dataset
-#counts(output$sces[[1]])[1:5,1:5]
+counts(output$sces[[1]])[1:5,1:5]
 #normalized and log-transformed data of the first dataset
-#logcounts(output$sces[[1]])[1:5,1:5]
+logcounts(output$sces[[1]])[1:5,1:5]
 #one SingleCellExperiment object,which contains normalized count, technical and biological metadata for the merged dataset (all datasets merged into one)
-#output$scesMerge
+output$scesMerge
 #metadata for the merged dataset
-#names(output$scesMerge@metadata)
+names(output$scesMerge@metadata)
 # normalized and log-transformed data of the merged dataset. Note: the merged dataset doesn't contain the raw count
-#dim(logcounts(output$scesMerge))
+dim(logcounts(output$scesMerge))
 ```
 
 ### Visulization of QC metrics
@@ -116,33 +125,50 @@ plotVarianceTrend(output$sces)
 plotVarianceExplained(output$sces,feature="genevar_by_counts")
 ```
 #### plot the heatmap of HVGs and PC-related genes
-```{r fig.align="center", fig.width=10}
+```{r results='hide'}
 # plot the HVGs 
 plotHVGs(output$sces)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in the HVGs
-#plotHVGsPathways(output$sces)
+plotHVGsPathways(output$sces)
+```
+
+```{r results='hide'}
 # plot the PC-related genes
-#plotPCgenes(output$sces)
+plotPCgenes(output$sces)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in pc-related genes
-#plotPCPathways(output$sces)
+plotPCPathways(output$sces)
 ```
 #### plot the similarity across all samples
 ```{r}
 # plot the pairwise similarity of average expression 
 plotSampleSimilarity(output$sces)
+```
+
+```{r results='hide'}
 # PCA plots of all samples
 plotAllPCA(output$scesMerge)
+```
+
+```{r results='hide'}
 # tSNE plots of all samples
 plotAlltSNE(output$scesMerge)
-
 ```
 
 #### plot the pairwise differential analysis across samples
-```{r}
+```{r results='hide'}
 # plot the differentially expressed genes in any pairwise comparison
-#plotDiffgenes(output$scesMerge)
+plotDiffgenes(output$scesMerge)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in DEGs
-#plotDiffPathways(output$scesMerge)
+plotDiffPathways(output$scesMerge)
 ```
 
 # Recommendations if out of memory
