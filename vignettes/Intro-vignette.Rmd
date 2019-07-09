@@ -23,8 +23,7 @@ To easiest way to generate a summary QC report for scRNAseq datasets is to run s
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"))
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
 ```
 
 # Input data
@@ -63,10 +62,24 @@ scRNABatchQC not only generates a QC summary report in a HTML file, but only ret
 
 ```{r echo=T,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 library(scRNABatchQC)
-output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
-                     createReport=F)
+rdsFile<-"output.rds"
+if(!file.exists(rdsFile)){
+  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"),
+                       createReport=F)
+  saveRDS(output, rdsFile)
+}else{
+  output<-readRDS(rdsFile)
+}
+```
+
+```{r test, fig.width=20}
+library(heatmap3)
+  hvgBiologicalSimilarity <- scRNABatchQC:::.getBiologicalSimilarity(output$sces, objectName = "hvg", valueName = "zval")
+margins=c(1,1)
+keysize=1
+col=bluered(75)
+heatmap3(hvgBiologicalSimilarity, cexRow = 0.5, margins = margins, keysize=keysize, col=col, main="HVGs",key.title="zval",key.xlab="",key.ylab="")
 ```
 
 ```{r}
@@ -103,9 +116,9 @@ plotVarianceTrend(output$sces)
 plotVarianceExplained(output$sces,feature="genevar_by_counts")
 ```
 #### plot the heatmap of HVGs and PC-related genes
-```{r}
+```{r fig.align="center", fig.width=10}
 # plot the HVGs 
-#plotHVGs(output$sces)
+plotHVGs(output$sces)
 # plot the pathways enriched in the HVGs
 #plotHVGsPathways(output$sces)
 # plot the PC-related genes

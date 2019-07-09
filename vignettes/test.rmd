@@ -1,0 +1,52 @@
+---
+title: "scRNABatchQC: Quality check for multiple single cell RNA-seq datasets"
+author: "Qi Liu, Quanhu Sheng, Jie Ping"
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+.figure p.caption {
+  font-size: 1.5em;
+}
+</style>
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r echo=T,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
+library(scRNABatchQC)
+rdsFile<-"output.rds"
+if(!file.exists(rdsFile)){
+  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"),
+                       createReport=F)
+  saveRDS(output, rdsFile)
+}else{
+  output<-readRDS(rdsFile)
+}
+```
+
+```{r test, fig.margin = FALSE}
+library(pheatmap)
+hvgBiologicalSimilarity <- scRNABatchQC:::.getBiologicalSimilarity(output$sces, objectName = "hvg", valueName = "zval")
+keysize=1
+col=bluered(75)
+heatmap.2(hvgBiologicalSimilarity)
+```
