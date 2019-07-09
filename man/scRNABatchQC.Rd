@@ -10,7 +10,7 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio = 1,
   logFC = 1, FDR = 0.01, organism = "mmusculus",
   outputFile = "report.html", lineSize = 1, pointSize = 0.8,
-  chunk.size = NULL)
+  chunk.size = NULL, createReport = TRUE)
 }
 \arguments{
 \item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
@@ -50,6 +50,8 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
 \item{pointSize}{float; the point size of figures in the report  (default: 0.8)}
 
 \item{chunk.size}{NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size}
+
+\item{createReport}{logical; default is TRUE, suggesting html report file will be created}
 }
 \value{
 a list of SingleCellExperiment objects;

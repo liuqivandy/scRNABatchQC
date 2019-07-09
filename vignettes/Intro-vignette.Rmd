@@ -23,7 +23,8 @@ To easiest way to generate a summary QC report for scRNAseq datasets is to run s
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"))
 ```
 
 # Input data
@@ -60,10 +61,11 @@ The section identifies genes differentially expressed (DEGs) across samples and 
 ## Output: SingleCellExperiment objects
 scRNABatchQC not only generates a QC summary report in a HTML file, but only return SingleCellExperiment object with raw count, normalized data, and QC metadata for downstream analysis. You can also use following code to generating the object without creating report file:
 
-```{r, eval=T, echo=T}
+```{r echo=T,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"),
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
                      createReport=F)
 ```
 
@@ -103,13 +105,13 @@ plotVarianceExplained(output$sces,feature="genevar_by_counts")
 #### plot the heatmap of HVGs and PC-related genes
 ```{r}
 # plot the HVGs 
-plotHVGs(output$sces)
+#plotHVGs(output$sces)
 # plot the pathways enriched in the HVGs
-plotHVGsPathways(output$sces)
+#plotHVGsPathways(output$sces)
 # plot the PC-related genes
-plotPCgenes(output$sces)
+#plotPCgenes(output$sces)
 # plot the pathways enriched in pc-related genes
-plotPCPathways(output$sces)
+#plotPCPathways(output$sces)
 ```
 #### plot the similarity across all samples
 ```{r}
@@ -125,9 +127,9 @@ plotAlltSNE(output$scesMerge)
 #### plot the pairwise differential analysis across samples
 ```{r}
 # plot the differentially expressed genes in any pairwise comparison
-plotDiffgenes(output$scesMerge)
+#plotDiffgenes(output$scesMerge)
 # plot the pathways enriched in DEGs
-plotDiffPathways(output$scesMerge)
+#plotDiffPathways(output$scesMerge)
 ```
 
 # Recommendations if out of memory
@@ -139,7 +141,7 @@ scRNABatchQC will read the data from each sample at one time and store the data 
 
 
 
-```{r}
+```{r, eval=F, echo=T}
 # change the chunk size to save memory
 result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), chunk=2000)
@@ -149,7 +151,7 @@ gc()
 ## Too many samples
 scRNABatchQC will combine the data from all samples into one sparse matrix. If there are too many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
 
-```{r}
+```{r, eval=F, echo=T}
 # change the sampleRatio to save memory
 result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), sampleRatio = 0.1)

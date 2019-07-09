@@ -40,3 +40,5 @@ vignettes/*.pdf
 /*.table
 inst/doc
 /vignettes/.webgestalt_cache
+doc
+Meta

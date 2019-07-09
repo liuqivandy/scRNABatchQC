@@ -94,7 +94,7 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
 #' @examples 
 #' library(scRNABatchQC)
 #' sces<-Process_scRNAseq(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz",
-#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),))
+#'                                     "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #'   
 #' #plot the gene detection rates for all datasets
 #' plotAveCountVSdetectRate(sces)
