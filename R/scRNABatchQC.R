@@ -141,7 +141,7 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
   if(! isOrganismValid){
     organism<-NULL
   }
-
+  
   result <- list()
   nfiles<-length(inputfiles)
   
@@ -207,7 +207,7 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
 Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sampleRatio=1,organism="mmusculus") {
   if (sampleRatio>1) stop("sampleRatio must be <=1")
   
-   isOrganismValid<-.isOrganismValid(organism)
+  isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
@@ -230,16 +230,16 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
       pca_tsne_data$condition <-c(pca_tsne_data$condition,rep(names(sces)[i],nsample))
     }
   }
-
+  
   pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
-
+  
   ##select the top 1000 highly variable genes for the PCA
   feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:nHVGs]
   
   #scevar <- apply(scesdata, 1, var)
   #feature_set <- head(order(scevar, decreasing = T), n = 500)
   pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = nPCs)
-
+  
   set.seed(100)
   tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = 20, check_duplicates = FALSE)
   pca_tsne_data$tsne <- tsne_out$Y
@@ -284,17 +284,17 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
   plotData <- list(sces = sces, 
                    scesMerge = scesMerge, 
                    tableSummary = pw,
-				   lineSize=lineSize,
-				   pointSize=pointSize)
+                   lineSize=lineSize,
+                   pointSize=pointSize)
   
   cat("Report html generated.\n")
   reportRmd <- system.file("report/scRNABatchQCreport.Rmd", package="scRNABatchQC")
   # reportRmd<-"d:/github/scRNABatchQC/inst/report/scRNABatchQCreport.Rmd"
-
+  
   outputFile <- getAbsolutePath(outputFile)
   output_dir = dirname(outputFile)
   output_file = basename(outputFile)
-
+  
   cat("Output report to:", outputFile, "\n")
   rmarkdown::render(reportRmd,
                     output_dir = output_dir,
@@ -443,16 +443,22 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' plotDensity(list(sce=sce))
 #' names(sce@metadata)
 #' head(sce@colData$log10_total_counts)
-#' @seealso \code{\link{Process_onescRNAseq}} , \code{\link{Bio_OnescRNAseq}} 
+#' @seealso \code{\link{Process_OnescRNAseq}} , \code{\link{Bio_OnescRNAseq}} 
 Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size=NULL ){
-  if(is.null(chunk.size)) {
-   rawdata<-fread(inputfile,data.table=F)
-   countmat<-.tosparse(rawdata[,-1])
-   rownames(countmat)<-rawdata[,1]
-   rm(rawdata)
-   gc()
-  } else { countmat<-fread_bychunk(inputfile,chunk.size=chunk.size)}
-  
+  if(dir.exists(inputfile)){
+    if(!.is_10X_v3(inputfile)) {
+      stop(paste0("Input folder doesn't contain 10X v3 files: ", inputfile))
+    }
+    countmat<-read_10X_v3(inputfile)
+  }else{
+    if(is.null(chunk.size)) {
+      rawdata<-fread(inputfile,data.table=F)
+      countmat<-.tosparse(rawdata[,-1])
+      rownames(countmat)<-rawdata[,1]
+      rm(rawdata)
+      gc()
+    } else { countmat<-fread_bychunk(inputfile,chunk.size=chunk.size)}
+  }
   
   #if (!is.integer(PCind) | !is.integer(nPCs) | ! is.integer(nHVGs)) stop("nPCs, PCind and nHVGs should be integer")
   
@@ -470,7 +476,7 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   total_counts_rRNA=Matrix::colSums(countmat[is.rRNA, ])  
   
   rawmeta$CellData<-data.frame(total_counts=total_counts, total_features=total_features,total_counts_Mt=total_counts_Mt,total_counts_rRNA=total_counts_rRNA,pct_counts_Mt = total_counts_Mt/total_counts,pct_counts_rRNA=total_counts_rRNA/total_counts)
-
+  
   ##filter cells with less than 500 counts or 3 mad lower
   libsize.drop = .findOutlier(rawmeta$CellData$total_counts,  log=TRUE,type = "lower",lower.limit=mincounts)
   rawmeta$CellData<-cbind(rawmeta$CellData,libsize.drop=libsize.drop$filtered)
@@ -500,7 +506,7 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   rowind<-logcount@i+1  
   colind<-findInterval(seq(logcount@x)-1,logcount@p[-1])+1
   logcount@x<-log2(logcount@x*lib_size[colind]+1) 
-
+  
   scdata<- SingleCellExperiment(assay=list(counts=newcount,logcounts=logcount))
   scdata@colData$log10_total_counts<-log10(rawmeta$CellData$total_counts)[!rawmeta$CellData$is.drop]
   scdata@colData$log10_total_features <- log10(rawmeta$CellData$total_features)[!rawmeta$CellData$is.drop]
@@ -513,7 +519,7 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
   ##keep the orignial meta data 
   scdata@metadata$rawmeta<-rawmeta
   scdata@metadata$sf<-sf
-
+  
   return(scdata)
 }
 
@@ -563,14 +569,14 @@ Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculu
   if(! isOrganismValid){
     organism<-NULL
   }
-
+  
   scdata@elementMetadata$hvg <- .getMeanVarTrend(logcounts(scdata))
   ##explained by feature###
   scdata@elementMetadata$genevar_by_counts<-.getVarExplainedbyFeature(scdata,"log10_total_counts")
   scdata@elementMetadata$genevar_by_features<-.getVarExplainedbyFeature(scdata,"log10_total_features")
   scdata@elementMetadata$genevar_by_Mt<-.getVarExplainedbyFeature(scdata,"log10_total_counts_Mt")
   scdata@elementMetadata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
-
+  
   ##select the top HVGs highly variable genes for the PCA, default is 1000
   hvggenes <-  rownames(scdata@elementMetadata$hvg)[order(scdata@elementMetadata$hvg$zval,decreasing=T)][1:nHVGs]
   

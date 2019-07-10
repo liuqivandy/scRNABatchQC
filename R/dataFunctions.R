@@ -23,6 +23,48 @@ fread_bychunk<-function(inputfile,chunk.size=2000) {
   
 }
 
+.is_10X_v3<-function(inputFolder){
+  barcodeFile = paste0(inputFolder, "/barcodes.tsv.gz")	
+  featureFile = paste0(inputFolder, "/features.tsv.gz")	
+  matrixFile = paste0(inputFolder, "/matrix.mtx.gz")	
+  
+  if(!file.exists(barcodeFile)){
+    return(FALSE)
+  }
+  if(!file.exists(featureFile)){
+    return(FALSE)
+  }
+  if(!file.exists(matrixFile)){
+    return(FALSE)
+  }
+  return(TRUE)
+}
+
+read_10X_v3<-function(inputFolder){
+  barcodeFile = paste0(inputFolder, "/barcodes.tsv.gz")	
+  featureFile = paste0(inputFolder, "/features.tsv.gz")	
+  matrixFile = paste0(inputFolder, "/matrix.mtx.gz")	
+  
+  if(!file.exists(barcodeFile)){
+    stop(paste0("File not found ", barcodeFile))
+  }
+  if(!file.exists(featureFile)){
+    stop(paste0("File not found ", featureFile))
+  }
+  if(!file.exists(matrixFile)){
+    stop(paste0("File not found ", matrixFile))
+  }
+  
+  features = read.delim(featureFile, header=F, stringsAsFactors = F)
+  barcodes = readLines(barcodeFile)
+  mat = readMM(matrixFile)
+  
+  colnames(mat)<-barcodes
+  rownames(mat)<-features$V1
+  result <-aggregate.Matrix(mat, features$V2, FUN=sum, na.rm=TRUE)
+  return(result)
+}
+
 .detach_package <- function(pkg, character.only = FALSE)
 {
   if(!character.only)
