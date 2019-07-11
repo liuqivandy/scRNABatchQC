@@ -1,28 +1,43 @@
 ---
-title: "scRNABatchQC: Quality check for multiple single cell RNA-seq datasets"
-author: "Qi Liu, Quanhu Sheng, Jie Ping"
+title: "Introduction to scRNABatchQC"
+author: "Quanhu Sheng, Jie Ping, Shyr Yu, Qi Liu"
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Introduction to scRNABatchQC}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 1280px !important;
+  width: 1280px !important;
+}
+body {
+  max-width: 1280px !important;
+}
+```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(fig.width=7, fig.height=7) 
 ```
 # Introduction
 Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets . scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detect possible outliers and batch effects.vcRNABatchQC can be also applied to other single cell experiments containing gene-cell count matrices. 
 
 # Quick start
 To easiest way to generate a summary QC report for scRNAseq datasets is to run scRNABatchQC.  The only required input is the list of file names (or a URL starting http://, file://, etc) with each file containing gene-cell count matrix for one single cell RNA-seq dataset.   
-```{r help, message=FALSE,warning = FALSE}
+```{r, eval=F, echo=T}
 library(scRNABatchQC)
-output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
+output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+			                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+                     logFC=0.585,
+                     organism="mmusculus")
 ```
 
 # Input data
@@ -57,25 +72,42 @@ This section provides three plots to compare the expression similarity across sa
 The section identifies genes differentially expressed (DEGs) across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
 
 ## Output: SingleCellExperiment objects
-scRNABatchQC not only generates a QC summary report in a HTML file, but only return SingleCellExperiment objects with raw count, normalized data, and QC metadata for downstream analysis. 
+scRNABatchQC not only generates a QC summary report in a HTML file, but only return SingleCellExperiment object with raw count, normalized data, and QC metadata for downstream analysis. You can also use following code to generating the object without creating report file:
 
-```{r}
+```{r echo=T,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
+library(scRNABatchQC)
+rdsFile<-"output.rds"
+if(!file.exists(rdsFile)){
+  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+                                    "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+                       logFC=0.585,
+                       organism="mmusculus",
+                       createReport=F)
+  saveRDS(output, rdsFile)
+}else{
+  output<-readRDS(rdsFile)
+}
+```
+
+
+```{r results='hide'}
 # a list of SingleCellExperiment objects, each of which contains raw and normalized count, technical and biological metadata from one scRNAseq dataset
-#output$sces
+output$sces
 # the first SingleCellExperiment object for the first dataset (here bioplar1.csv.gz)
-#output$sces[[1]]
+output$sces[[1]]
 # the metadata of the first dataset
-#names(output$sces[[1]]@metadata)
+names(output$sces[[1]]@metadata)
 #raw counts of the first dataset
-#counts(output$sces[[1]])[1:5,1:5]
+counts(output$sces[[1]])[1:5,1:5]
 #normalized and log-transformed data of the first dataset
-#logcounts(output$sces[[1]])[1:5,1:5]
+logcounts(output$sces[[1]])[1:5,1:5]
 #one SingleCellExperiment object,which contains normalized count, technical and biological metadata for the merged dataset (all datasets merged into one)
-#output$scesMerge
+output$scesMerge
 #metadata for the merged dataset
-#names(output$scesMerge@metadata)
+names(output$scesMerge@metadata)
 # normalized and log-transformed data of the merged dataset. Note: the merged dataset doesn't contain the raw count
-#dim(logcounts(output$scesMerge))
+dim(logcounts(output$scesMerge))
 ```
 
 ### Visulization of QC metrics
@@ -93,33 +125,50 @@ plotVarianceTrend(output$sces)
 plotVarianceExplained(output$sces,feature="genevar_by_counts")
 ```
 #### plot the heatmap of HVGs and PC-related genes
-```{r}
+```{r results='hide'}
 # plot the HVGs 
 plotHVGs(output$sces)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in the HVGs
-#plotHVGsPathways(output$sces)
+plotHVGsPathways(output$sces)
+```
+
+```{r results='hide'}
 # plot the PC-related genes
-#plotPCgenes(output$sces)
+plotPCgenes(output$sces)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in pc-related genes
-#plotPCPathways(output$sces)
+plotPCPathways(output$sces)
 ```
 #### plot the similarity across all samples
 ```{r}
 # plot the pairwise similarity of average expression 
 plotSampleSimilarity(output$sces)
+```
+
+```{r results='hide'}
 # PCA plots of all samples
 plotAllPCA(output$scesMerge)
+```
+
+```{r results='hide'}
 # tSNE plots of all samples
 plotAlltSNE(output$scesMerge)
-
 ```
 
 #### plot the pairwise differential analysis across samples
-```{r}
+```{r results='hide'}
 # plot the differentially expressed genes in any pairwise comparison
-#plotDiffgenes(output$scesMerge)
+plotDiffgenes(output$scesMerge)
+```
+
+```{r results='hide'}
 # plot the pathways enriched in DEGs
-#plotDiffPathways(output$scesMerge)
+plotDiffPathways(output$scesMerge)
 ```
 
 # Recommendations if out of memory
@@ -127,10 +176,24 @@ scRNABatchQC has been tested on multiple platforms (windows, MacOS, linux & Cent
 
 ## One sample has huge amount of cells
 
-scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk.size, default:NULL) to read the data by chunk, which will take longer time but less memory. The smaller the chunk size, the longer time to read the data but less memory required.
+scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk, default:NULL) to read the data by chunk, which will cost time but save memory. The smaller the chunk size, the longer time to read the data but less memory required.
+
+
+
+```{r, eval=F, echo=T}
+# change the chunk size to save memory
+result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), chunk=2000)
+gc()
+```
 
 ## Too many samples
 scRNABatchQC will combine the data from all samples into one sparse matrix. If there are too many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
 
-
+```{r, eval=F, echo=T}
+# change the sampleRatio to save memory
+result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), sampleRatio = 0.1)
+gc()
+```
 

@@ -70,5 +70,5 @@ names(sce@metadata)
 head(sce@colData$log10_total_counts)
 }
 \seealso{
-\code{\link{Process_onescRNAseq}} , \code{\link{Bio_OnescRNAseq}}
+\code{\link{Process_OnescRNAseq}} , \code{\link{Bio_OnescRNAseq}}
 }

@@ -39,3 +39,7 @@ vignettes/*.pdf
 /*.rdata
 /*.table
 inst/doc
+/vignettes/.webgestalt_cache
+Meta
+/vignettes/output.rds
+/doc

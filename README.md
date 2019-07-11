@@ -23,7 +23,7 @@ Step 2: Install a modified version of WebGestatR by:
 
 Step 3: Install scRNABatchQC by:
 
-	install_github("liuqivandy/scRNABatchQC")
+	install_github("liuqivandy/scRNABatchQC", build_opts = c("--no-resave-data", "--no-manual"), build_vignettes = TRUE)
   
 <a name="example"/>
 
