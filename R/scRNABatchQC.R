@@ -2,7 +2,8 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputfiles string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfiles string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
+#' Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
 #' @param names string vector; giving names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -59,7 +60,8 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 ###############################
 #' process scRNAseq datasets one by one to generate QC metadata
 #' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets represented by gene-count matrices;each dataset is processed one by one
-#' @param inputfiles string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @param inputfiles string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+#' Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
 #' @param names string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -304,8 +306,9 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 
 ##############################################
 #' process one scRNAseq dataset to generate QC metadata 
-#' @description Generate technical and biological metadata for one single cell RNAseq represented by gene-cell count table
-#' @param inputfile string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @description Generate technical and biological metadata for one single cell RNAseq dataset
+#' @param inputfile string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+#' Inputfile can also be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer: the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
@@ -391,8 +394,9 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 
 #####################################
 #' process one scRNAseq dataset to generate technical metadata
-#' @description Generate technical metadata for one single cell RNAseq represented by gene-cell count table
-#' @param inputfile string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported
+#' @description Generate technical metadata for one single cell RNAseq dataset
+#' @param inputfile string; a string containing the name of the file (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr 
+#' Inputfile can also be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
@@ -444,6 +448,8 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' names(sce@metadata)
 #' head(sce@colData$log10_total_counts)
 #' @seealso \code{\link{Process_OnescRNAseq}} , \code{\link{Bio_OnescRNAseq}} 
+
+
 Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size=NULL ){
   if(dir.exists(inputfile)){
     if(!.is_10X_v3(inputfile)) {

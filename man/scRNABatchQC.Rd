@@ -13,7 +13,8 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   chunk.size = NULL, createReport = TRUE)
 }
 \arguments{
-\item{inputfiles}{string vector; giving the input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported}
+\item{inputfiles}{string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
+Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0}
 
 \item{names}{string vector; giving names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
 
