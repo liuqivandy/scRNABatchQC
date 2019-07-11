@@ -20,9 +20,9 @@ Understanding the existence and the sources of experimental noise is very import
 
 # Quick start
 To easiest way to generate a summary QC report for scRNAseq datasets is to run scRNABatchQC.  The only required input is the list of file names (or a URL starting http://, file://, etc) with each file containing gene-cell count matrix for one single cell RNA-seq dataset.   
-```{r setup, message=FALSE,warning = FALSE}
-#library(scRNABatchQC)
-#output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
+```{r help, message=FALSE,warning = FALSE}
+library(scRNABatchQC)
+output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz","ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz"))
 ```
 
 # Input data
@@ -97,11 +97,11 @@ plotVarianceExplained(output$sces,feature="genevar_by_counts")
 # plot the HVGs 
 plotHVGs(output$sces)
 # plot the pathways enriched in the HVGs
-plotHVGsPathways(output$sces)
+#plotHVGsPathways(output$sces)
 # plot the PC-related genes
-plotPCgenes(output$sces)
+#plotPCgenes(output$sces)
 # plot the pathways enriched in pc-related genes
-plotPCPathways(output$sces)
+#plotPCPathways(output$sces)
 ```
 #### plot the similarity across all samples
 ```{r}
@@ -117,9 +117,9 @@ plotAlltSNE(output$scesMerge)
 #### plot the pairwise differential analysis across samples
 ```{r}
 # plot the differentially expressed genes in any pairwise comparison
-plotDiffgenes(output$scesMerge)
+#plotDiffgenes(output$scesMerge)
 # plot the pathways enriched in DEGs
-plotDiffPathways(output$scesMerge)
+#plotDiffPathways(output$scesMerge)
 ```
 
 # Recommendations if out of memory
@@ -127,24 +127,10 @@ scRNABatchQC has been tested on multiple platforms (windows, MacOS, linux & Cent
 
 ## One sample has huge amount of cells
 
-scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk, default:NULL) to read the data by chunk, which will cost time but save memory. The smaller the chunk size, the longer time to read the data but less memory required.
-
-
-
-```{r}
-# change the chunk size to save memory
-result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
-	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), chunk=2000)
-gc()
-```
+scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk.size, default:NULL) to read the data by chunk, which will take longer time but less memory. The smaller the chunk size, the longer time to read the data but less memory required.
 
 ## Too many samples
 scRNABatchQC will combine the data from all samples into one sparse matrix. If there are too many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
 
-```{r}
-# change the sampleRatio to save memory
-result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
-	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), sampleRatio = 0.1)
-gc()
-```
+
 
