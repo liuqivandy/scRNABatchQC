@@ -35,8 +35,7 @@ To easiest way to generate a summary QC report for scRNAseq datasets is to run s
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
                                   "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
-			                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
-                     organism="mmusculus")
+			                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"))
 ```
 
 # Input data
@@ -44,7 +43,7 @@ As input, the scRNABatchQC package expects raw count data from scRNA-seq experim
 The parameter inputfiles can be a string vector of file names containing gene-cell count matrices, or a vector of path names containing the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0.
 
 # Output data
-The scRNABatchQC generates two types of output. One is a HTML file, a QC report providing both metrics and diagnostic graphics to assess the similarity/difference on a number of technical and biological features for the input datasets. By default, the HTML report will be written in your working directory named report.html.  The other is a list of SingleCellExperiment objects containing raw, filtered and normalized data, quality meta data from each dataset and the merged dataset. 
+The scRNABatchQC generates two types of output. One is a HTML file, a QC report providing both metrics and diagnostic graphics to assess the similarity/difference on a number of technical and biological features for the input datasets. By default, the HTML report will be written in your working directory named report.html. To suppress the generation of the HTML report, set createReport=F.  The other is a list of SingleCellExperiment objects containing raw, filtered and normalized data, quality meta data from each dataset and the merged dataset. 
 
 ## Output: HTML file
 The HTML file has five sections, QC Summary, Technical View, Biological View, Expression Similarity, and Pairwise Difference. 
@@ -71,18 +70,17 @@ This section provides three plots to compare the expression similarity across sa
 ### HTML file: Pairwise Difference
 The section identifies genes differentially expressed (DEGs) across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
 
-## Output: SingleCellExperiment objects
-scRNABatchQC not only generates a QC summary report in a HTML file, but only return a list of SingleCellExperiment objects with raw count, normalized data, and QC metadata for downstream analysis. 
+## Output: list of SingleCellExperiment objects
+scRNABatchQC returns a list of SingleCellExperiment objects with raw count, normalized data, and QC metadata for each individual dataset and the merged dataset for downstream analysis. 
 
-```{r echo=T,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
+```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 library(scRNABatchQC)
 rdsFile<-"output.rds"
 if(!file.exists(rdsFile)){
   output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
                                     "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
 		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
-                       organism="mmusculus",
-                       createReport=F)
+                                   createReport=F)
   saveRDS(output, rdsFile)
 }else{
   output<-readRDS(rdsFile)
@@ -115,7 +113,7 @@ dim(logcounts(output$scesMerge))
 ```{r}
 # plot the distribution of the total number of counts 
 plotDensity(output$sces,"total_counts")
-# plot the distribution of mtRNA fraction
+# plot the distribution of rRNA fraction
 plotDensity(output$sces,"pct_counts_rRNA")
 # plot the distribution of the total counts for the first sample
 plotDensity(output$sces[1],"total_counts")
@@ -171,21 +169,21 @@ scRNABatchQC has been tested on multiple platforms (windows, MacOS, linux & Cent
 
 ## One sample has huge amount of cells
 
-scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk.size, default:NULL) to read the data by chunk, which will cost time but save memory. The smaller the chunk size, the longer time to read the data but less memory required.
+scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk.size, default:NULL, read the whole file) to read the data by chunk, which will take longer time but less memory. The smaller the chunk size, the longer time to read the data but less memory required.
 
 
 
 ```{r, eval=F, echo=T}
-# change the chunk size to save memory
+# Read by chunk
 result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), chunk.size=2000)
 ```
 
-## Too many samples
-scRNABatchQC will combine the data from all samples into one sparse matrix. If there are too many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
+## Many samples leading to huge amount of cells in total
+scRNABatchQC will combine the data from all samples into one sparse matrix. If there are many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
 
 ```{r, eval=F, echo=T}
-# change the sampleRatio to save memory
+# decrease the sampleRatio 
 result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), sampleRatio = 0.1)
 ```
