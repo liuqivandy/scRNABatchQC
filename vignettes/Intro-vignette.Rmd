@@ -75,16 +75,13 @@ scRNABatchQC returns a list of SingleCellExperiment objects with raw count, norm
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 library(scRNABatchQC)
-rdsFile<-"output.rds"
-if(!file.exists(rdsFile)){
-  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-                                    "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
-		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
-                                   createReport=F)
-  saveRDS(output, rdsFile)
-}else{
-  output<-readRDS(rdsFile)
-}
+#
+#  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+#                                    "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
+#		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
+#                                   createReport=F)
+# saveRDS(output, rdsFile)
+#
 ```
 
 
