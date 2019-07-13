@@ -74,6 +74,7 @@ The section identifies genes differentially expressed (DEGs) across samples and 
 scRNABatchQC returns a list of SingleCellExperiment objects with raw count, normalized data, and QC metadata for each individual dataset and the merged dataset for downstream analysis. 
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
+# use pre-computed data
 download.file("https://github.com/liuqivandy/scRNABatchQC/blob/master/example.Rdata?raw=true","outputfile")
 load("outputfile")
 ```
