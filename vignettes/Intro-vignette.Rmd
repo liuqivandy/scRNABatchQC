@@ -71,7 +71,7 @@ This section provides three plots to compare the expression similarity across sa
 The section identifies genes differentially expressed (DEGs) across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
 
 ## Output: list of SingleCellExperiment objects
-scRNABatchQC returns a list of SingleCellExperiment objects with raw count, normalized data, and QC metadata for each individual dataset and the merged dataset for downstream analysis. 
+scRNABatchQC returns two objects: one is sces, a list of SingleCellExperiment objects for each individual dataset; the other is scesMerge, a SingleCellExperiment object for the merged dataset. Each SingleCellExperiment object contains raw, normalized and QC metadata, which can be used for downstream analysis.
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 # use pre-computed data
@@ -81,7 +81,9 @@ load("outputfile")
 
 
 ```{r }
-# The output contains two objects, sces and scesMerge.  sces is a list of SingleCellExperiment objects, each of which contains the raw, normalized and QC metadata for each dataset. scesMerge is a SingleCellExperiment object contains all the data and QC metadata for the merged dataset.
+# The output contains two objects, sces and scesMerge.  
+# sces is a list of SingleCellExperiment objects, each of which contains the raw, normalized and QC metadata for each dataset.
+# scesMerge is a SingleCellExperiment object contains all the data and QC metadata for the merged dataset.
 names(output)
 length(output$sces)
 # the SingleCellExperiment object for the first dataset
