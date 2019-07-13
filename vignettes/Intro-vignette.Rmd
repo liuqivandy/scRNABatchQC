@@ -74,14 +74,8 @@ The section identifies genes differentially expressed (DEGs) across samples and 
 scRNABatchQC returns a list of SingleCellExperiment objects with raw count, normalized data, and QC metadata for each individual dataset and the merged dataset for downstream analysis. 
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
-library(scRNABatchQC)
-#
-#  output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
-#                                    "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
-#		  	                            "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
-#                                   createReport=F)
-# saveRDS(output, rdsFile)
-#
+download.file("https://github.com/liuqivandy/scRNABatchQC/blob/master/example.Rdata?raw=true","outputfile")
+load("outputfile")
 ```
 
 
