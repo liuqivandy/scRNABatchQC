@@ -27,10 +27,11 @@ knitr::opts_chunk$set(
 knitr::opts_chunk$set(fig.width=7, fig.height=7) 
 ```
 # Introduction
-Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets . scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detect possible outliers and batch effects.vcRNABatchQC can be also applied to other single cell experiments containing gene-cell count matrices. 
+Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets. scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detects possible outliers and batch effects. scRNABatchQC can also be applied to other single cell experiments containing gene-cell count matrices. 
 
 # Quick start
-To easiest way to generate a summary QC report for scRNAseq datasets is to run scRNABatchQC.  The only required input is the list of file names (or a URL starting http://, file://, etc) with each file containing gene-cell count matrix for one single cell RNA-seq dataset.   
+To easiest way to generate a summary QC report is to run scRNABatchQC.  The only required input is the vector of file names (or a URL starting http://, file://, etc) for gene-cell count matrices or a vector of path namems from 10X CellRanger >=3.0.
+
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
 output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
@@ -39,39 +40,38 @@ output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM288
 ```
 
 # Input data
-As input, the scRNABatchQC package expects raw count data from scRNA-seq experiment. The gene-cell count data has the gene as row (the gene name should be gene symbol) and the cell as column. Each file should be regular delimited; Compressed files ending .gz and .bz2 are supported. 
+As input, the scRNABatchQC package expects raw count data from scRNA-seq or other single cell experiments. The gene-cell count data has the gene as row (the gene name should be gene symbol) and the cell as column. Each file should be regular delimited; Compressed files ending .gz and .bz2 are supported. 
 The parameter inputfiles can be a string vector of file names containing gene-cell count matrices, or a vector of path names containing the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0.
 
 # Output data
-The scRNABatchQC generates two types of output. One is a HTML file, a QC report providing both metrics and diagnostic graphics to assess the similarity/difference on a number of technical and biological features for the input datasets. By default, the HTML report will be written in your working directory named report.html. To suppress the generation of the HTML report, set createReport=F.  The other is a list of SingleCellExperiment objects containing raw, filtered and normalized data, quality meta data from each dataset and the merged dataset. 
+The scRNABatchQC generates two types of output. One is the HTML file, a QC report providing both metrics and diagnostic graphics to assess the similarity/difference on a number of technical and biological features for the input datasets. By default, the HTML report will be written in your working directory named report.html. To suppress the generation of the HTML report, set createReport=FALSE.  The other is a list of SingleCellExperiment objects containing raw, filtered and normalized data, QC meta data for each individual dataset and the combined dataset. 
 
-## Output: HTML file
-The HTML file has five sections, QC Summary, Technical View, Biological View, Expression Similarity, and Pairwise Difference. 
+## Output: the HTML report
+The HTML report has five sections, QC Summary, Technical View, Biological View, Expression Similarity, and Pairwise Difference. 
 
-### HTML file: QC Summary
-The QC summary section contains a table with the QC metrics for each sample, including the total number of counts (Count), the total number of cells (Cell), the total number of genes (Gene),  the number of counts in a cell across all cells [min-median-max], the number of genes in a cell across all cells [min-median-max], the maximum percentage of mitochondrial reads (mtRNA), the maximum percentage of reads mapped to ribosomal proteins (rRNA), the number of cells filtered by the cutoff by the number of counts (F-Count), the cutoff by the number of counts (C-Count), the number of cells filtered by the cutoff by the number of genes (F-Gene), the cutoff by the number of genes (C-Gene), the number of cells filtered by the cutoff by the fraction of mtRNA (F-mt), the cutoff by the fraction of mtrNA (C-mt), and the total number of cell filtered by either of the criteria (F).
+### HTML report: QC Summary
+The QC summary section contains a table with the QC metrics for each sample, including the total number of counts (Count), the total number of cells (Cell), the total number of genes (Gene),  the number of counts in a cell across all cells [min-median-max], the number of genes in a cell across all cells [min-median-max], the maximum percentage of mitochondrial reads (mtRNA), the maximum percentage of reads mapped to ribosomal proteins (rRNA), the cutoff by the number of counts (C-Count), the number of cells filtered by the cutoff C-Count (F-Count), the cutoff by the number of genes (C-Gene), the number of cells filtered by the cutoff C-Gene (F-Gene), the cutoff by the fraction of mtRNA (C-mt), the number of cells filtered by the cutoff C-mt (F-mt), and the total number of cell filtered by either of C-Count, C-Gene or C-mt (F).
 
-### HTML file: Technical View
+### HTML report: Technical View
 The technical view evaluates 11 technical features. For each feature, a plot is generated to compare its consistency across samples. including the distribution of the number of counts in a cell (Fig. 1), the number of genes in a cell (Fig. 2), the mtRNA fraction (Fig. 3), the rRNA fraction (Fig. 4), the cumulative expression distribution of the top 500 highly expressed genes (Fig.5), the detection rate vs. the average expression (Fig. 6), the variance vs. the expression (Fig. 7), the variances explained by the number of counts (Fig. 8), the variance explained by the number of genes (Fig. 9), the variance explained by the mtRNA fraction (Fig. 10), and the variance explained by the rRNA fraction (Fig. 11). 
-Different distribution across samples in Figs. 1-7 are indicative of the presence of batch effects. Figs. 8-11 shows the percentage of gene expression variance explained by these technical factors. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with the technical factor. Otherwise, it suggests that the technical factor contributes substantially to the gene expression variance. If so, this technical factor may need to be modeled into the downstream analysis. 
+Different distribution across samples in Figs. 1-7 are indicative of the presence of batch effects. Figs. 8-11 show the percentage of gene expression variance explained by these technical factors. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with the technical factor. Otherwise, it suggests that the technical factor contributes substantially to the gene expression variance. If so, this technical factor may need to be modeled into the downstream analysis. 
 
-### HTML file: Biological View
-The Biological view contains four plots. Two plots are related to highly variable genes (HVGs) and enriched pathways of HVGs. The other two plots are related to genes differentially expressed along a specific principal component (default: the first PC) (PC-related genes) and enriched pathways of PC-related genes. Generally, HVGs and PC-related genes are those determining cell types. Samples with similar HVGs or PC-related gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from just technical noise. Pathway enrichment analysis is performed by WebGestalt (https://github.com/bzhanglab/WebGestaltR, which supports 12 organisms, including athaliana, btaurus,
-celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae. If the organism is not supported by WebGestalt, enrichment analysis will not be performed.The heatmap of HVGs shows the zscore of dispersion, the heatmap of PC-related genes represents the log Fold change along one PC, and the heatmap of pathways illustrates the -log FDR value. 
+### HTML report: Biological View
+The Biological view contains four plots. Two plots are related to highly variable genes (HVGs) and enriched pathways of HVGs. The other two plots are related to genes differentially expressed along a specific principal component (default: the first PC) (PC-related genes) and enriched pathways of PC-related genes. Ideally, HVGs and PC-related genes are those determining cell types. Samples with similar HVGs or PC-related gens are either derived from the similar cell populations, or subject to same technical bias. Pathway enrichment analysis will help discriminate real biological effect from technical noise. Pathway enrichment analysis is performed by WebGestalt (https://github.com/bzhanglab/WebGestaltR, which supports 12 organisms, including athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae. If the organism is not supported by WebGestalt, enrichment analysis will not be performed. The heatmap of HVGs shows the zscore of dispersion, the heatmap of PC-related genes represents the log Fold change along one PC, and the heatmap of pathways illustrates the -log FDR value. 
 
 ```{r,message=FALSE,warning=FALSE}
 # list the organism supported by WebGestalt
 library(scRNABatchQC)
 listOrganism()
 ```
-### HTML file: Expression Similarity
-This section provides three plots to compare the expression similarity across samples, the scatter plot of the average gene expression of cells between pairwise samples, and the two plots on reduced dimensions (PCA and tSNE). scRNABatchQC merges all datasets into one dataset, find the HVGs,  and then perform the PCA amd tSNE analysis. The cells are colored by samples. PCA and tSNE plots give a quick view that cells from different samples are mixed together or form different groups . 
+### HTML report: Expression Similarity
+This section provides three plots to compare the expression similarity across datasets, the scatter plot of the average gene expression of cells between pairwise samples, and the two plots on reduced dimensions (PCA and tSNE). scRNABatchQC combines all datasets into one, finds the HVGs,  and then performs the PCA amd tSNE analysis. The cells are colored by samples. PCA and tSNE plots give a quick view that cells from different samples are mixed together or form different groups . 
 
-### HTML file: Pairwise Difference
-The section identifies genes differentially expressed (DEGs) across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
+### HTML report: Pairwise Difference
+The section identifies genes differentially expressed (DEGs) in any pairwise comparison across samples and enriched pathways related to these genes. The differentially expressed genes are detected by limma and pathway enrichment is performed by WebGestalt. The heatmap of DEGs shows the log Fold change between two samples, while the heatmap of pathways uses the -logFDR value. 
 
-## Output: list of SingleCellExperiment objects
-scRNABatchQC returns two objects: one is sces, a list of SingleCellExperiment objects for each individual dataset; the other is scesMerge, a SingleCellExperiment object for the merged dataset. Each SingleCellExperiment object contains raw, normalized and QC metadata, which can be used for downstream analysis.
+## Output: a list of SingleCellExperiment objects
+scRNABatchQC returns a list of two objects: one is sces, a list of SingleCellExperiment objects, each of which contains meta data for one dataset; the other is scesMerge, a SingleCellExperiment object for the combined dataset. Each SingleCellExperiment object contains raw, normalized and QC metadata, which can be used for downstream analysis.
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 # use pre-computed data
@@ -81,7 +81,7 @@ load("outputfile")
 
 
 ```{r }
-# The output contains two objects, sces and scesMerge.  
+# The output contains a list of two objects, sces and scesMerge.  
 # sces is a list of SingleCellExperiment objects, each of which contains the raw, normalized and QC metadata for each dataset.
 # scesMerge is a SingleCellExperiment object contains all the data and QC metadata for the merged dataset.
 names(output)
@@ -94,7 +94,7 @@ names(output$sces[[1]]@metadata)
 counts(output$sces[[1]])[1:5,1:5]
 #normalized and log-transformed data of the first dataset
 logcounts(output$sces[[1]])[1:5,1:5]
-#one SingleCellExperiment object,which contains normalized count, technical and biological metadata for the merged dataset (all datasets merged into one)
+#one SingleCellExperiment object,which contains normalized count, technical and biological metadata for the combined dataset (all datasets combined into one)
 class(output$scesMerge)
 #metadata for the merged dataset
 names(output$scesMerge@metadata)
@@ -159,11 +159,11 @@ plotDiffgenes(output$scesMerge)
 ```
 
 # Recommendations if out of memory
-scRNABatchQC has been tested on multiple platforms (windows, MacOS, linux & CentOS 7) with memory from 4G to 1000G on multiple datasets. Each dataset has 2-6 samples, and each sample has over 20000 genes and 2000-14000 cells. However, the system will probably be out of memory if one sample is very big (huge amount of cells) or there are too many samples (requring a large memory for the merged dataset).
+scRNABatchQC has been tested on multiple platforms (windows, MacOS, linux & CentOS 7) with memory from 4G to 1000G on multiple datasets. Each dataset has 2-6 samples, and each sample has over 20000 genes and 2000-14000 cells. However, the system will probably be out of memory if one sample is very big (huge amount of cells) or there are too many samples (requring a large memory for the combined dataset).
 
 ## One sample has huge amount of cells
 
-scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory for the sparse matrix, scRNABatchQC provides an parameter (chunk.size, default:NULL, read the whole file) to read the data by chunk, which will take longer time but less memory. The smaller the chunk size, the longer time to read the data but less memory required.
+scRNABatchQC will read the data from each sample at one time and store the data in a sparse matrix. if one sample has huge amount of cells and the system cannot allocate the memory required, scRNABatchQC provides an parameter (chunk.size, default:NULL, read the whole file) to read the data by chunk, which will take longer time but less memory. The smaller the chunk size, the longer time to read the data but less memory required.
 
 
 
@@ -174,7 +174,7 @@ result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/ra
 ```
 
 ## Many samples leading to huge amount of cells in total
-scRNABatchQC will combine the data from all samples into one sparse matrix. If there are many samples in the experiment, the sparse matrix could be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
+scRNABatchQC will combine the data from all samples into one sparse matrix. If there are many samples in the experiment, the sparse matrix would be too big for the memory. In this case, scRNABatchQC provides an parameter (sampleRatio,default: 1) to downsample each sample to generate the combined dataset. sampleRatio=0.1 means that only 10% of original data is combined into the merged dataset. The PCA, tSNE and pairwise comparison will be performed on the downsampled datasets.
 
 ```{r, eval=F, echo=T}
 # decrease the sampleRatio 
