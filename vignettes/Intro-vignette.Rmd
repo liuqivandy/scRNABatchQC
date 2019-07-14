@@ -30,7 +30,7 @@ knitr::opts_chunk$set(fig.width=7, fig.height=7)
 Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets. scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detects possible outliers and batch effects. scRNABatchQC can also be applied to other single cell experiments containing gene-cell count matrices. 
 
 # Quick start
-To easiest way to generate a summary QC report is to run scRNABatchQC.  The only required input is the vector of file names (or a URL starting http://, file://, etc) for gene-cell count matrices or a vector of path namems from 10X CellRanger >=3.0.
+To easiest way to generate a summary QC report is to run scRNABatchQC.  The only required input is the vector of file names (or a URL starting http://, file://, etc) for gene-cell count matrices or a vector of path names from 10X CellRanger >=3.0.
 
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
