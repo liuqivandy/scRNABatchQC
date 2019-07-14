@@ -8,7 +8,7 @@ scRNABatchQC
 
 # Introduction
 
-scRNABatchQC is an R package for generating a HTML QC report to check and compare quality of multiple single cell RNA-seq datasets. Please see the manual (https://github.com/jgm/pandoc/releases/tag/2.2.1) for the usage of scRNABatchQC and the explanation of the HTML report.
+scRNABatchQC is an R package for generating a HTML QC report to check and compare quality of multiple single cell RNA-seq datasets. Please see the manual (http://htmlpreview.github.com/?) for the usage of scRNABatchQC and the explanation of the HTML report.
 
 <a name="installation"/>
 
