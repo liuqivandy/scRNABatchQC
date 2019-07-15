@@ -97,7 +97,10 @@ getHeatmapHeight<-function(hdata){
 }
 
 isHeatmapFigure<-function(datam){
-  return(ncol(datam)>1 & nrow(datam)>1)
+  if (is.null(datam)){
+    return(FALSE)
+  }
+  return (ncol(datam)>1 & nrow(datam)>1)
 }
 
 getHeatmapCaption<-function(datam, feature){
