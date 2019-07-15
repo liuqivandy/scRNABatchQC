@@ -589,7 +589,7 @@ Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculu
   pcaresult <- prcomp_irlba(t(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE]), n= nPCs)
   
   design <- model.matrix( ~ pcaresult$x[, PCind])
-  fit <- lmFit(logcounts(scdata), design)
+  fit <- lmFit(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE], design)
   fit <- eBayes(fit, trend = TRUE, robust = TRUE)
   
   ##select the top 500 pc1 genes
