@@ -75,7 +75,7 @@ scRNABatchQC returns a list of two objects: one is sces, a list of SingleCellExp
 
 ```{r echo=F,message=FALSE,warning=FALSE,error=FALSE,results='hide'}
 # use pre-computed data
-download.file("https://github.com/liuqivandy/scRNABatchQC/blob/master/example.Rdata?raw=true","outputfile")
+download.file("https://github.com/liuqivandy/scRNABatchQC/blob/master/example.Rdata?raw=true","outputfile",mode="wb")
 load("outputfile")
 ```
 
