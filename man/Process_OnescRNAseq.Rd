@@ -4,14 +4,16 @@
 \alias{Process_OnescRNAseq}
 \title{process one scRNAseq dataset to generate QC metadata}
 \usage{
-Process_OnescRNAseq(inputfile, sf = 10000, mincounts = 500,
+Process_OnescRNAseq(input, sf = 10000, mincounts = 500,
   mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000, nPCs = 10,
-  PCind = 1, organism = "mmusculus", chunk.size = NULL)
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000,
+  nPCs = 10, PCind = 1, organism = "mmusculus", chunk.size = NULL)
 }
 \arguments{
-\item{inputfile}{string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
-Inputfile can also be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0}
+\item{input}{string of file or path name, a SingleCellExperiment or Seurat object; \cr
+input can be the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+input can be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+input can also be a SingleCellExperiment or Seurat object}
 
 \item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
@@ -82,7 +84,7 @@ Generate technical and biological metadata for one single cell RNAseq dataset
 }
 \examples{
 library(scRNABatchQC)
-sce<-Process_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
+sce<-Process_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 head(sce@elementMetadata)
 head(colData(sce))
 counts(sce)[1:5,1:5]

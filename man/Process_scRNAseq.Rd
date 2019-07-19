@@ -4,17 +4,19 @@
 \alias{Process_scRNAseq}
 \title{process scRNAseq datasets one by one to generate QC metadata}
 \usage{
-Process_scRNAseq(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
+Process_scRNAseq(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
   PCind = 1, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism = "mmusculus",
-  chunk.size = NULL)
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  organism = "mmusculus", chunk.size = NULL)
 }
 \arguments{
-\item{inputfiles}{string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
-Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0}
+\item{inputs}{string vector or vector of SingleCellExperiment or Seurat objects; \cr
+inputs can be a string vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+inputs can be a string vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+inputs can also be a vector of SingleCellExperiment or Seurat objects}
 
-\item{names}{string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+\item{names}{string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -30,9 +32,9 @@ Inputfiles can also be a vector of path names, each of which contains the barcod
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{mtRNA}{string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, give the gene name pattern of mtRNA}
 
-\item{rRNA}{string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+\item{rRNA}{string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, give the gene name pattern of ribosomal proteins}
 
 \item{organism}{string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus)}
 
@@ -87,7 +89,7 @@ Generate technical and biological metadata for one or multiple single-cell RNAse
 }
 \examples{
 library(scRNABatchQC)
-sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 names(sces)
 class(sces[[1]])
 head(sces[[1]]@elementMetadata)

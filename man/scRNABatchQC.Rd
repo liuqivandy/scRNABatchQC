@@ -4,7 +4,7 @@
 \alias{scRNABatchQC}
 \title{scRNABatchQC}
 \usage{
-scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
+scRNABatchQC(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
   PCind = 1, mtRNA = "^mt-|^MT-",
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio = 1,
@@ -13,10 +13,12 @@ scRNABatchQC(inputfiles, names = NULL, nHVGs = 1000, nPCs = 10,
   chunk.size = NULL, createReport = TRUE)
 }
 \arguments{
-\item{inputfiles}{string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
-Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0}
+\item{inputs}{string vector or vector of SingleCellExperiment or Seurat objects; \cr
+inputs can be a vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
+inputs can be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+inputs can also be a vector of SingleCellExperiment or Seurat objects}
 
-\item{names}{string vector; giving names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2...}
+\item{names}{string vector; giving names of each sample  (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2...}
 
 \item{nHVGs}{integer; the number of highly variable genes (default: 1000)}
 
@@ -32,9 +34,9 @@ Inputfiles can also be a vector of path names, each of which contains the barcod
 
 \item{PCind}{integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC}
 
-\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA}
+\item{mtRNA}{string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, give the gene name pattern of mtRNA}
 
-\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins}
+\item{rRNA}{string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, give the gene name pattern of ribosomal proteins}
 
 \item{sampleRatio}{float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)}
 
@@ -66,7 +68,7 @@ Compare multiple scRNA-seq datasets simultaneously on numerous technical and bio
 }
 \examples{
 library(scRNABatchQC)  
-output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+output<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 output$sces
 output$scesMerge
 plotDensity(output$sces, "total_counts")

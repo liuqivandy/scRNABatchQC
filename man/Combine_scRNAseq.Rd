@@ -4,8 +4,8 @@
 \alias{Combine_scRNAseq}
 \title{combine multiple scRNAseq datasets into one and generate QC metadata}
 \usage{
-Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1, FDR = 0.01,
-  sampleRatio = 1, organism = "mmusculus")
+Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1,
+  FDR = 0.01, sampleRatio = 1, organism = "mmusculus")
 }
 \arguments{
 \item{sces}{a list of SingleCellExperiment objects (results from \code{\link{Process_scRNAseq}}); each object corresponds to one single cell RNAseq dataset}
@@ -45,7 +45,7 @@ Combine and compare multiple single cell RNAseq datasets, including \cr
 }
 \examples{
 library(scRNABatchQC)
-sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 scesMerge <- Combine_scRNAseq(sces)
 logcounts(scesMerge)[1:5,1:5]
 head(scesMerge@elementMetadata$hvg)

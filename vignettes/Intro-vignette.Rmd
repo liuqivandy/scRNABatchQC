@@ -30,18 +30,18 @@ knitr::opts_chunk$set(fig.width=7, fig.height=7)
 Understanding the existence and the sources of experimental noise is very important to integration and interpretation of single cell RNAseq datasets. scRNABatchQC is a tool to evaluate the consistency of multiple single cell RNA-seq datasets over a number of technical and biological features, which not only provides a global overview of all experiments, but also enables the examination of technical or biological origin of discrepancies between experiments, and detects possible outliers and batch effects. scRNABatchQC can also be applied to other single cell experiments containing gene-cell count matrices. 
 
 # Quick start
-To easiest way to generate a summary QC report is to run scRNABatchQC.  The only required input is a vector of file names (or a URL starting http://, file://, etc) for gene-cell count matrices or a vector of path names from 10X CellRanger >=3.0.
+To easiest way to generate a summary QC report is to run scRNABatchQC.  The only required input is a vector of file names (or a URL starting http://, file://, etc) for gene-cell count matrices, or a vector of path names from 10X CellRanger >=3.0, or a vector of SingleCellExperiment or Seurat objects.
 
 ```{r, eval=F, echo=T}
 library(scRNABatchQC)
-output<-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+output<-scRNABatchQC(inputs=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
                                   "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
 			                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"))
 ```
 
 # Input data
 As input, the scRNABatchQC package expects raw count data from scRNA-seq or other single cell experiments. The gene-cell count data has the gene as row (the gene name should be gene symbol) and the cell as column. Each file should be regular delimited; Compressed files ending .gz and .bz2 are supported. 
-The parameter inputfiles can be a string vector of file names containing gene-cell count matrices, or a vector of path names containing the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0.
+The parameter inputs can be a string vector of file names containing gene-cell count matrices, or a vector of path names containing the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0, or a vector of SingleCellExperiment or Seurat objects.
 
 # Output data
 The scRNABatchQC generates two types of output. One is the HTML file, a QC report providing both metrics and diagnostic graphics to assess the similarity/difference on a number of technical and biological features for the input datasets. By default, the HTML report will be written in your working directory named report.html. To suppress the generation of the HTML report, set createReport=FALSE.  The other is a list of SingleCellExperiment objects containing raw, filtered and normalized data, QC meta data for each individual dataset and the combined dataset. 
@@ -169,7 +169,7 @@ scRNABatchQC will read the data from each sample at one time and store the data 
 
 ```{r, eval=F, echo=T}
 # Read by chunk
-result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+result<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), chunk.size=2000)
 ```
 
@@ -178,7 +178,7 @@ scRNABatchQC will combine the data from all samples into one sparse matrix. If t
 
 ```{r, eval=F, echo=T}
 # downsampling each dataset by sampleRatio 
-result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+result<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"), sampleRatio = 0.1)
 ```
 

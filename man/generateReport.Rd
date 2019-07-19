@@ -4,8 +4,8 @@
 \alias{generateReport}
 \title{generate a QC report in a html file}
 \usage{
-generateReport(sces, scesMerge, outputFile = "report.html", lineSize = 1,
-  pointSize = 0.8)
+generateReport(sces, scesMerge, outputFile = "report.html",
+  lineSize = 1, pointSize = 0.8)
 }
 \arguments{
 \item{sces}{a list of SingleCellExperiment Objects; each object containing quality meta data for one single cell RNAseq dataset (results from \code{\link{Process_scRNAseq}})}
@@ -23,7 +23,7 @@ Generate a QC report by comparing technical and biological features across multi
 }
 \examples{
 library(scRNABatchQC)
-sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 scesMerge <- Combine_scRNAseq(sces)
 generateReport(sces,scesMerge)
 }

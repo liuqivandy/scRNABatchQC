@@ -45,7 +45,7 @@ Generate metadata (HVGs, PC-related genes, pathways) for one single cell RNAseq 
 }
 \examples{
 library(scRNABatchQC)
-sce<-Tech_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
+sce<-Tech_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 sce<-Bio_OnescRNAseq(sce)
 head(sce@elementMetadata)
 sce@metadata$hvgPathway

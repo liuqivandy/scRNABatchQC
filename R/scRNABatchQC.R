@@ -2,9 +2,11 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputfiles string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
-#' Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
-#' @param names string vector; giving names of each sample  (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
+#' @param inputs string vector or vector of SingleCellExperiment or Seurat objects; \cr
+#' inputs can be a vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
+#' inputs can be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+#' inputs can also be a vector of SingleCellExperiment or Seurat objects
+#' @param names string vector; giving names of each sample  (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
@@ -12,8 +14,8 @@
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
 #' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2) 
 #' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param mtRNA string; the pattern of genenames for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA genenames in human or mouse); If not human or mouse, give the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of genenames for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein genenames in human or mouse); If not human or mouse, give the gene name pattern of ribosomal proteins
 #' @param logFC float; log fold change cutoff to select differentially expressed genes (default: 1)
 #' @param FDR float; FDR cutoff to select differentially expressed genes (default: 0.01)
 #' @param sampleRatio float; the ratio of cells sampled from each dataset to examine the expression similarity (default: 1)
@@ -30,7 +32,7 @@
 #' }
 #' @examples
 #' library(scRNABatchQC)  
-#' output<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' output<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' output$sces
 #' output$scesMerge
 #' plotDensity(output$sces, "total_counts")
@@ -43,12 +45,12 @@
 #' 
 #' @export
 #' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
-scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2, PCind=1, mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio=1, logFC=1,FDR=0.01, organism="mmusculus", outputFile="report.html", lineSize=1, pointSize=0.8,chunk.size=NULL, createReport=TRUE){
+scRNABatchQC<-function(inputs,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2, PCind=1, mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio=1, logFC=1,FDR=0.01, organism="mmusculus", outputFile="report.html", lineSize=1, pointSize=0.8,chunk.size=NULL, createReport=TRUE){
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
-  sces<-Process_scRNAseq(inputfiles=inputfiles,names=names,nHVGs=nHVGs, nPCs=nPCs,sf=sf, mincounts=mincounts, mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
+  sces<-Process_scRNAseq(inputs=inputs,names=names,nHVGs=nHVGs, nPCs=nPCs,sf=sf, mincounts=mincounts, mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
   scesMerge<-Combine_scRNAseq(sces,nHVGs=nHVGs, nPCs= nPCs, logFC=logFC,FDR=FDR,sampleRatio=sampleRatio,organism=organism)
   if(createReport){
     generateReport(sces,scesMerge, outputFile=outputFile, lineSize=lineSize, pointSize=pointSize)
@@ -60,9 +62,11 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 ###############################
 #' process scRNAseq datasets one by one to generate QC metadata
 #' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets represented by gene-count matrices;each dataset is processed one by one
-#' @param inputfiles string vector; a vector of input file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
-#' Inputfiles can also be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
-#' @param names string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputfiles; if NULL, the names are S1, S2... 
+#' @param inputs string vector or vector of SingleCellExperiment or Seurat objects; \cr
+#' inputs can be a string vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+#' inputs can be a string vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+#' inputs can also be a vector of SingleCellExperiment or Seurat objects
+#' @param names string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the data  (default: 10000)
@@ -70,8 +74,8 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
 #' @param maxmito float; the cutoff of filtering the cell if the percentage of mtRNA reads in the cell larger than the minmito (default: 0.2)
 #' @param PCind integer; which principal component for exploring biological featues (default: 1; the first principal component will be used to find genes highly correlated with PCA 1); PCind should be less than nPC 
-#' @param mtRNA string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, input the gene name pattern of mtRNA
-#' @param rRNA string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, input the gene name pattern of ribosomal proteins
+#' @param mtRNA string; the pattern of gene names for mitochondrial encoded RNAs ; (default: "^mt-|^MT-", the default is mtRNA gene names in human or mouse); If not human or mouse, give the gene name pattern of mtRNA
+#' @param rRNA string; the pattern of gene names for ribosomal proteins; (default: "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", the default is ribosomal protein gene names in human or mouse); If not human or mouse, give the gene name pattern of ribosomal proteins
 #' @param organism string; the organism of single cell RNAseq datasets; if supported by WebGestaltR, functional enrichment analysis will be performed (defeault: mmusculus) 
 #' @param chunk.size NULL or integer; default is NULL, suggesting data will be loaded into memory at one time, otherwise, the data will be loaded into memory by chunks with chunk.size
 
@@ -121,7 +125,7 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 
 #' @examples
 #' library(scRNABatchQC)
-#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' names(sces)
 #' class(sces[[1]])
 #' head(sces[[1]]@elementMetadata)
@@ -138,22 +142,22 @@ scRNABatchQC<-function(inputfiles,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincou
 #' 
 #' @export
 #' @seealso \code{\link{Combine_scRNAseq}} , \code{\link{generateReport}}
-Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2,PCind=1,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism="mmusculus",chunk.size=NULL){
+Process_scRNAseq <- function(inputs, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mincounts=500,mingenes=200, maxmito=0.2,PCind=1,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", organism="mmusculus",chunk.size=NULL){
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
   
   result <- list()
-  nfiles<-length(inputfiles)
+  nfiles<-length(inputs)
   
   if (is.null(names)){names=paste0("S",1:nfiles)}
-  if (nfiles!=length(names)) {stop("the inputfiles and names should have the same length", call. = FALSE)}
+  if (nfiles!=length(names)) {stop("the inputs and names should have the same length", call. = FALSE)}
   if (sum(names!=make.names(names))>0) names<-paste0("S",names)
   
   for (ind in 1:nfiles) {
     cat("Processing ", names[ind], "\n")
-    result[[ind]] <- Process_OnescRNAseq(inputfiles[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
+    result[[ind]] <- Process_OnescRNAseq(inputs[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
   }
   
   names(result) <- names
@@ -194,7 +198,7 @@ Process_scRNAseq <- function(inputfiles, names=NULL, nHVGs=1000, nPCs=10,sf=1000
 #' @export 
 #' @examples 
 #' library(scRNABatchQC)
-#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scesMerge <- Combine_scRNAseq(sces)
 #' logcounts(scesMerge)[1:5,1:5]
 #' head(scesMerge@elementMetadata$hvg)
@@ -272,7 +276,7 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
 #' @param pointSize float; the point size of figures in the generated report (default: 0.8)
 #' @examples
 #' library(scRNABatchQC)
-#' sces<-Process_scRNAseq(inputfile=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scesMerge <- Combine_scRNAseq(sces)
 #' generateReport(sces,scesMerge)
 #' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl SingleCellExperiment knitr
@@ -307,8 +311,10 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 ##############################################
 #' process one scRNAseq dataset to generate QC metadata 
 #' @description Generate technical and biological metadata for one single cell RNAseq dataset
-#' @param inputfile string; the input file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
-#' Inputfile can also be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
+#' @param input string of file or path name, a SingleCellExperiment or Seurat object; \cr
+#' input can be the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
+#' input can be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+#' input can also be a SingleCellExperiment or Seurat object
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer: the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
@@ -364,7 +370,7 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #'                              
 #' @examples
 #' library(scRNABatchQC)
-#' sce<-Process_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
+#' sce<-Process_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 #' head(sce@elementMetadata)
 #' head(colData(sce))
 #' counts(sce)[1:5,1:5]
@@ -379,13 +385,13 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #' 
 #' @export
 #' @seealso \code{\link{Process_scRNAseq}}, \code{\link{Combine_scRNAseq}}
-Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus",chunk.size=NULL) {
+Process_OnescRNAseq <- function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus",chunk.size=NULL) {
   isOrganismValid<-.isOrganismValid(organism)
   if(! isOrganismValid){
     organism<-NULL
   }
   
-  sce<-Tech_OnescRNAseq(inputfile=inputfile,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA, chunk.size=chunk.size)
+  sce<-Tech_OnescRNAseq(input=input,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA, chunk.size=chunk.size)
   sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
   return(sce)
 }
@@ -395,8 +401,10 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #####################################
 #' process one scRNAseq dataset to generate technical metadata
 #' @description Generate technical metadata for one single cell RNAseq dataset
-#' @param inputfile string; a string containing the name of the file (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr 
-#' Inputfile can also be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
+#' @param input string of file or path name, a SingleCellExperiment or Seurat object; \cr
+#' input can be a string of the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr 
+#' input can be a string of the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
+#' input can also be a SingleCellExperiment or a Seurat object
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)
@@ -443,28 +451,32 @@ Process_OnescRNAseq <- function(inputfile, sf=10000,mincounts=500,mingenes=200, 
 #' @export
 #' @examples
 #' library(scRNABatchQC)
-#' sce<-Tech_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
+#' sce<-Tech_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 #' plotDensity(list(sce=sce))
 #' names(sce@metadata)
 #' head(sce@colData$log10_total_counts)
 #' @seealso \code{\link{Process_OnescRNAseq}} , \code{\link{Bio_OnescRNAseq}} 
 
 
-Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size=NULL ){
-  if(dir.exists(inputfile)){
-    if(!.is_10X_v3(inputfile)) {
-      stop(paste0("Input folder doesn't contain 10X v3 files: ", inputfile))
+Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0.2,mtRNA="^mt-|^MT-", rRNA="^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size=NULL ){
+ if (is(input, "SingleCellExperiment")){
+     countmat<-counts(input)
+  } else if (is(input, "Seurat")) {
+    countmat<-GetAssayData(object = input, assays = assays, slot = "counts")
+  } else if(dir.exists(input)){
+    if(!.is_10X_v3(input)) {
+      stop(paste0("Input folder doesn't contain 10X v3 files: ", input))
     }
-    countmat<-read_10X_v3(inputfile)
-  }else{
+    countmat<-read_10X_v3(input)
+  } else {
     if(is.null(chunk.size)) {
-      rawdata<-fread(inputfile,data.table=F)
+      rawdata<-fread(input,data.table=F)
       countmat<-.tosparse(rawdata[,-1])
       rownames(countmat)<-rawdata[,1]
       rm(rawdata)
       gc()
-    } else { countmat<-fread_bychunk(inputfile,chunk.size=chunk.size)}
-  }
+    } else { countmat<-fread_bychunk(input,chunk.size=chunk.size)}
+  } 
   
   #if (!is.integer(PCind) | !is.integer(nPCs) | ! is.integer(nHVGs)) stop("nPCs, PCind and nHVGs should be integer")
   
@@ -565,7 +577,7 @@ Tech_OnescRNAseq<-function(inputfile, sf=10000,mincounts=500,mingenes=200, maxmi
 #' @export
 #' @examples
 #' library(scRNABatchQC)
-#' sce<-Tech_OnescRNAseq(inputfile="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
+#' sce<-Tech_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 #' sce<-Bio_OnescRNAseq(sce)
 #' head(sce@elementMetadata)
 #' sce@metadata$hvgPathway
