@@ -41,7 +41,7 @@ One SingleCellExperiment object (scesMerge) containing the combined dataset and 
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
-result<-scRNABatchQC(inputfiles=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
+result<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz", 
 	                          "https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"),
                      organism="mmusculus")
 end_time <- Sys.time()
@@ -65,7 +65,7 @@ A report named "report.html" will be generated in your working directory
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069439/suppl/GSM3069439_ST1_DGE.txt.gz", 
+scRNABatchQC(inputs=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069439/suppl/GSM3069439_ST1_DGE.txt.gz", 
                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069440/suppl/GSM3069440_ST2_DGE.txt.gz", 
                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069441/suppl/GSM3069441_ST3_DGE.txt.gz",
                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3069nnn/GSM3069442/suppl/GSM3069442_ST4_DGE.txt.gz",
@@ -84,7 +84,7 @@ Check the quality of three scRNA-seq datasets from embryonic development of the 
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
-scRNABatchQC(inputfiles=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
+scRNABatchQC(inputs=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883184/suppl/GSM2883184_E12_5_wholeThy_venus_1.dge.txt.gz",
                           "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883185/suppl/GSM2883185_E12_5_wholeThy_venus_2.dge.txt.gz",
 			  "ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883186/suppl/GSM2883186_E12_5_wholeThy_venus_3.dge.txt.gz"),
 	     organism="mmusculus")
