@@ -69,12 +69,25 @@ Compare multiple scRNA-seq datasets simultaneously on numerous technical and bio
 \examples{
 library(scRNABatchQC)  
 output<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+
+# a list of SingleCellExperiment objects, one for each individual dataset
 output$sces
+# a SingleCellExperiment object for the combined dataset
 output$scesMerge
+
 plotDensity(output$sces, "total_counts")
 output$sces[[1]]@metadata$hvgPathway
 plotHVGs(output$sces)
 output$scesMerge@metadata$diffFC$genes
+
+#scRNABatchQC can run on a list of SingleCellExperiment objects
+scRNABatchQC(inputs=output$sces)
+
+#scRNABatchQC can run on a list of Seurat objects
+library(Seurat)
+S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
+S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))
+scRNABatchQC(inputs=list(S1,S2))
 
 }
 \seealso{
