@@ -11,10 +11,10 @@ Process_scRNAseq(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   organism = "mmusculus", chunk.size = NULL)
 }
 \arguments{
-\item{inputs}{string vector or vector of SingleCellExperiment or Seurat objects; \cr
+\item{inputs}{a string vector of file or path names, or a list of SingleCellExperiment or Seurat objects; \cr
 inputs can be a string vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
 inputs can be a string vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-inputs can also be a vector of SingleCellExperiment or Seurat objects}
+inputs can also be a list of SingleCellExperiment or Seurat objects}
 
 \item{names}{string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2...}
 

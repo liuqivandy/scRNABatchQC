@@ -2,10 +2,10 @@
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputs string vector or vector of SingleCellExperiment or Seurat objects; \cr
+#' @param inputs string vector of file or path names,  or a list of SingleCellExperiment or Seurat objects; \cr
 #' inputs can be a vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
 #' inputs can be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' inputs can also be a vector of SingleCellExperiment or Seurat objects
+#' inputs can also be a list of SingleCellExperiment or Seurat objects
 #' @param names string vector; giving names of each sample  (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -33,12 +33,20 @@
 #' @examples
 #' library(scRNABatchQC)  
 #' output<-scRNABatchQC(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
+#' # a list of SingleCellExperiment objects, each containing counts, logcounts and QC metadata for one dataset
 #' output$sces
+#' # a SingleCellExperiment objects, containing counts,logcounts and QC metadata for the combined dataset
 #' output$scesMerge
 #' plotDensity(output$sces, "total_counts")
 #' output$sces[[1]]@metadata$hvgPathway
 #' plotHVGs(output$sces)
 #' output$scesMerge@metadata$diffFC$genes
+#' #scRNABatchQC can run on a list of SingleCellExperiments or Seurat objects
+#' scRNABatchQC(inputs=output$sces)
+#' library(Seurat)
+#' S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
+#' S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))
+#' scRNABatchQC(inputs=list(S1,S2))
 #' 
 #' @import R.utils ggplot2 gplots limma data.table irlba Rtsne WebGestaltR rmdformats Matrix statmod DT RCurl SingleCellExperiment
 #' @importFrom devtools session_info
@@ -62,10 +70,10 @@ scRNABatchQC<-function(inputs,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=
 ###############################
 #' process scRNAseq datasets one by one to generate QC metadata
 #' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets represented by gene-count matrices;each dataset is processed one by one
-#' @param inputs string vector or vector of SingleCellExperiment or Seurat objects; \cr
+#' @param inputs a string vector of file or path names, or a list of SingleCellExperiment or Seurat objects; \cr
 #' inputs can be a string vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
 #' inputs can be a string vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' inputs can also be a vector of SingleCellExperiment or Seurat objects
+#' inputs can also be a list of SingleCellExperiment or Seurat objects
 #' @param names string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -157,7 +165,11 @@ Process_scRNAseq <- function(inputs, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mi
   
   for (ind in 1:nfiles) {
     cat("Processing ", names[ind], "\n")
-    result[[ind]] <- Process_OnescRNAseq(inputs[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
+    if (is.list(inputs)) {
+          result[[ind]] <- Process_OnescRNAseq(inputs[[ind]], nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism)
+    } else {
+          result[[ind]] <- Process_OnescRNAseq(inputs[ind],  nHVGs=nHVGs, nPCs=nPCs,sf=sf,mincounts=mincounts,mingenes=mingenes, maxmito=maxmito,PCind=PCind,mtRNA=mtRNA, rRNA=rRNA, organism=organism, chunk.size=chunk.size)
+    }
   }
   
   names(result) <- names
@@ -462,7 +474,8 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
  if (is(input, "SingleCellExperiment")){
      countmat<-counts(input)
   } else if (is(input, "Seurat")) {
-    countmat<-GetAssayData(object = input, assays = assays, slot = "counts")
+    if (!require("Seurat",character.only = TRUE)) { stop("Please install Seurat")}
+    countmat<-GetAssayData(object = input, assay = "RNA", slot = "counts")
   } else if(dir.exists(input)){
     if(!.is_10X_v3(input)) {
       stop(paste0("Input folder doesn't contain 10X v3 files: ", input))
