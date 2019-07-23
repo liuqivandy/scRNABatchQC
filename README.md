@@ -57,7 +57,8 @@ dim(result$sces[[1]])
 
 ## Example 2:
 
-Check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells
+Check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells. 
+
 A QC report named "report.html" will be generated in your working directory
 
 ```
