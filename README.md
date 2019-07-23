@@ -34,7 +34,8 @@ After installing scRNABatchQC, use following codes to run examples:
 ## Example 1:
 
 Check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neurons (Cell 2016 Aug 25;166(5):1308-1323 ). The scRNA-seq dataset should be provided by the gene(row)-cell(column) matrix and the rowname should be gene symbol. Since one dataset has more than 14,000 cells and 2,4904 genes,  **memory >= 4Gb and 64 bit system** are required. 
-A report named "report.html" will be generated in your working directory. In addition, One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
+
+A QC report named "report.html" will be generated in your working directory. In addition, One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
 
 ```
 library(scRNABatchQC)
@@ -57,8 +58,7 @@ dim(result$sces[[1]])
 ## Example 2:
 
 Check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells
-	
-A report named "report.html" will be generated in your working directory
+A QC report named "report.html" will be generated in your working directory
 
 ```
 library(scRNABatchQC)
@@ -78,7 +78,8 @@ end_time - start_time
 ## Example 3:
 	
 Check the quality of three scRNA-seq datasets from embryonic development of the thymus. 
-A report named "report.html" will be generated in your working directory
+
+A QC report named "report.html" will be generated in your working directory
 	
 ```
 library(scRNABatchQC)
