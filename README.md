@@ -59,7 +59,7 @@ dim(result$sces[[1]])
 
 Check the quality of six seminiferous tubule (ST) datasets of murine spermatogenesis from GEO (GSE112393), each dataset has 25,000 genes and 2,600~5,500 cells. 
 
-A QC report named "report.html" will be generated in your working directory
+A QC report named "report.html" will be generated in your working directory.
 
 ```
 library(scRNABatchQC)
@@ -80,7 +80,7 @@ end_time - start_time
 	
 Check the quality of three scRNA-seq datasets from embryonic development of the thymus. 
 
-A QC report named "report.html" will be generated in your working directory
+A QC report named "report.html" will be generated in your working directory.
 	
 ```
 library(scRNABatchQC)
