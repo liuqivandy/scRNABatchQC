@@ -1,11 +1,11 @@
-#' scRNABatchQC
+#' QC on multiple scRNAseq datasets
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
-#' @param inputs string vector of file or path names,  or a list of SingleCellExperiment or Seurat objects; \cr
+#' @param inputs string vector of file or path names,  or a list of SingleCellExperiment or Seurat v3 objects; \cr
 #' inputs can be a vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
 #' inputs can be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' inputs can also be a list of SingleCellExperiment or Seurat objects
+#' inputs can also be a list of SingleCellExperiment or Seurat v3 objects
 #' @param names string vector; giving names of each sample  (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -47,7 +47,7 @@
 #' #scRNABatchQC can run on a list of SingleCellExperiment objects
 #' scRNABatchQC(inputs=output$sces)
 #' 
-#' #scRNABatchQC can run on a list of Seurat objects
+#' #scRNABatchQC can run on a list of Seurat v3 objects
 #' library(Seurat)
 #' S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
 #' S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))
@@ -74,11 +74,11 @@ scRNABatchQC<-function(inputs,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=
 
 ###############################
 #' process scRNAseq datasets one by one to generate QC metadata
-#' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets represented by gene-count matrices;each dataset is processed one by one
-#' @param inputs a string vector of file or path names, or a list of SingleCellExperiment or Seurat objects; \cr
+#' @description  Generate technical and biological metadata for one or multiple single-cell RNAseq datasets;each dataset is processed one by one
+#' @param inputs a string vector of file or path names, or a list of SingleCellExperiment or Seurat v3 objects; \cr
 #' inputs can be a string vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
 #' inputs can be a string vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' inputs can also be a list of SingleCellExperiment or Seurat objects
+#' inputs can also be a list of SingleCellExperiment or Seurat v3 objects
 #' @param names string vector; giving the names of single-cell RNAseq datasets (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2... 
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer; the number of principal components (default: 10)
@@ -328,10 +328,10 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 ##############################################
 #' process one scRNAseq dataset to generate QC metadata 
 #' @description Generate technical and biological metadata for one single cell RNAseq dataset
-#' @param input string of file or path name, a SingleCellExperiment or Seurat object; \cr
+#' @param input string of file or path name, a SingleCellExperiment or Seurat v3 object; \cr
 #' input can be the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr
 #' input can be the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' input can also be a SingleCellExperiment or Seurat object
+#' input can also be a SingleCellExperiment or Seurat v3 object
 #' @param nHVGs integer; the number of highly variable genes (default: 1000)
 #' @param nPCs integer: the number of principal components (default: 10)
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
@@ -418,10 +418,10 @@ Process_OnescRNAseq <- function(input, sf=10000,mincounts=500,mingenes=200, maxm
 #####################################
 #' process one scRNAseq dataset to generate technical metadata
 #' @description Generate technical metadata for one single cell RNAseq dataset
-#' @param input string of file or path name, a SingleCellExperiment or Seurat object; \cr
+#' @param input string of file or path name, a SingleCellExperiment or Seurat v3 object; \cr
 #' input can be a string of the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr 
 #' input can be a string of the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-#' input can also be a SingleCellExperiment or a Seurat object
+#' input can also be a SingleCellExperiment or a Seurat v3 object
 #' @param sf integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)
 #' @param mincounts integer; the cutoff of filtering the cell if the total number of counts in the cell less than the mincounts (default:500)
 #' @param mingenes integer; the cutoff of filtering the cell if the total number of genes detected in the cell less than the mingenes (default: 200)

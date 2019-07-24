@@ -2,7 +2,7 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{scRNABatchQC}
 \alias{scRNABatchQC}
-\title{scRNABatchQC}
+\title{QC on multiple scRNAseq datasets}
 \usage{
 scRNABatchQC(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
@@ -13,10 +13,10 @@ scRNABatchQC(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   chunk.size = NULL, createReport = TRUE)
 }
 \arguments{
-\item{inputs}{string vector of file or path names,  or a list of SingleCellExperiment or Seurat objects; \cr
+\item{inputs}{string vector of file or path names,  or a list of SingleCellExperiment or Seurat v3 objects; \cr
 inputs can be a vector of file names (or a URL starting http://, file://, etc.) of gene-by-cell count matrices, the rowname should be gene symbol; each file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported.\cr
 inputs can be a vector of path names, each of which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-inputs can also be a list of SingleCellExperiment or Seurat objects}
+inputs can also be a list of SingleCellExperiment or Seurat v3 objects}
 
 \item{names}{string vector; giving names of each sample  (default: NULL); names should have the same length of inputs; if NULL, the names are S1, S2...}
 
@@ -83,7 +83,7 @@ output$scesMerge@metadata$diffFC$genes
 #scRNABatchQC can run on a list of SingleCellExperiment objects
 scRNABatchQC(inputs=output$sces)
 
-#scRNABatchQC can run on a list of Seurat objects
+#scRNABatchQC can run on a list of Seurat v3 objects
 library(Seurat)
 S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
 S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))

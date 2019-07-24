@@ -9,10 +9,10 @@ Tech_OnescRNAseq(input, sf = 10000, mincounts = 500, mingenes = 200,
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size = NULL)
 }
 \arguments{
-\item{input}{string of file or path name, a SingleCellExperiment or Seurat object; \cr
+\item{input}{string of file or path name, a SingleCellExperiment or Seurat v3 object; \cr
 input can be a string of the file name (or a URL starting http://, file://, etc.) of gene-by-cell count matrix, the rowname should be gene symbol; the file should be regular delimited file;  Compressed files ending .gz and .bz2 are supported. \cr 
 input can be a string of the path name, which contains the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0 \cr
-input can also be a SingleCellExperiment or a Seurat object}
+input can also be a SingleCellExperiment or a Seurat v3 object}
 
 \item{sf}{integer; Scale factor to normalize the single cell RNA-seq data (default: 10000)}
 
