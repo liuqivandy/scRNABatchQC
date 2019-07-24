@@ -1,4 +1,4 @@
-#' QC on multiple scRNAseq datasets
+#' QC across multiple scRNAseq datasets
 #' 
 #' @description Compare multiple scRNA-seq datasets simultaneously on numerous technical and biological features 
 
