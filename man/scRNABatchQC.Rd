@@ -2,7 +2,7 @@
 % Please edit documentation in R/scRNABatchQC.R
 \name{scRNABatchQC}
 \alias{scRNABatchQC}
-\title{QC on multiple scRNAseq datasets}
+\title{QC across multiple scRNAseq datasets}
 \usage{
 scRNABatchQC(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
   sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
