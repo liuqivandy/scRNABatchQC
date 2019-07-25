@@ -103,6 +103,7 @@ scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X genomi
 scRNABatchQC(inputs=result$sces)
 
 # run on a list of Seurat v3 objects (note: v3 is required)
+library(Seurat) 
 S1<-CreateSeuratObject(counts=counts(result$sces[[1]]))
 S2<-CreateSeuratObject(counts=counts(result$sces[[2]]))
 scRNABatchQC(inputs=list(S1,S2))
