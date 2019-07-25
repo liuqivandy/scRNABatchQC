@@ -8,7 +8,7 @@ scRNABatchQC
 
 # Introduction
 
-scRNABatchQC is an R package for generating a HTML QC report to check and compare quality of multiple single cell RNA-seq datasets. Please see the [manual](http://htmlpreview.github.io/?https://github.com/liuqivandy/scRNABatchQC/blob/master/scRNABatchQC_manual.html) for the usage of scRNABatchQC and the explanation of the HTML report.
+scRNABatchQC is an R package for generating a HTML QC report to check and compare quality of multiple single cell RNA-seq datasets. scRNABatchQC supports multiple types of inputs, including gene-cell count matrices, 10x genomics, SingleCellExperiment or Seurat v3 objects. Please see the [manual](http://htmlpreview.github.io/?https://github.com/liuqivandy/scRNABatchQC/blob/master/scRNABatchQC_manual.html) for the usage of scRNABatchQC and the explanation of the HTML report.
 
 <a name="installation"/>
 
@@ -92,6 +92,25 @@ scRNABatchQC(inputs=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883
 	     organism="mmusculus")
 end_time <- Sys.time()
 end_time - start_time
+```
+## Example 4:
+scRNABatchQC can also run on SingleCellExperiment or Seurat objects
+
+```
+# run on a list of SingleCellExperiment objects
+# the result from Example 1 (result$sces) is a list of SingleCellExperiment
+scRNABatchQC(result$sces)
+
+# run on a list of Seurat v3 objects (note: v3 is required)
+S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
+S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))
+scRNABatchQC(inputs=list(S1,S2))
+
+
+#  run on 10X genomics data 
+# assume "c:/usrs/folder1", "c:/usrs/folder2" are folders containing the the barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz provided by 10X from CellRanger >=3.0
+scRNABatchQC(inputs=c("c:/usrs/folder1","c:/usrs/folder2"))
+
 ```
 
 <a name="speed"/>
