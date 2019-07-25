@@ -99,7 +99,7 @@ scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X genomi
 
 ```
 # run on a list of SingleCellExperiment objects
-# the result from Example 1 (result$sces) is a list of SingleCellExperiment
+# the result from Example 1 (result$sces) is a list of SingleCellExperiment objects
 scRNABatchQC(inputs=result$sces)
 
 # run on a list of Seurat v3 objects (note: v3 is required)
