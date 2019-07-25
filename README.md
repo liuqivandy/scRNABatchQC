@@ -94,7 +94,8 @@ end_time <- Sys.time()
 end_time - start_time
 ```
 ## Example 4:
-scRNABatchQC can also run on SingleCellExperiment or Seurat objects
+
+scRNABatchQC can also run on SingleCellExperiment, Seurat v3 objects or 10X genomics data
 
 ```
 # run on a list of SingleCellExperiment objects
