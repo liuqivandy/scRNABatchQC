@@ -95,16 +95,16 @@ end_time - start_time
 ```
 ## Example 4:
 
-scRNABatchQC can also run on SingleCellExperiment, Seurat v3 objects or 10X genomics data
+scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X genomics data as input
 
 ```
 # run on a list of SingleCellExperiment objects
 # the result from Example 1 (result$sces) is a list of SingleCellExperiment
-scRNABatchQC(result$sces)
+scRNABatchQC(inputs=result$sces)
 
 # run on a list of Seurat v3 objects (note: v3 is required)
-S1<-CreateSeuratObject(counts=counts(output$sces[[1]]))
-S2<-CreateSeuratObject(counts=counts(output$sces[[2]]))
+S1<-CreateSeuratObject(counts=counts(result$sces[[1]]))
+S2<-CreateSeuratObject(counts=counts(result$sces[[2]]))
 scRNABatchQC(inputs=list(S1,S2))
 
 
