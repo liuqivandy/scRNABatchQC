@@ -93,7 +93,7 @@ scRNABatchQC(inputs=c("ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM2883nnn/GSM2883
 end_time <- Sys.time()
 end_time - start_time
 ```
-## Example 4:
+## Examples for other types of input:
 
 scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X genomics data as input.
 
