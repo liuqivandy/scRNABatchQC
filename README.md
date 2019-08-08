@@ -2,6 +2,7 @@ scRNABatchQC
 ==========
 * [Introduction](#introduction)
 * [Installation](#installation)
+* [Citation](#citation)
 * [Usage](#example)
 * [Speed test](#speed)
 <a name="introduction"/>
@@ -26,6 +27,11 @@ Step 3: Install scRNABatchQC by:
 	install_github("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
+
+# Citation
+
+scRNABatchQC: Multi-samples quality control for single cell RNA-seq data. Liu Q, Sheng Q, Ping J, Ramirez MA, Lau KS, Coffey R, Shyr Y. Bioinformatics. 2019 Aug 2. pii: btz601. doi: 10.1093/bioinformatics/btz601. PMID: 31373345
+<a name="citation"/>
 
 # Usage
 
