@@ -486,6 +486,9 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
       stop(paste0("Input folder doesn't contain 10X v3 files: ", input))
     }
     countmat<-read_10X_v3(input)
+  } else if(endsWith(input, ".h5")){
+    if (!require("Seurat",character.only = TRUE)) { stop("Please install Seurat")}
+    countmat<-Read10X_h5(input)
   } else {
     if(is.null(chunk.size)) {
       rawdata<-fread(input,data.table=F)
