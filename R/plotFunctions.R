@@ -201,7 +201,7 @@ plotVarianceExplained <- function(sces, feature=c("genevar_by_counts","genevar_b
     ylab("Density") + 
     scale_color_manual(values = scolors) +
     coord_cartesian(xlim = c(10 ^ (-3), 100)) + theme_classic()+guides(col = guide_legend(ncol=ceiling(length(sces)/10)))+
-    ggtitle(paste0("Var explained by ",featureLabel))+
+    ggtitle(paste0("Var explained ",featureLabel))+
     theme(plot.title = element_text(hjust = 0.5))
   return(p)
 }
