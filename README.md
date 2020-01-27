@@ -101,7 +101,7 @@ end_time - start_time
 ```
 ## Examples for other types of input:
 
-scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X genomics data as input.
+scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X v3/v2 genomics data as input.
 
 ```
 # run on a list of SingleCellExperiment objects

@@ -482,10 +482,13 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
     if (!require("Seurat",character.only = TRUE)) { stop("Please install Seurat")}
     countmat<-GetAssayData(object = input, assay = "RNA", slot = "counts")
   } else if(dir.exists(input)){
-    if(!.is_10X_v3(input)) {
-      stop(paste0("Input folder doesn't contain 10X v3 files: ", input))
+    if(.is_10X_v3(input)) {
+      countmat<-read_10X_v3(input)
+    }else if(.is_10X_v2(input)) {
+      countmat<-read_10X_v2(input)
+    }else{
+      stop(paste0("Input folder doesn't contain 10X v3/v2 files: ", input))
     }
-    countmat<-read_10X_v3(input)
   } else if(endsWith(input, ".h5")){
     if (!require("Seurat",character.only = TRUE)) { stop("Please install Seurat")}
     countmat<-Read10X_h5(input)
