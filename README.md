@@ -19,6 +19,7 @@ Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) (pand
 
 Step 2: Install scRNABatchQC by:
 
+	library(devtools)
 	install_github("liuqivandy/scRNABatchQC")
   
 <a name="example"/>
