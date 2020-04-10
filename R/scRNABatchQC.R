@@ -261,10 +261,15 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
   
   #scevar <- apply(scesdata, 1, var)
   #feature_set <- head(order(scevar, decreasing = T), n = 500)
-  pca_tsne_data$pca <- prcomp_irlba(t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE]), n = nPCs)
   
+  tdata<-t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE])
+  nPCs<-min(nPCs, min(dim(tdata))-1)
+  
+  pca_tsne_data$pca <- prcomp_irlba(tdata, n= nPCs)
+
   set.seed(100)
-  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity = 20, check_duplicates = FALSE)
+  perplexity<-min(20, floor((nrow(pca_tsne_data$pca$x)-1)/3))
+  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity =perplexity, check_duplicates = FALSE)
   pca_tsne_data$tsne <- tsne_out$Y
   scesMerge<-SingleCellExperiment(assay=list(logcounts=pca_tsne_data$logcounts))
   scesMerge@metadata$reducedDims=list(PCA=pca_tsne_data$pca, tSNE=pca_tsne_data$tsne)
@@ -626,7 +631,10 @@ Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculu
   ##select the top HVGs highly variable genes for the PCA, default is 1000
   hvggenes <-  rownames(scdata@elementMetadata$hvg)[order(scdata@elementMetadata$hvg$zval,decreasing=T)][1:nHVGs]
   
-  pcaresult <- prcomp_irlba(t(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE]), n= nPCs)
+  tdata<-t(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE])
+  nPCs<-min(nPCs, min(dim(tdata))-1)
+  
+  pcaresult <- prcomp_irlba(tdata, n= nPCs)
   
   design <- model.matrix( ~ pcaresult$x[, PCind])
   fit <- lmFit(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE], design)
