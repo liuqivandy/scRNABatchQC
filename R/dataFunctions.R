@@ -552,7 +552,7 @@ read_10X_v3<-function(inputFolder){
 }
 
 .prepareTableSummary <- function(sces) {
-  pw <- matrix(nrow = length(sces), ncol = 15)
+  pw <- matrix(nrow = length(sces), ncol = 17)
   
   for (i in 1:length(sces)) {
     pw[i, 1] <- names(sces)[i]
@@ -577,10 +577,12 @@ read_10X_v3<-function(inputFolder){
     pw[i, 13] <- sum(sces[[i]]@metadata$rawmeta$CellData$mito.drop,na.rm=T) # F-mtRNA
     pw[i, 14] <- paste0(round(sces[[i]]@metadata$rawmeta$Cutoff$mito,2)*100,"%")   #cutoff by mtRNA percentage
     pw[i, 15] <- sum(sces[[i]]@metadata$rawmeta$CellData$is.drop,na.rm=T)  #F-total
+    pw[i, 16] <- sces[[i]]@metadata$rawmeta$ncells - as.integer(pw[i, 9]) #valid cell
+    pw[i, 17] <- sces[[i]]@metadata$valid  #Valid
   }
   
   colnames(pw) <- c("EID", "Count", "Cell", "Gene", "R-Count", "R-Gene", 
-                    "mtRNA", "rRNA", "F-Count", "C-Count","F-Gene","C-Gene", "F-mt","C-mt", "F")
+                    "mtRNA", "rRNA", "F-Count", "C-Count","F-Gene","C-Gene", "F-mt","C-mt", "F", "V-Count", "Valid")
   
   return(as.data.frame(pw))
 }

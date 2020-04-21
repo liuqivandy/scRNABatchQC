@@ -236,55 +236,65 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
   }
   cat("Merging data.\n")
   pca_tsne_data <- list()
-  nsample=round(dim(sces[[1]])[2]*sampleRatio,0)
-  sampleind<-sample(1:dim(sces[[1]])[2],nsample)
-  pca_tsne_data$logcounts<-logcounts(sces[[1]])[,sampleind]
-  pca_tsne_data$condition <-rep(names(sces)[1],nsample)
-  
-  colnames(pca_tsne_data$logcounts) <- paste0(names(sces)[1], 1:nsample)
   
   if(length(sces) > 1){
-    for (i in 2:length(sces)) {
+    for (i in 1:length(sces)) {
+      sce<-sces[[i]]
+      if (!sce@metadata$valid){
+        next
+      }
+
       nsample=round(dim(sces[[i]])[2]*sampleRatio,0)
       sampleind<-sample(1:dim(sces[[i]])[2],nsample)
       mat<-logcounts(sces[[i]])[,sampleind]
       colnames(mat)<-paste0(names(sces)[i], 1:nsample)
-      pca_tsne_data$logcounts <- .mergeSparseMatrix(pca_tsne_data$logcounts, mat)
-      pca_tsne_data$condition <-c(pca_tsne_data$condition,rep(names(sces)[i],nsample))
+      condition<-rep(names(sces)[i],nsample)
+      
+      if(length(pca_tsne_data) == 0){
+        pca_tsne_data$logcounts<-mat
+        pca_tsne_data$condition <-condition
+      }else{
+        pca_tsne_data$logcounts <- .mergeSparseMatrix(pca_tsne_data$logcounts, mat)
+        pca_tsne_data$condition <-c(pca_tsne_data$condition,condition)
+      }
     }
   }
   
-  pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
+  if(length(pca_tsne_data) > 0){
+    pca_tsne_data$hvg <- .getMeanVarTrend(pca_tsne_data$logcounts)
+    
+    ##select the top 1000 highly variable genes for the PCA
+    feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:nHVGs]
+    
+    #scevar <- apply(scesdata, 1, var)
+    #feature_set <- head(order(scevar, decreasing = T), n = 500)
+    
+    tdata<-t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE])
+    nPCs<-min(nPCs, min(dim(tdata))-1)
+    
+    pca_tsne_data$pca <- prcomp_irlba(tdata, n= nPCs)
   
-  ##select the top 1000 highly variable genes for the PCA
-  feature_set <-  rownames(pca_tsne_data$hvg)[order(pca_tsne_data$hvg$zval,decreasing=T)][1:nHVGs]
-  
-  #scevar <- apply(scesdata, 1, var)
-  #feature_set <- head(order(scevar, decreasing = T), n = 500)
-  
-  tdata<-t(pca_tsne_data$logcounts[rownames(pca_tsne_data$logcounts)%in%feature_set, , drop = FALSE])
-  nPCs<-min(nPCs, min(dim(tdata))-1)
-  
-  pca_tsne_data$pca <- prcomp_irlba(tdata, n= nPCs)
-
-  set.seed(100)
-  perplexity<-min(20, floor((nrow(pca_tsne_data$pca$x)-1)/3))
-  tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity =perplexity, check_duplicates = FALSE)
-  pca_tsne_data$tsne <- tsne_out$Y
-  scesMerge<-SingleCellExperiment(assay=list(logcounts=pca_tsne_data$logcounts))
-  scesMerge@metadata$reducedDims=list(PCA=pca_tsne_data$pca, tSNE=pca_tsne_data$tsne)
-  scesMerge@colData$condition<-pca_tsne_data$condition
-  scesMerge@elementMetadata$hvg<-pca_tsne_data$hvg
-  
-  #compare conditions
-  cat("Performing differential expression analysis data ...\n")
-  scesMerge@metadata$diffFC <- .getDiffGenes(scesMerge, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
-  scesMerge@metadata$logFC<- logFC
-  scesMerge@metadata$FDR<-FDR
-  scesMerge@metadata$sampleRatio<-sampleRatio
-  scesMerge@metadata$nHVGs<-nHVGs
-  scesMerge@metadata$nPCs<-nPCs
-  
+    set.seed(100)
+    perplexity<-min(20, floor((nrow(pca_tsne_data$pca$x)-1)/3))
+    tsne_out <- Rtsne(pca_tsne_data$pca$x, initial_dims = ncol(pca_tsne_data$pca$x), pca = FALSE, perplexity =perplexity, check_duplicates = FALSE)
+    pca_tsne_data$tsne <- tsne_out$Y
+    scesMerge<-SingleCellExperiment(assay=list(logcounts=pca_tsne_data$logcounts))
+    scesMerge@metadata$reducedDims=list(PCA=pca_tsne_data$pca, tSNE=pca_tsne_data$tsne)
+    scesMerge@colData$condition<-pca_tsne_data$condition
+    scesMerge@elementMetadata$hvg<-pca_tsne_data$hvg
+    
+    #compare conditions
+    cat("Performing differential expression analysis data ...\n")
+    scesMerge@metadata$diffFC <- .getDiffGenes(scesMerge, organism = organism,  logFC=logFC, FDR = FDR, geneNo = 50)
+    scesMerge@metadata$logFC<- logFC
+    scesMerge@metadata$FDR<-FDR
+    scesMerge@metadata$sampleRatio<-sampleRatio
+    scesMerge@metadata$nHVGs<-nHVGs
+    scesMerge@metadata$nPCs<-nPCs
+  }
+  else{
+    scesMerge<-NULL
+  }
   return(scesMerge)
 }
 
@@ -414,7 +424,12 @@ Process_OnescRNAseq <- function(input, sf=10000,mincounts=500,mingenes=200, maxm
   }
   
   sce<-Tech_OnescRNAseq(input=input,sf=sf,mincounts=mincounts,mingenes=mingenes,maxmito=maxmito,mtRNA=mtRNA, rRNA=rRNA, chunk.size=chunk.size)
-  sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
+  if (ncol(sce) > 10){
+    sce<-Bio_OnescRNAseq(sce,nHVGs=nHVGs,nPCs=nPCs,PCind=PCind,organism=organism)
+    sce@metadata$valid=TRUE
+  }else{
+    sce@metadata$valid=FALSE
+  }
   return(sce)
 }
 
@@ -558,6 +573,13 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
   colind<-findInterval(seq(logcount@x)-1,logcount@p[-1])+1
   logcount@x<-log2(logcount@x*lib_size[colind]+1) 
   
+  filteredmeta<-list()
+  filteredmeta$ngenes<-dim(newcount)[1]
+  filteredmeta$ncells<-dim(newcount)[2]
+  filteredmeta$mincounts<-mincounts
+  filteredmeta$mingenes<-mingenes
+  filteredmeta$maxmito<-maxmito
+
   scdata<- SingleCellExperiment(assay=list(counts=newcount,logcounts=logcount))
   scdata@colData$log10_total_counts<-log10(rawmeta$CellData$total_counts)[!rawmeta$CellData$is.drop]
   scdata@colData$log10_total_features <- log10(rawmeta$CellData$total_features)[!rawmeta$CellData$is.drop]
@@ -570,6 +592,8 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
   ##keep the orignial meta data 
   scdata@metadata$rawmeta<-rawmeta
   scdata@metadata$sf<-sf
+
+  scdata@metadata$filteredmeta<-filteredmeta
   
   return(scdata)
 }

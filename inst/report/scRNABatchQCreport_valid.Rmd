@@ -1,0 +1,71 @@
+
+
+```{r VarianceTrend, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("VarianceTrend", "The mean-variance trend")}
+print(plotVarianceTrend(sces, scolors,lineSize=plotData$lineSize), fig.height=4)
+```
+
+`r figRef("VarianceTrend")` shows mean vs. variance of gene expession. The variance of gene expression is driven by both uninteresting technical noise and real biological difference. scRNABatchQC models the technical variance of gene expression values by fitting a trend between mean expression abundance and technical variance. Different mean-variance trends across scRNA-seq experiments are indicative of the presence of batch effects.
+
+<hr>
+
+```{r log10_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts", "The percentage of expression variances explained by the library size"), fig.height=4}
+print(plotVarianceExplained(sces, "genevar_by_counts", scolors,lineSize=plotData$lineSize))
+```
+
+`r figRef("log10_total_counts")` shows the percentage of gene expression variance explained by the log-transformed total number of counts. If percentages are generally small (1-3%), it indicates that gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the library sizes contribute substantially to the gene expression variance. If so, this technical factor may need to be modeled into the downstream analysis.  Different contributions of library sizes to expression variances across multiple experiments are indicative of the presence of batch effects.
+
+<hr>
+
+```{r log10_total_features, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_features", "The percentage of expression variances explained by the total number of expressed genes"), fig.height=4}
+print(plotVarianceExplained(sces, "genevar_by_features",scolors,lineSize=plotData$lineSize))
+```
+
+`r figRef("log10_total_features")` shows the percentage of gene expression variance explained by the log-transformed number of genes detected in each cell. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression variance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+
+<hr>
+
+```{r log10_total_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("log10_total_counts_Mt", "The percentage of expression variances explained by the proportion of mitochondrial reads"), fig.height=4}
+print(plotVarianceExplained(sces,  "genevar_by_Mt", scolors,lineSize=plotData$lineSize))
+```
+
+`r figRef("log10_total_counts_Mt")` shows the percentage of expression variance of each gene that is explained by the percentage of mitochondrial reads. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression abundance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+
+<hr>
+
+```{r plotVariancerRNA, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotVariancerRNA", "The percentage of expression variances explained by the proportion of ribosomal proteins reads"), fig.height=4}
+print(plotVarianceExplained(sces, "genevar_by_rRNA",scolors,lineSize=plotData$lineSize))
+```
+
+`r figRef("plotVariancerRNA")` shows the percentage of gene expression variance  explained by the percentage of reads mapped to ribosomal proteins. If the percentages are generally small (1-3%), it indicates that the gene expressions are not strongly associated with this technical factor. Otherwise, it suggests that the factor contribute substantially to the gene expression variance. If so, the technical factor may need to be modeled into the downstream analysis.  Different contributions of the factor to expression variances are indicative of the presence of batch effects.
+
+<hr>
+
+```{r child="scRNABatchQCreport_biological.Rmd", echo=FALSE}
+```
+
+```{r child="scRNABatchQCreport_similarity.Rmd", eval=hasComparison, echo=FALSE}
+```
+
+```{r plotPCA, echo=FALSE, warning=FALSE, message=FALSE, results='asis',fig.align="center", fig.cap=figRef("plotPCA", "PCA plot of expression similarity between cells"), fig.height=4}
+plotAllPCA(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
+```
+
+`r figRef("plotPCA")` PCA Plot for the first two components, which shows the similarities between cells within or across scRNA-seq experiments.
+
+<hr>
+
+```{r plotTSNE, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plottSNE", "tSNE plot of expression similarity between cells"), fig.height=4}
+plotAlltSNE(plotData$scesMerge, scolors, pointSize=plotData$pointSize)
+```
+
+`r figRef("plottSNE")` tSNE plot for the first two components, which shows the similarities between cells within or across scRNA-seq experiments. tSNE is a non-linear dimension reduction technique, which PCA reduce the dimension through linear transformation. 
+
+<hr>
+
+```{r child="scRNABatchQCreport_difference.Rmd", eval=hasComparison, echo=FALSE}
+```
+
+```{r child="scRNABatchQCreport_difference_pathways.Rmd", eval=hasComparison, echo=FALSE}
+```
+
+**Note**: If no pathways results are reported for HVGs, PC-related genes or differentially expressed genes, there are two possible reasons. One is that pathways are not enriched. The other reason is that gene name is not gene symbol or organism is not supported by WebGestalt (https://github.com/bzhanglab/WebGestaltR). WebGestalt supports 12 organisms, including athaliana, btaurus, celegans, cfamiliaris, drerio, sscrofa, dmelanogaster, ggallus, hsapiens, mmusculus, rnorvegicus, and scerevisiae.
