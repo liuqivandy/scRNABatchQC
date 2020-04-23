@@ -237,7 +237,7 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
   cat("Merging data.\n")
   pca_tsne_data <- list()
   
-  if(length(sces) > 1){
+  if(length(sces) > 0){
     for (i in 1:length(sces)) {
       sce<-sces[[i]]
       if (!sce@metadata$valid){
