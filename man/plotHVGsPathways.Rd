@@ -4,8 +4,13 @@
 \alias{plotHVGsPathways}
 \title{plot pathways enriched in HVGs}
 \usage{
-plotHVGsPathways(sces, margins = c(5, 10), keysize = 1,
-  col = colorpanel(75, low = "white", high = "red"), ...)
+plotHVGsPathways(
+  sces,
+  margins = c(5, 10),
+  keysize = 1,
+  col = colorpanel(75, low = "white", high = "red"),
+  ...
+)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

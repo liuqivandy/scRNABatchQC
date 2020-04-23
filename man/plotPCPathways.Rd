@@ -4,8 +4,13 @@
 \alias{plotPCPathways}
 \title{plot pathways enriched in PC-related genes}
 \usage{
-plotPCPathways(sces, margins = c(5, 10), keysize = 1,
-  col = colorpanel(75, low = "white", high = "red"), ...)
+plotPCPathways(
+  sces,
+  margins = c(5, 10),
+  keysize = 1,
+  col = colorpanel(75, low = "white", high = "red"),
+  ...
+)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

@@ -97,7 +97,7 @@ scRNABatchQC<-function(inputs,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=
 #'         each SingleCellExperiment object containing several slots:
 #' \itemize{
 #' \item  {                        assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-#' \item  {                        elementMetadata; A DataFrame containining metadata for each gene, including 
+#' \item  {                        rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
 #'            \itemize{  
 #'                         \item {              ave.counts: the average counts  }
 #'                         \item {              num.cells: the number of cells with the gene detected }
@@ -141,8 +141,8 @@ scRNABatchQC<-function(inputs,names=NULL, nHVGs=1000,nPCs=10,sf=10000,mincounts=
 #' sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' names(sces)
 #' class(sces[[1]])
-#' head(sces[[1]]@elementMetadata)
-#' head(sces[[2]]@elementMetadata)
+#' head(sces[[1]]@rowRanges@elementMetadata)
+#' head(sces[[2]]@rowRanges@elementMetadata)
 #' head(colData(sces[[1]]))
 #' sces[[1]]@metadata$rawmeta$ngenes
 #' head(sces[[1]]@metadata$rawmeta$CellData)
@@ -199,7 +199,7 @@ Process_scRNAseq <- function(inputs, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mi
 #' @return a SingleCellExperiment object with several slots:
 #' \itemize{
 #' 	               \item {         assays; ShallowSimpleListAssays object containing one sparse matrix  logcounts (log-transformed normalized counts) }
-#'                 \item {         elementMetadata; A Dataframe hvg containining mean, variance and z-score for each gene  }
+#'                 \item {         rowRanges@elementMetadata; A Dataframe hvg containining mean, variance and z-score for each gene  }
 #'                 \item {         colData; A Dataframe containing conidtion for each cell   }
 #'                 \item {         metadata: A list containing other metadata, including 
 #'                                 \itemize{
@@ -218,7 +218,7 @@ Process_scRNAseq <- function(inputs, names=NULL, nHVGs=1000, nPCs=10,sf=10000,mi
 #' sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 #' scesMerge <- Combine_scRNAseq(sces)
 #' logcounts(scesMerge)[1:5,1:5]
-#' head(scesMerge@elementMetadata$hvg)
+#' head(scesMerge@rowRanges@metadata$hvg)
 #' summary(scesMerge@metadata$reducedDims$PCA)
 #' #visualize PCA results
 #' plot(scesMerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scesMerge@colData$condition),xlab="PCA1",ylab="PCA2")
@@ -281,7 +281,7 @@ Combine_scRNAseq <- function(sces, nHVGs=1000, nPCs= 10, logFC=1,FDR=0.01,sample
     scesMerge<-SingleCellExperiment(assay=list(logcounts=pca_tsne_data$logcounts))
     scesMerge@metadata$reducedDims=list(PCA=pca_tsne_data$pca, tSNE=pca_tsne_data$tsne)
     scesMerge@colData$condition<-pca_tsne_data$condition
-    scesMerge@elementMetadata$hvg<-pca_tsne_data$hvg
+    scesMerge@rowRanges@metadata$hvg<-pca_tsne_data$hvg
     
     #compare conditions
     cat("Performing differential expression analysis data ...\n")
@@ -362,7 +362,7 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #' @return a SingleCellExperiment object with several slots:
 #' \itemize{
 #' \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-#' \item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+#' \item  {                            rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
 #'            \itemize{  
 #'                         \item {               ave.counts: the average counts  }
 #'                         \item {               num.cells: the number of cells with the gene detected }
@@ -403,7 +403,7 @@ generateReport<-function(sces, scesMerge, outputFile="report.html", lineSize=1, 
 #' @examples
 #' library(scRNABatchQC)
 #' sce<-Process_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
-#' head(sce@elementMetadata)
+#' head(sce@rowRanges@elementMetadata)
 #' head(colData(sce))
 #' counts(sce)[1:5,1:5]
 #' logcounts(sce)[1:5,1:5]
@@ -453,7 +453,7 @@ Process_OnescRNAseq <- function(input, sf=10000,mincounts=500,mingenes=200, maxm
 #' @return a SingleCellExperiment object containing metadata for technical features
 #' \itemize{
 #'  \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-#'  \item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+#'  \item  {                            rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
 #'            \itemize{  
 #'                         \item {               ave.counts: the average counts  }
 #'                         \item {               num.cells: the number of cells with the gene detected }
@@ -586,8 +586,8 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
   scdata@colData$log10_total_counts_rRNA <- log10(rawmeta$CellData$total_counts_rRNA+1)[!rawmeta$CellData$is.drop]
   scdata@colData$log10_total_counts_Mt <- log10(rawmeta$CellData$total_counts_Mt+1)[!rawmeta$CellData$is.drop]
   
-  scdata@elementMetadata$ave.counts <- Matrix::rowMeans(counts(scdata))
-  scdata@elementMetadata$num.cells<- num.cells[rawmeta$GeneData$gene.keep]
+  scdata@rowRanges@elementMetadata$ave.counts <- Matrix::rowMeans(counts(scdata))
+  scdata@rowRanges@elementMetadata$num.cells<- num.cells[rawmeta$GeneData$gene.keep]
   
   ##keep the orignial meta data 
   scdata@metadata$rawmeta<-rawmeta
@@ -611,7 +611,7 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
 #' @return a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
 #' 	                               
 #'  \itemize{
-#'               \item {         elementMetadata; 
+#'               \item {         rowRanges@elementMetadata; 
 #'                            \itemize{          
 #'                                      \item {   hvg: a dataframe containing mean, variance and z-score for dispersion  }
 #'                                      \item {   genevar_by_tounts:  variance explained by the log-transformed counts  }
@@ -636,7 +636,7 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
 #' library(scRNABatchQC)
 #' sce<-Tech_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 #' sce<-Bio_OnescRNAseq(sce)
-#' head(sce@elementMetadata)
+#' head(sce@rowRanges@elementMetadata)
 #' sce@metadata$hvgPathway
 #' @seealso \code{\link{Process_OnescRNAseq}} , \code{\link{Tech_OnescRNAseq}} 
 Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculus" ){
@@ -645,15 +645,15 @@ Bio_OnescRNAseq<-function(scdata,nHVGs=1000, nPCs=10,PCind=1, organism="mmusculu
     organism<-NULL
   }
   
-  scdata@elementMetadata$hvg <- .getMeanVarTrend(logcounts(scdata))
+  scdata@rowRanges@metadata$hvg <- .getMeanVarTrend(logcounts(scdata))
   ##explained by feature###
-  scdata@elementMetadata$genevar_by_counts<-.getVarExplainedbyFeature(scdata,"log10_total_counts")
-  scdata@elementMetadata$genevar_by_features<-.getVarExplainedbyFeature(scdata,"log10_total_features")
-  scdata@elementMetadata$genevar_by_Mt<-.getVarExplainedbyFeature(scdata,"log10_total_counts_Mt")
-  scdata@elementMetadata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
+  scdata@rowRanges@elementMetadata$genevar_by_counts<-.getVarExplainedbyFeature(scdata,"log10_total_counts")
+  scdata@rowRanges@elementMetadata$genevar_by_features<-.getVarExplainedbyFeature(scdata,"log10_total_features")
+  scdata@rowRanges@elementMetadata$genevar_by_Mt<-.getVarExplainedbyFeature(scdata,"log10_total_counts_Mt")
+  scdata@rowRanges@elementMetadata$genevar_by_rRNA<-.getVarExplainedbyFeature(scdata,"log10_total_counts_rRNA")
   
   ##select the top HVGs highly variable genes for the PCA, default is 1000
-  hvggenes <-  rownames(scdata@elementMetadata$hvg)[order(scdata@elementMetadata$hvg$zval,decreasing=T)][1:nHVGs]
+  hvggenes <-  rownames(scdata@rowRanges@metadata$hvg)[order(scdata@rowRanges@metadata$hvg$zval,decreasing=T)][1:nHVGs]
   
   tdata<-t(logcounts(scdata)[rownames(scdata)%in%hvggenes, , drop = FALSE])
   nPCs<-min(nPCs, min(dim(tdata))-1)

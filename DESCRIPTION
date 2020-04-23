@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: scRNABatchQC
 Type: Package
 Title: a package for quality control of multiple single cell RNAseq data
-Version: 0.9.17
-Date: 2020-04-21
+Version: 0.9.18
+Date: 2020-04-22
 Authors@R: c(person("Quanhu", "Sheng", email = "quanhu.sheng.1@vumc.org", role = c("aut", "ctr")),
              person("Jie", "Ping", email = "jie.ping.1@vumc.org", role = c("aut", "ctr")),
              person("Yu", "Shyr", email = "yu.shyr@vumc.org", role = c("aut")),
@@ -17,6 +17,6 @@ Depends: R (>= 3.5), devtools, R.utils, ggplot2, irlba, data.table, gplots, Rtsn
          limma, Matrix, statmod, DT, RCurl, SingleCellExperiment, knitr, Matrix.utils
 biocViews:
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Suggests: 
     rmarkdown

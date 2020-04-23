@@ -4,8 +4,13 @@
 \alias{Bio_OnescRNAseq}
 \title{process one scRNAseq dataset to generate biological metadata}
 \usage{
-Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
-  organism = "mmusculus")
+Bio_OnescRNAseq(
+  scdata,
+  nHVGs = 1000,
+  nPCs = 10,
+  PCind = 1,
+  organism = "mmusculus"
+)
 }
 \arguments{
 \item{scdata}{a SingleCellExperiment object; (results from \code{\link{Tech_OnescRNAseq}}}
@@ -22,7 +27,7 @@ Bio_OnescRNAseq(scdata, nHVGs = 1000, nPCs = 10, PCind = 1,
 a new SingleCellExperiment object by adding features into the the elementMetadata and metadata slots of the input object:
 	                               
  \itemize{
-              \item {         elementMetadata; 
+              \item {         rowRanges@elementMetadata; 
                            \itemize{          
                                      \item {   hvg: a dataframe containing mean, variance and z-score for dispersion  }
                                      \item {   genevar_by_tounts:  variance explained by the log-transformed counts  }
@@ -47,7 +52,7 @@ Generate metadata (HVGs, PC-related genes, pathways) for one single cell RNAseq 
 library(scRNABatchQC)
 sce<-Tech_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
 sce<-Bio_OnescRNAseq(sce)
-head(sce@elementMetadata)
+head(sce@rowRanges@elementMetadata)
 sce@metadata$hvgPathway
 }
 \seealso{

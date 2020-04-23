@@ -4,13 +4,28 @@
 \alias{scRNABatchQC}
 \title{QC across multiple scRNAseq datasets}
 \usage{
-scRNABatchQC(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
-  sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
-  PCind = 1, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", sampleRatio = 1,
-  logFC = 1, FDR = 0.01, organism = "mmusculus",
-  outputFile = "report.html", lineSize = 1, pointSize = 0.8,
-  chunk.size = NULL, createReport = TRUE)
+scRNABatchQC(
+  inputs,
+  names = NULL,
+  nHVGs = 1000,
+  nPCs = 10,
+  sf = 10000,
+  mincounts = 500,
+  mingenes = 200,
+  maxmito = 0.2,
+  PCind = 1,
+  mtRNA = "^mt-|^MT-",
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  sampleRatio = 1,
+  logFC = 1,
+  FDR = 0.01,
+  organism = "mmusculus",
+  outputFile = "report.html",
+  lineSize = 1,
+  pointSize = 0.8,
+  chunk.size = NULL,
+  createReport = TRUE
+)
 }
 \arguments{
 \item{inputs}{string vector of file or path names,  or a list of SingleCellExperiment or Seurat v3 objects; \cr

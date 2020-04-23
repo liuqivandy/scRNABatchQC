@@ -4,9 +4,16 @@
 \alias{Tech_OnescRNAseq}
 \title{process one scRNAseq dataset to generate technical metadata}
 \usage{
-Tech_OnescRNAseq(input, sf = 10000, mincounts = 500, mingenes = 200,
-  maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", chunk.size = NULL)
+Tech_OnescRNAseq(
+  input,
+  sf = 10000,
+  mincounts = 500,
+  mingenes = 200,
+  maxmito = 0.2,
+  mtRNA = "^mt-|^MT-",
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  chunk.size = NULL
+)
 }
 \arguments{
 \item{input}{string of file or path name, a SingleCellExperiment or Seurat v3 object; \cr
@@ -32,7 +39,7 @@ input can also be a SingleCellExperiment or a Seurat v3 object}
 a SingleCellExperiment object containing metadata for technical features
 \itemize{
  \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
- \item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+ \item  {                            rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
            \itemize{  
                         \item {               ave.counts: the average counts  }
                         \item {               num.cells: the number of cells with the gene detected }

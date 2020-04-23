@@ -4,8 +4,12 @@
 \alias{plotVarianceTrend}
 \title{plot Mean~variance trend}
 \usage{
-plotVarianceTrend(sces, scolors = 1:length(sces), pointSize = 0.8,
-  lineSize = 1)
+plotVarianceTrend(
+  sces,
+  scolors = 1:length(sces),
+  pointSize = 0.8,
+  lineSize = 1
+)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

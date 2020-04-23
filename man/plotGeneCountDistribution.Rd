@@ -4,8 +4,12 @@
 \alias{plotGeneCountDistribution}
 \title{plot the gene count distribution}
 \usage{
-plotGeneCountDistribution(sces, scolors = 1:length(sces), ngenes = 500,
-  lineSize = 1)
+plotGeneCountDistribution(
+  sces,
+  scolors = 1:length(sces),
+  ngenes = 500,
+  lineSize = 1
+)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

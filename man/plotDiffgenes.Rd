@@ -4,8 +4,13 @@
 \alias{plotDiffgenes}
 \title{plot differentially expressed genes between any two datasets}
 \usage{
-plotDiffgenes(scesMerge, margins = c(5, 5), keysize = 1,
-  col = bluered(75), ...)
+plotDiffgenes(
+  scesMerge,
+  margins = c(5, 5),
+  keysize = 1,
+  col = bluered(75),
+  ...
+)
 }
 \arguments{
 \item{scesMerge}{a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE}

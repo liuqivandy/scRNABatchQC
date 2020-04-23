@@ -59,8 +59,8 @@ plotGeneCountDistribution <- function(sces, scolors = 1:length(sces),
   prop_mat <- c()
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   for (i in 1:length(sces)) {
-    aveCountSum <- sum(sces[[i]]@elementMetadata$ave.counts)
-    aveCountProp <- cumsum(sort(sces[[i]]@elementMetadata$ave.counts, decreasing = TRUE)[1:ngenes]) / aveCountSum
+    aveCountSum <- sum(sces[[i]]@rowRanges@elementMetadata$ave.counts)
+    aveCountProp <- cumsum(sort(sces[[i]]@rowRanges@elementMetadata$ave.counts, decreasing = TRUE)[1:ngenes]) / aveCountSum
     prop_mat <- cbind(prop_mat, aveCountProp)
     colnames(prop_mat)[i] <- names(sces)[i]
   }
@@ -105,9 +105,9 @@ plotAveCountVSdetectRate <- function(sces, scolors = 1:length(sces), lineSize = 
   avedetect <- data.frame()
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   for (i in 1:length(sces)) {
-    tmpavedec <- data.frame(avecount = log10(sces[[i]]@elementMetadata$ave.counts), 
-                            detectrate = sces[[i]]@elementMetadata$num.cells / sces[[i]]@metadata$rawmeta$ncell, 
-                            Sample = rep(names(sces)[i], length(log10(sces[[i]]@elementMetadata$ave.counts))))
+    tmpavedec <- data.frame(avecount = log10(sces[[i]]@rowRanges@elementMetadata$ave.counts), 
+                            detectrate = sces[[i]]@rowRanges@elementMetadata$num.cells / sces[[i]]@metadata$rawmeta$ncell, 
+                            Sample = rep(names(sces)[i], length(log10(sces[[i]]@rowRanges@elementMetadata$ave.counts))))
     avedetect <- rbind(avedetect, tmpavedec)
   }
   
@@ -146,12 +146,10 @@ plotVarianceTrend <- function(sces, scolors = 1:length(sces),
   meanvar_dat <- data.frame()
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   for (i in 1:length(sces)) {
-    tmpmeanvar <- data.frame(mean = sces[[i]]@elementMetadata$hvg$mean, 
-                             var= sces[[i]]@elementMetadata$hvg$var, 
-                             
-                             Sample = rep(names(sces)[i], length(sces[[i]]@elementMetadata$hvg$mean)))
-    
-    
+    tmpmeanvar <- data.frame(mean = sces[[i]]@rowRanges@metadata$hvg$mean, 
+                             var= sces[[i]]@rowRanges@metadata$hvg$var, 
+                             Sample = rep(names(sces)[i], length(sces[[i]]@rowRanges@metadata$hvg$mean)))
+
     meanvar_dat<- rbind(meanvar_dat, tmpmeanvar)
     
   }
@@ -252,10 +250,10 @@ plotSampleSimilarity <- function(sces, ...) {
   if (length(sces)<=1) stop("there should be more than one dataset")
   if (is.null(names(sces))) names(sces)<-1:length(sces)
   
-  aveCount <- sces[[1]]@elementMetadata$ave.counts
+  aveCount <- sces[[1]]@rowRanges@elementMetadata$ave.counts
   
   for (i in 2:length(sces)) {
-    aveCount <- merge(aveCount, sces[[i]]@elementMetadata$ave.counts, by = "row.names")
+    aveCount <- merge(aveCount, sces[[i]]@rowRanges@elementMetadata$ave.counts, by = "row.names")
     rownames(aveCount) <- aveCount[, 1]
     aveCount <- aveCount[, -1]
   }

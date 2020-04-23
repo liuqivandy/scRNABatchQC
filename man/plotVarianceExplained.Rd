@@ -4,9 +4,13 @@
 \alias{plotVarianceExplained}
 \title{plot variance explained by one specific feature}
 \usage{
-plotVarianceExplained(sces, feature = c("genevar_by_counts",
-  "genevar_by_features", "genevar_by_Mt", "genevar_by_rRNA"),
-  scolors = 1:length(sces), lineSize = 1)
+plotVarianceExplained(
+  sces,
+  feature = c("genevar_by_counts", "genevar_by_features", "genevar_by_Mt",
+    "genevar_by_rRNA"),
+  scolors = 1:length(sces),
+  lineSize = 1
+)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

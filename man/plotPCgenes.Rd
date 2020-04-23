@@ -4,8 +4,7 @@
 \alias{plotPCgenes}
 \title{plot PC-related genes}
 \usage{
-plotPCgenes(sces, margins = c(5, 5), keysize = 1, col = bluered(75),
-  ...)
+plotPCgenes(sces, margins = c(5, 5), keysize = 1, col = bluered(75), ...)
 }
 \arguments{
 \item{sces}{list; a list of SingleCellExperiment objects; each object containing QC metadata for each dataset;(results from \code{\link{Process_scRNAseq}} )}

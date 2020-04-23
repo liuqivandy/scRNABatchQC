@@ -244,14 +244,14 @@ read_10X_v3<-function(inputFolder){
     stop("Need to specify feature of .getColData")
   }
   if (is.null(names(sces))) names(sces)<-1:length(sces)
-  fNo <- which(names(sces[[1]]@elementMetadata) == feature)
+  fNo <- which(names(sces[[1]]@rowRanges@elementMetadata) == feature)
   if(length(fNo) == 0){
     stop(paste0("Feature ", feature, " is not exists in object sces"))
   }
   
   result<-NULL
   for (i in 1:length(sces)) {
-    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=sces[[i]]@elementMetadata[fNo]))
+    result<-rbind(result, data.frame(Sample=names(sces)[i], Value=sces[[i]]@rowRanges@elementMetadata[fNo]))
   }
   colnames(result) <- c("Sample", "Value")
   return(result)
@@ -298,7 +298,7 @@ read_10X_v3<-function(inputFolder){
     }
   }
   
-  filtereddata<-logcounts(scesall)[scesall@elementMetadata$hvg$var>0,]
+  filtereddata<-logcounts(scesall)[scesall@rowRanges@metadata$hvg$var>0,]
   
   cat("performing differential analysis ...\n")
   ngenes <- nrow(filtereddata)
@@ -342,7 +342,7 @@ read_10X_v3<-function(inputFolder){
                                          Gene = rownames(pairTables[[i]])[matchid], 
                                          LogFold = pairTables[[i]]$logFC[matchid]))
     }
-    mDiffFC <- dcast(diffFC, Gene ~ Comparison, value.var = "LogFold", fill = 0)
+    mDiffFC <- reshape2::dcast(diffFC, Gene ~ Comparison, value.var = "LogFold", fill = 0)
     rownames(mDiffFC) <- mDiffFC$Gene
     
     for (con in cont) {
@@ -402,7 +402,7 @@ read_10X_v3<-function(inputFolder){
     if (objectName=="pc1genes") sobj=sces[[i]]@metadata$pc1genes
     #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
     if (objectName=="hvg") {
-      sobj=sces[[i]]@elementMetadata$hvg
+      sobj=sces[[i]]@rowRanges@metadata$hvg
       sobj<-sobj[order(sobj[valueName],decreasing=T),]}
   }
   sgene <- rownames(head(sobj,topn))
@@ -415,7 +415,7 @@ read_10X_v3<-function(inputFolder){
     
     if (objectName=="pc1genes") sobj=sces[[i]]@metadata$pc1genes
     #sobj <- sobj[sobj[, filterIndex] < 0.01, ]
-    if (objectName=="hvg")   sobj=sces[[i]]@elementMetadata$hvg
+    if (objectName=="hvg")   sobj=sces[[i]]@rowRanges@metadata$hvg
     
     matchid <- rownames(sobj) %in% genelist
     filtered <- sobj[matchid, ]
@@ -504,8 +504,8 @@ read_10X_v3<-function(inputFolder){
   for (element in levels(by.chunk)) {
     current <- by.chunk == element
     cur.exprs <- exprs_mat[current, , drop = FALSE]
-    Exy= cur.exprs%*%feature.data/ncells-sce@elementMetadata$hvg$mean[current]*expf
-    sdxy=sdf*sqrt(sce@elementMetadata$hvg$var[current])
+    Exy= cur.exprs%*%feature.data/ncells-sce@rowRanges@metadata$hvg$mean[current]*expf
+    sdxy=sdf*sqrt(sce@rowRanges@metadata$hvg$var[current])
     R_squared[current] <- (Exy/sdxy) ^ 2 
   }
   

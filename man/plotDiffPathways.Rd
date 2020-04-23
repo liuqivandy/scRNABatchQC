@@ -4,8 +4,13 @@
 \alias{plotDiffPathways}
 \title{plot pathways enriched in differentially expressed genes}
 \usage{
-plotDiffPathways(scesMerge, margins = c(5, 5), keysize = 1,
-  col = colorpanel(75, low = "white", high = "red"), ...)
+plotDiffPathways(
+  scesMerge,
+  margins = c(5, 5),
+  keysize = 1,
+  col = colorpanel(75, low = "white", high = "red"),
+  ...
+)
 }
 \arguments{
 \item{scesMerge}{a SingleCellExperiment object; this object contains the combined datasets, pairwise comparison results and reduced dimensions using PCA and tSNE; (results from \code{\link{Combine_scRNAseq}})}

@@ -4,8 +4,15 @@
 \alias{Combine_scRNAseq}
 \title{combine multiple scRNAseq datasets into one and generate QC metadata}
 \usage{
-Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1,
-  FDR = 0.01, sampleRatio = 1, organism = "mmusculus")
+Combine_scRNAseq(
+  sces,
+  nHVGs = 1000,
+  nPCs = 10,
+  logFC = 1,
+  FDR = 0.01,
+  sampleRatio = 1,
+  organism = "mmusculus"
+)
 }
 \arguments{
 \item{sces}{a list of SingleCellExperiment objects (results from \code{\link{Process_scRNAseq}}); each object corresponds to one single cell RNAseq dataset}
@@ -26,7 +33,7 @@ Combine_scRNAseq(sces, nHVGs = 1000, nPCs = 10, logFC = 1,
 a SingleCellExperiment object with several slots:
 \itemize{
 	               \item {         assays; ShallowSimpleListAssays object containing one sparse matrix  logcounts (log-transformed normalized counts) }
-                \item {         elementMetadata; A Dataframe hvg containining mean, variance and z-score for each gene  }
+                \item {         rowRanges@elementMetadata; A Dataframe hvg containining mean, variance and z-score for each gene  }
                 \item {         colData; A Dataframe containing conidtion for each cell   }
                 \item {         metadata: A list containing other metadata, including 
                                 \itemize{
@@ -48,7 +55,7 @@ library(scRNABatchQC)
 sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 scesMerge <- Combine_scRNAseq(sces)
 logcounts(scesMerge)[1:5,1:5]
-head(scesMerge@elementMetadata$hvg)
+head(scesMerge@rowRanges@metadata$hvg)
 summary(scesMerge@metadata$reducedDims$PCA)
 #visualize PCA results
 plot(scesMerge@metadata$reducedDims$PCA$x[,1:2],pch=16,col=as.factor(scesMerge@colData$condition),xlab="PCA1",ylab="PCA2")

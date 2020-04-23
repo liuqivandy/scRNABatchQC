@@ -4,11 +4,21 @@
 \alias{Process_scRNAseq}
 \title{process scRNAseq datasets one by one to generate QC metadata}
 \usage{
-Process_scRNAseq(inputs, names = NULL, nHVGs = 1000, nPCs = 10,
-  sf = 10000, mincounts = 500, mingenes = 200, maxmito = 0.2,
-  PCind = 1, mtRNA = "^mt-|^MT-",
+Process_scRNAseq(
+  inputs,
+  names = NULL,
+  nHVGs = 1000,
+  nPCs = 10,
+  sf = 10000,
+  mincounts = 500,
+  mingenes = 200,
+  maxmito = 0.2,
+  PCind = 1,
+  mtRNA = "^mt-|^MT-",
   rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
-  organism = "mmusculus", chunk.size = NULL)
+  organism = "mmusculus",
+  chunk.size = NULL
+)
 }
 \arguments{
 \item{inputs}{a string vector of file or path names, or a list of SingleCellExperiment or Seurat v3 objects; \cr
@@ -46,7 +56,7 @@ a list of SingleCellExperiment objects ;  \cr
         each SingleCellExperiment object containing several slots:
 \itemize{
 \item  {                        assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-\item  {                        elementMetadata; A DataFrame containining metadata for each gene, including 
+\item  {                        rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
            \itemize{  
                         \item {              ave.counts: the average counts  }
                         \item {              num.cells: the number of cells with the gene detected }
@@ -92,8 +102,8 @@ library(scRNABatchQC)
 sces<-Process_scRNAseq(inputs=c("https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz","https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar5.csv.gz"))
 names(sces)
 class(sces[[1]])
-head(sces[[1]]@elementMetadata)
-head(sces[[2]]@elementMetadata)
+head(sces[[1]]@rowRanges@elementMetadata)
+head(sces[[2]]@rowRanges@elementMetadata)
 head(colData(sces[[1]]))
 sces[[1]]@metadata$rawmeta$ngenes
 head(sces[[1]]@metadata$rawmeta$CellData)

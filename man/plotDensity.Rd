@@ -4,9 +4,13 @@
 \alias{plotDensity}
 \title{plotDensity}
 \usage{
-plotDensity(sces, feature = c("total_counts", "total_features",
-  "pct_counts_Mt", "pct_counts_rRNA"), featureLabel = NULL,
-  scolors = 1:length(sces), lineSize = 1)
+plotDensity(
+  sces,
+  feature = c("total_counts", "total_features", "pct_counts_Mt", "pct_counts_rRNA"),
+  featureLabel = NULL,
+  scolors = 1:length(sces),
+  lineSize = 1
+)
 }
 \arguments{
 \item{sces}{a list of SingleCellExperiment objects; each object containing QC metadata for each dataset; (results from \code{\link{Process_scRNAseq}} )}

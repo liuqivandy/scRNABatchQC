@@ -4,10 +4,20 @@
 \alias{Process_OnescRNAseq}
 \title{process one scRNAseq dataset to generate QC metadata}
 \usage{
-Process_OnescRNAseq(input, sf = 10000, mincounts = 500,
-  mingenes = 200, maxmito = 0.2, mtRNA = "^mt-|^MT-",
-  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]", nHVGs = 1000,
-  nPCs = 10, PCind = 1, organism = "mmusculus", chunk.size = NULL)
+Process_OnescRNAseq(
+  input,
+  sf = 10000,
+  mincounts = 500,
+  mingenes = 200,
+  maxmito = 0.2,
+  mtRNA = "^mt-|^MT-",
+  rRNA = "^Rp[sl][[:digit:]]|^RP[SL][[:digit:]]",
+  nHVGs = 1000,
+  nPCs = 10,
+  PCind = 1,
+  organism = "mmusculus",
+  chunk.size = NULL
+)
 }
 \arguments{
 \item{input}{string of file or path name, a SingleCellExperiment or Seurat v3 object; \cr
@@ -41,7 +51,7 @@ input can also be a SingleCellExperiment or Seurat v3 object}
 a SingleCellExperiment object with several slots:
 \itemize{
 \item  {                            assays; ShallowSimpleListAssays object containing two sparse matrix: counts and logcounts }
-\item  {                            elementMetadata; A DataFrame containining metadata for each gene, including 
+\item  {                            rowRanges@elementMetadata; A DataFrame containining metadata for each gene, including 
            \itemize{  
                         \item {               ave.counts: the average counts  }
                         \item {               num.cells: the number of cells with the gene detected }
@@ -85,7 +95,7 @@ Generate technical and biological metadata for one single cell RNAseq dataset
 \examples{
 library(scRNABatchQC)
 sce<-Process_OnescRNAseq(input="https://github.com/liuqivandy/scRNABatchQC/raw/master/bioplar1.csv.gz")
-head(sce@elementMetadata)
+head(sce@rowRanges@elementMetadata)
 head(colData(sce))
 counts(sce)[1:5,1:5]
 logcounts(sce)[1:5,1:5]

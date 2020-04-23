@@ -4,8 +4,13 @@
 \alias{generateReport}
 \title{generate a QC report in a html file}
 \usage{
-generateReport(sces, scesMerge, outputFile = "report.html",
-  lineSize = 1, pointSize = 0.8)
+generateReport(
+  sces,
+  scesMerge,
+  outputFile = "report.html",
+  lineSize = 1,
+  pointSize = 0.8
+)
 }
 \arguments{
 \item{sces}{a list of SingleCellExperiment Objects; each object containing quality meta data for one single cell RNAseq dataset (results from \code{\link{Process_scRNAseq}})}
