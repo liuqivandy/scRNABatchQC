@@ -2,7 +2,7 @@ Encoding: UTF-8
 Package: scRNABatchQC
 Type: Package
 Title: a package for quality control of multiple single cell RNAseq data
-Version: 0.9.19
+Version: 0.10.1
 Date: 2020-04-23
 Authors@R: c(person("Quanhu", "Sheng", email = "quanhu.sheng.1@vumc.org", role = c("aut", "ctr")),
              person("Jie", "Ping", email = "jie.ping.1@vumc.org", role = c("aut", "ctr")),

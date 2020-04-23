@@ -132,7 +132,7 @@ plotHeatmap<-function(datam,feature=c("hvg","hvgPath","PCg","PCgPath","diffg","d
   } 
   else {
     warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
-	  kable(as.matrix(datam),caption=tabRef(feature, maintitle),col.names=paste0(colnames(datam),"(",keytitle,")"))
+	  print(kable_styling(kable(as.matrix(datam),caption=tabRef(feature, maintitle),col.names=paste0(colnames(datam),"(",keytitle,")"))))
 	}
 }
 
