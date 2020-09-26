@@ -132,7 +132,9 @@ plotHeatmap<-function(datam,feature=c("hvg","hvgPath","PCg","PCgPath","diffg","d
   } 
   else {
     warning("there is only one dataset/comparison or one gene/pathway detected and heatmap figure is not generated")
-	  print(kable_styling(kable(as.matrix(datam),caption=tabRef(feature, maintitle),col.names=paste0(colnames(datam),"(",keytitle,")"))))
+	  print(kable(as.matrix(datam),caption=tabRef(feature, maintitle),col.names=paste0(colnames(datam),"(",keytitle,")")) %>% 
+	          kable_styling() %>%
+	          htmltools::HTML())
 	}
 }
 
@@ -210,8 +212,10 @@ if(hasValid){
 
 ```{r tableSummary, echo=FALSE, results="asis"}
 curTable<-plotData$tableSummary
-print(kable_styling(kable(curTable, caption=tabRef("tableSummary", "Summary of Quality Metrics."), row.names=FALSE)) %>% 
-		row_spec(which(curTable$Valid=="FALSE"), color = "black", background = "bisque"))
+print(kable(curTable, caption=tabRef("tableSummary", "Summary of Quality Metrics."), row.names=FALSE) %>% 
+      kable_styling() %>% 
+		  row_spec(which(curTable$Valid=="FALSE"), color = "black", background = "bisque") %>% 
+		  htmltools::HTML())
 
 ```
 
@@ -236,66 +240,3 @@ A short description of Table 1 metrics is provided below:
 * _**F**_ - The total number of cells filtered by either counts, genes, or mtRNA criteria
 * _**V-Count**_ - The number of cell passed filtering
 * _**Valid**_ - If the sample was unvalid due to extremly low cell count (less than 10)
-
-```{r unvalid, echo=FALSE, warning=FALSE, message=FALSE, results='asis', eval=hasNotValid, fig.align="center", fig.cap=figRef("VarianceTrend", "The mean-variance trend")}
-unvalidSampleNames<-names(unvalid)
-cat('<p style="color:red">WARNING: The following samples may not be included in some of QC analysis due to extremely low cell counts:',  paste0(unvalidSampleNames, collapse=', '), "<p>")
-```
-
-# Technical View
-
-**This section checks 11 technical features and aggregates results across multiple scRNA-seq experiments, which include the total number of counts, the number of expressed genes, percentage of reads mapped to mitochondria-encoded genes and ribosomal proteins, the expression cumulative plot, the detection rate, the mean-variance trend, and the variance explained by technical features.**
-
-<hr>
-
-```{r density_total_counts, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_counts", "The distribution of the total number of counts in a cell"), fig.height=4}
-print(plotDensity(allsces,feature="total_counts", featureLabel="The total number of counts", scolors=scolors, lineSize=plotData$lineSize))
-```
-
-`r figRef("density_total_counts")` shows the distribution of the total number of counts in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very low number of read counts, suggesting RNAs are not efficiently captured, are considered as low quality and removed from the downstream analysis. Different count distributions across experiments are indicative of the presence of batch effects.
-
-<hr>
-
-```{r density_total_features, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_total_features", "The distribution of the total number of genes in a cell"), fig.height=4}
-print(plotDensity(allsces,feature="total_features", featureLabel="The number of expressed genes", scolors=scolors,lineSize=plotData$lineSize))
-```
-
-`r figRef("density_total_features")` shows the distribution of the number of expressed genes in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. Cells with very few expressed genes are considered as low quality and removed from the downstream analysis. Different distributions on gene numbers across experiments are indicative of the presence of batch effects.
-
-<hr>
-
-```{r density_pct_counts_Mt, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("density_pct_counts_Mt", "The distribution of percentage of mitochondrial counts in a cell"), fig.height=4}
-print(plotDensity(allsces,feature="pct_counts_Mt", featureLabel="The proportion of reads mapped to mitochondria-encoded genes", scolors=scolors,lineSize=plotData$lineSize))
-```
-
-`r figRef("density_pct_counts_Mt")` shows the distribution of the proportion of reads mapped to mitochondria-encoded genes in a cell in each scRNA-seq experiment. Different experiments are denoted by different colors. A cell with high proportion of reads mapped to mitochondria-encoded genes is considered as low quality and removed from the downstream analysis. Caution should be paid when one experiment has higher proportion of mitochondrial reads than others.
-
-<hr>
-
-```{r plotRibosomalRNA, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("plotRibosomalRNA", "The distribution of percentage of ribosomal counts in a cell"), fig.height=4}
-print(plotDensity(allsces,feature="pct_counts_rRNA", featureLabel="The proportion of reads mapped to genes encoded for ribosomal proteins", scolors=scolors,lineSize=plotData$lineSize))
-
-```
-
-`r figRef("plotRibosomalRNA")` shows the distribution of the proportion of reads mapped to genes encoded for ribosomal proteins in a cell in each scRNA-seq experiment, which is denoted by different color. Caution should be paid when one experiment has higher proportion of ribosomal gene reads than others.
-
-<hr>
-
-```{r genesCountdistribution, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("genesCountdistribution", "Cumulative expression plot for the top 500 highly expressed genes"), fig.height=4}
-print(plotGeneCountDistribution(allsces, scolors,lineSize=plotData$lineSize))
-```
-
-`r figRef("genesCountdistribution")` shows the cumulative expression for the top 500 highly expressed genes. The plot is generated based on the average count of each gene, that is, the top 500 highly expressed genes are those with the highest average count. This plot describes how reads are distributed across genes in each scRNA-seq experiment. A cumulative graph with rapid increase at the beginning suggests a library with low complexity where very few genes consume most reads. In contrast, a cumulative graph with slow increase at the beginning indicates that reads are more evenly distributed across genes. Different cumulative expression plots across multiple scRNA-seq experiments are indicative of the presence of batch effects. 
-
-<hr>
-
-```{r aveCountVSdetectRate, echo=FALSE, warning=FALSE, message=FALSE, results='asis', fig.align="center", fig.cap=figRef("aveCountVSdetectRate", "The detection rate of genes"), fig.height=4}
-print(plotAveCountVSdetectRate(allsces, scolors,lineSize=plotData$lineSize))
-```
-
-`r figRef("aveCountVSdetectRate")` shows the percentage of cells expressing each gene plotted against its log-average count. Generally the detection rate for a gene depends on its expression. Different detection rates across scRNA-seq experiments are indicative of the presence of batch effects. 
-
-<hr>
-
-```{r child="scRNABatchQCreport_valid.Rmd", eval=hasValid,  echo=FALSE}
-```
