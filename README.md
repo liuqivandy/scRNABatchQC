@@ -26,8 +26,7 @@ Step 2: Install scRNABatchQC by:
 
 # Citation
 
-[scRNABatchQC: Multi-samples quality control for single cell RNA-seq data.](https://www.ncbi.nlm.nih.gov/pubmed/31373345) Liu Q, Sheng Q, Ping J, Ramirez MA, Lau KS, Coffey R, Shyr Y. Bioinformatics. 2019 Aug 2. pii: btz601. doi: 10.1093/bioinformatics/btz601. PMID: 31373345
-<a name="citation"/>
+[scRNABatchQC: Multi-samples quality control for single cell RNA-seq data.](https://www.ncbi.nlm.nih.gov/pubmed/31373345) Liu Q, Sheng Q, Ping J, Ramirez MA, Lau KS, Coffey R, Shyr Y. Bioinformatics. 2019 Dec 15;35(24):5306-5308. PMID: 31373345 PMCID: PMC6954654>
 
 # Usage
 
