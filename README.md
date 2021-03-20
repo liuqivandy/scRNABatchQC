@@ -40,11 +40,13 @@ If the error converted from warning prevents package install when dependency was
 Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 ```
 
-<a name="example"/>
+<a name="citation"/>
 
 # Citation
 
 [scRNABatchQC: Multi-samples quality control for single cell RNA-seq data.](https://www.ncbi.nlm.nih.gov/pubmed/31373345) Liu Q, Sheng Q, Ping J, Ramirez MA, Lau KS, Coffey R, Shyr Y. Bioinformatics. 2019 Dec 15;35(24):5306-5308. PMID: 31373345 PMCID: PMC6954654 
+
+<a name="example"/>
 
 # Usage
 
@@ -56,7 +58,7 @@ Check and compare the quality of two scRNA-seq datasets from Retinal Bipolar Neu
 
 A QC report named "report.html" will be generated in your working directory. In addition, One SingleCellExperiment object (scesMerge) containing the combined dataset and a list of SingleCellExperiment objects (sces, each object contains the preprocessed dataset and metadata for one dataset) will be returned.
 
-```
+```R
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
@@ -80,7 +82,7 @@ Check the quality of six seminiferous tubule (ST) datasets of murine spermatogen
 
 A QC report named "report.html" will be generated in your working directory.
 
-```
+```R
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
@@ -101,7 +103,7 @@ Check the quality of three scRNA-seq datasets from embryonic development of the 
 
 A QC report named "report.html" will be generated in your working directory.
 	
-```
+```R
 library(scRNABatchQC)
 	
 start_time <- Sys.time()
@@ -116,7 +118,7 @@ end_time - start_time
 
 scRNABatchQC also supports SingleCellExperiment, Seurat v3 objects or 10X v3/v2 genomics data as input.
 
-```
+```R
 # run on a list of SingleCellExperiment objects
 # the result from Example 1 (result$sces) is a list of SingleCellExperiment objects
 scRNABatchQC(inputs=result$sces)
