@@ -15,13 +15,31 @@ scRNABatchQC is an R package for generating a HTML QC report to check and compar
 
 # Installation
 
-Step 1:  Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) (pandoc is required to convert files from markup format into html format). After installation , update your path to include the directory where pandoc’s binaries are installed. 
+## Step 1: Install pandoc
 
-Step 2: Install scRNABatchQC by:
+Install pandoc (https://github.com/jgm/pandoc/releases/tag/2.2.1) (pandoc is required to convert files from markup format into html format). After installation , update your path to include the directory where pandoc’s binaries are installed. 
 
-	library(devtools)
-	install_github("liuqivandy/scRNABatchQC")
+## Step 2: Install scRNABatchQC
+
+```R
+library(devtools)
+install_github("liuqivandy/scRNABatchQC")
+```
+
+or
+
+```R
+BiocManager::install("liuqivandy/scRNABatchQC")
+```
   
+## Trouble shooting
+
+If the error converted from warning prevents package install when dependency was built under newer R, set following enviroment in R before installing scRNABatchQC.
+
+```R
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
+```
+
 <a name="example"/>
 
 # Citation
