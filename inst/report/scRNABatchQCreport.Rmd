@@ -159,7 +159,7 @@ for (p in names(allsces)) {
 }
 
 if(length(allsces) < 9){
-  scolors=brewer.pal(length(allsces), "Set1")
+  scolors=brewer.pal(max(3, length(allsces)), "Set1")[1:length(allsces)]
 }else{
   scolors=rainbow(length(allsces))
 }
