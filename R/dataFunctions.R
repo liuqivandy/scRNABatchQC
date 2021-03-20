@@ -374,7 +374,7 @@ read_10X_v3<-function(inputFolder){
           maxFdr <- max(diffPathList$FDR[diffPathList$FDR != Inf])
           diffPathList$FDR[infDiffIndex] <- maxFdr + 1
         }
-        mDiffPathway <- dcast(diffPathList, Pathway ~ Comparison, value.var = "FDR", fill = 0)
+        mDiffPathway <- reshape2::dcast(diffPathList, Pathway ~ Comparison, value.var = "FDR", fill = 0)
         for (con in cont){
           if (!(con %in% colnames(mDiffPathway))) {
             mDiffPathway[, con] <- abs(rnorm(nrow(mDiffPathway), 0, 0.01))
