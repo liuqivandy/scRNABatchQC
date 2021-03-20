@@ -426,7 +426,7 @@ read_10X_v3<-function(inputFolder){
                                      Value = Value))
   }
   
-  mdata <- dcast(sdata, Feature ~ Sample, value.var = valueName, fill = defaultValue)
+  mdata <- reshape2::dcast(sdata, Feature ~ Sample, value.var = valueName, fill = defaultValue)
   
   mdatax <- as.matrix(mdata[, c(2:ncol(mdata))])
   rownames(mdatax) <- mdata$Feature
