@@ -514,7 +514,7 @@ Tech_OnescRNAseq<-function(input, sf=10000,mincounts=500,mingenes=200, maxmito=0
     if (!require("Seurat",character.only = TRUE)) { stop("Please install Seurat")}
     countmat<-Read10X_h5(input)
     if (is.list(countmat)){
-      cat("h5 file has multiple data entries, select Gene Expression\n")
+      cat("h5 file has multiple data entries, ", paste(names(countmat), collapse=","), ", select Gene Expression\n")
       countmat<-countmat$`Gene Expression` 
     }
   } else {
